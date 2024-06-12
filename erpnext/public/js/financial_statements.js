@@ -113,10 +113,8 @@ erpnext.financial_statements = {
 	initial_depth: 3,
 	onload: function (report) {
 		// dropdown for links to other financial statements
-		erpnext.financial_statements.filters = get_filters();
-
 		let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today());
-
+		erpnext.financial_statements.filters = get_filters(fiscal_year);
 		frappe.model.with_doc("Fiscal Year", fiscal_year, function (r) {
 			var fy = frappe.model.get_doc("Fiscal Year", fiscal_year);
 			frappe.query_report.set_filter_value({
@@ -146,7 +144,7 @@ erpnext.financial_statements = {
 	},
 };
 
-function get_filters() {
+function get_filters(fiscal_year) {
 	let filters = [
 		{
 			fieldname: "company",
@@ -207,6 +205,7 @@ function get_filters() {
 			label: __("Start Year"),
 			fieldtype: "Link",
 			options: "Fiscal Year",
+			default: fiscal_year,
 			reqd: 1,
 			depends_on: "eval:doc.filter_based_on == 'Fiscal Year'",
 		},
@@ -215,6 +214,7 @@ function get_filters() {
 			label: __("End Year"),
 			fieldtype: "Link",
 			options: "Fiscal Year",
+			default: fiscal_year,
 			reqd: 1,
 			depends_on: "eval:doc.filter_based_on == 'Fiscal Year'",
 		},
@@ -262,18 +262,5 @@ function get_filters() {
 			},
 		},
 	];
-
-	// Dynamically set 'default' values for fiscal year filters
-	let fy_filters = filters.filter((x) => {
-		return ["from_fiscal_year", "to_fiscal_year"].includes(x.fieldname);
-	});
-	let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), false, true);
-	if (fiscal_year) {
-		let fy = erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), false, false);
-		fy_filters.forEach((x) => {
-			x.default = fy;
-		});
-	}
-
 	return filters;
 }
