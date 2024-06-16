@@ -37,6 +37,7 @@
   "column_break_19",
   "discount_percentage",
   "discount_amount",
+  "distributed_discount_amount",
   "base_rate_with_margin",
   "section_break1",
   "rate",
@@ -849,11 +850,17 @@
   {
    "fieldname": "column_break_ciit",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "distributed_discount_amount",
+   "fieldtype": "Currency",
+   "label": "Distributed Discount Amount",
+   "options": "currency"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-03-27 13:10:15.336778",
+ "modified": "2024-06-02 06:17:05.636024",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "POS Invoice Item",
