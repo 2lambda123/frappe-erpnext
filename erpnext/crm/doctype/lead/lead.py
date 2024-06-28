@@ -103,7 +103,7 @@ class Lead(SellingController, CRMNote):
 	def before_insert(self):
 		self.contact_doc = None
 		if frappe.db.get_single_value("CRM Settings", "auto_creation_of_contact"):
-			if self.source == "Existing Customer" and self.customer:
+			if self.utm_source == "Existing Customer" and self.customer:
 				contact = frappe.db.get_value(
 					"Dynamic Link",
 					{"link_doctype": "Customer", "parenttype": "Contact", "link_name": self.customer},
