@@ -127,6 +127,7 @@ class DeliveryNote(SellingController):
 		taxes_and_charges: DF.Link | None
 		tc_name: DF.Link | None
 		terms: DF.TextEditor | None
+		territory: DF.Link | None
 		title: DF.Data | None
 		total: DF.Currency
 		total_commission: DF.Currency
