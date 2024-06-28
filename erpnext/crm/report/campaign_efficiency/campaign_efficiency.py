@@ -9,8 +9,8 @@ from frappe.utils import flt
 
 def execute(filters=None):
 	columns, data = [], []
-	columns = get_columns("Campaign Name")
-	data = get_lead_data(filters or {}, "Campaign Name")
+	columns = get_columns("Campaign")
+	data = get_lead_data(filters or {}, "Campaign")
 	return columns, data
 
 
