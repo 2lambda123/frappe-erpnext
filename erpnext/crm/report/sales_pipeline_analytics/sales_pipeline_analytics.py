@@ -132,7 +132,7 @@ class SalesPipelineAnalytics:
 		conditions = []
 
 		if self.filters.get("opportunity_source"):
-			conditions.append({"source": self.filters.get("opportunity_source")})
+			conditions.append({"utm_source": self.filters.get("opportunity_source")})
 
 		if self.filters.get("opportunity_type"):
 			conditions.append({"opportunity_type": self.filters.get("opportunity_type")})
