@@ -31,6 +31,7 @@ class Campaign(Document):
 		except frappe.DoesNotExistError:
 			mc = frappe.new_doc("Marketing Campaign")
 			mc.name = self.campaign_name
+		mc.campaign_description = self.description
 		mc.crm_campaign = self.campaign_name
 		mc.save(ignore_permissions=True)
 
@@ -40,6 +41,7 @@ class Campaign(Document):
 		except frappe.DoesNotExistError:
 			mc = frappe.new_doc("Marketing Campaign")
 			mc.name = self.campaign_name
+		mc.campaign_description = self.description
 		mc.crm_campaign = self.campaign_name
 		mc.save(ignore_permissions=True)
 

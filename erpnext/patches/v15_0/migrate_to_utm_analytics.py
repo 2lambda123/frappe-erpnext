@@ -2,6 +2,8 @@ import click
 import frappe
 from frappe.query_builder.functions import Coalesce
 
+from erpnext.setup.install import create_marketgin_campagin_custom_fields
+
 
 def execute():
 	"""
@@ -27,6 +29,7 @@ def execute():
 	frappe.delete_doc("DocType", "Lead Source", ignore_missing=True)
 
 	campaign = frappe.qb.DocType("Campaign")
+	create_marketgin_campagin_custom_fields()
 	marketing_campaign = frappe.qb.DocType("Marketing Campaign")
 
 	# Fetch all Campaigns
@@ -38,12 +41,18 @@ def execute():
 	insert_query = (
 		frappe.qb.into(marketing_campaign)
 		.ignore()
-		.columns(marketing_campaign.name, marketing_campaign.campaign_description)
+		.columns(
+			marketing_campaign.name,
+			marketing_campaign.campaign_description,
+			marketing_campaign.crm_campaign,
+		)
 	)
 
 	# Add values for each Campaign
 	for camp in campaigns:
-		insert_query = insert_query.insert(camp.campaign_name, Coalesce(camp.description, ""))
+		insert_query = insert_query.insert(
+			camp.campaign_name, Coalesce(camp.description, ""), camp.campaign_name
+		)
 
 	# Execute the insert query
 	insert_query.run()
