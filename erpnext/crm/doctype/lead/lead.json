@@ -516,7 +516,6 @@
   },
   {
    "fieldname": "utm_source",
-   "print_hide": 1,
    "fieldtype": "Link",
    "label": "Source",
    "oldfieldname": "source",
@@ -525,14 +524,12 @@
   },
   {
    "fieldname": "utm_medium",
-   "print_hide": 1,
    "fieldtype": "Link",
    "label": "Medium",
    "options": "Marketing Medium"
   },
   {
    "fieldname": "utm_campaign",
-   "print_hide": 1,
    "fieldtype": "Link",
    "label": "Campaign",
    "oldfieldname": "campaign_name",
