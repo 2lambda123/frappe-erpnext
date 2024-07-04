@@ -254,9 +254,9 @@
    "dependencies": "",
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Lead Source",
+   "label": "Marketing Source",
    "link_count": 0,
-   "link_to": "Lead Source",
+   "link_to": "Marketing Source",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"

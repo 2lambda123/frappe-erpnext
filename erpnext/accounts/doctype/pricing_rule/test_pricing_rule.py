@@ -1312,7 +1312,7 @@ class TestPricingRule(unittest.TestCase):
 		self.assertRaises(frappe.ValidationError, pricing_rule.save)
 
 
-test_dependencies = ["Campaign"]
+test_dependencies = ["Marketing Campaign"]
 
 
 def make_pricing_rule(**args):
@@ -1372,9 +1372,9 @@ def make_pricing_rule(**args):
 
 
 def setup_pricing_rule_data():
-	if not frappe.db.exists("Campaign", "_Test Campaign"):
+	if not frappe.db.exists("Marketing Campaign", "_Test Campaign"):
 		frappe.get_doc(
-			{"doctype": "Campaign", "campaign_name": "_Test Campaign", "name": "_Test Campaign"}
+			{"doctype": "Marketing Campaign", "description": "_Test Campaign", "name": "_Test Campaign"}
 		).insert()
 
 
