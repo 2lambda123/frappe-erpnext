@@ -601,6 +601,8 @@ class Subscription(Document):
 			return True
 		elif getdate(posting_date) == getdate(self.current_invoice_end):
 			return True
+		elif getdate(self.current_invoice_end) < getdate(posting_date):
+			return True
 		else:
 			return False
 
