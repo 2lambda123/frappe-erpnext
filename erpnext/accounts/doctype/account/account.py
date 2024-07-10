@@ -465,7 +465,13 @@ def get_account_autoname(account_number, account_name, company):
 def validate_account_number(name, account_number, company, root_type):
 	if account_number:
 		account_with_same_number = frappe.db.get_value(
-			"Account", {"account_number": account_number, "company": company, 'root_type': root_type, "name": ["!=", name]}
+			"Account",
+			{
+				"account_number": account_number,
+				"company": company,
+				"root_type": root_type,
+				"name": ["!=", name],
+			},
 		)
 		if account_with_same_number:
 			frappe.throw(
