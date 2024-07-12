@@ -268,6 +268,11 @@ def get_tax_amount(party_type, parties, inv, tax_details, posting_date, pan_no=N
 	vouchers, voucher_wise_amount = get_invoice_vouchers(
 		parties, tax_details, inv.company, party_type=party_type
 	)
+
+	advances_allocated_vouchers = frappe.db.get_all(
+		"Advance Tax", filters={"parent": ["in", vouchers]}, pluck="reference_name"
+	)
+
 	advance_vouchers = get_advance_vouchers(
 		parties,
 		company=inv.company,
@@ -275,7 +280,7 @@ def get_tax_amount(party_type, parties, inv, tax_details, posting_date, pan_no=N
 		to_date=tax_details.to_date,
 		party_type=party_type,
 	)
-	taxable_vouchers = vouchers + advance_vouchers
+	taxable_vouchers = vouchers + advance_vouchers + advances_allocated_vouchers
 	tax_deducted_on_advances = 0
 
 	if inv.doctype == "Purchase Invoice":
@@ -292,7 +297,6 @@ def get_tax_amount(party_type, parties, inv, tax_details, posting_date, pan_no=N
 	# ---Advance-------------||---------Inv_1--------Inv_2------------------------||--
 	if tax_deducted_on_advances:
 		tax_deducted += get_advance_tax_across_fiscal_year(tax_deducted_on_advances, tax_details)
-
 	tax_amount = 0
 
 	if party_type == "Supplier":
