@@ -49,13 +49,14 @@
   "message",
   "message_examples",
   "mute_email",
-  "payment_url",
   "section_break_7",
   "payment_gateway",
   "payment_account",
   "payment_channel",
   "payment_order",
-  "amended_from"
+  "amended_from",
+  "column_break_pnyv",
+  "payment_url"
  ],
  "fields": [
   {
@@ -341,7 +342,7 @@
   {
    "fieldname": "payment_url",
    "fieldtype": "Data",
-   "hidden": 1,
+   "label": "Payment URL",
    "length": 500,
    "options": "URL",
    "read_only": 1
@@ -399,13 +400,17 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_pnyv",
+   "fieldtype": "Column Break"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-03-27 13:10:11.120742",
+ "modified": "2024-05-02 07:03:11.048147",
  "modified_by": "Administrator",
  "module": "Accounts",
  "name": "Payment Request",
