@@ -420,7 +420,7 @@ $.extend(erpnext.utils, {
 		});
 	},
 
-	get_fiscal_year: function (date, with_dates = false, boolean = false) {
+	get_fiscal_year: function (date, with_dates = false) {
 		if (!frappe.boot.setup_complete) {
 			return;
 		}
@@ -431,9 +431,9 @@ $.extend(erpnext.utils, {
 		let fiscal_year = "";
 		frappe.call({
 			method: "erpnext.accounts.utils.get_fiscal_year",
+			type: "GET", // make it cacheable
 			args: {
 				date: date,
-				boolean: boolean,
 			},
 			async: false,
 			callback: function (r) {
