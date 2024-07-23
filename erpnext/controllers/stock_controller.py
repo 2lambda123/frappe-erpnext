@@ -710,7 +710,7 @@ class StockController(AccountsController):
 				if row.get("batch_no"):
 					update_values["batch_no"] = None
 
-				if row.serial_and_batch_bundle:
+				if row.get("serial_and_batch_bundle"):
 					update_values["serial_and_batch_bundle"] = None
 					frappe.db.set_value(
 						"Serial and Batch Bundle", row.serial_and_batch_bundle, {"is_cancelled": 1}
@@ -725,6 +725,7 @@ class StockController(AccountsController):
 					)
 
 					row.db_set("rejected_serial_and_batch_bundle", None)
+
 
 				if row.get("current_serial_and_batch_bundle"):
 					row.db_set("current_serial_and_batch_bundle", None)
