@@ -8,7 +8,7 @@ from functools import reduce
 import frappe
 from frappe import ValidationError, _, qb, scrub, throw
 from frappe.utils import cint, comma_or, flt, getdate, nowdate
-from frappe.utils.data import comma_and, fmt_money
+from frappe.utils.data import comma_and, fmt_money, get_link_to_form
 from pypika import Case
 from pypika.functions import Coalesce, Sum
 
@@ -181,6 +181,9 @@ class PaymentEntry(AccountsController):
 		self.set_status()
 		self.set_total_in_words()
 
+	def before_save(self):
+		self.check_payment_requests()
+
 	def on_submit(self):
 		if self.difference_amount:
 			frappe.throw(_("Difference Amount must be zero"))
@@ -188,7 +191,9 @@ class PaymentEntry(AccountsController):
 		self.update_outstanding_amounts()
 		self.update_advance_paid()
 		self.update_payment_schedule()
+		self.set_payment_req_outstanding_amount()
 		self.set_payment_req_status()
+		self.set_reference_advance_payment_status()
 		self.set_status()
 
 	def set_liability_account(self):
@@ -263,13 +268,34 @@ class PaymentEntry(AccountsController):
 		self.update_advance_paid()
 		self.delink_advance_entry_references()
 		self.update_payment_schedule(cancel=1)
+		self.set_payment_req_outstanding_amount(cancel=True)
 		self.set_payment_req_status()
+		self.set_reference_advance_payment_status()
 		self.set_status()
+
+	def set_payment_req_outstanding_amount(self, cancel=False):
+		from erpnext.accounts.doctype.payment_request.payment_request import (
+			update_payment_req_outstanding_amount,
+		)
+
+		update_payment_req_outstanding_amount(self, cancel=cancel)
 
 	def set_payment_req_status(self):
 		from erpnext.accounts.doctype.payment_request.payment_request import update_payment_req_status
 
 		update_payment_req_status(self, None)
+
+	# todo: need to optimize
+	def set_reference_advance_payment_status(self):
+		advance_payment_doctypes = frappe.get_hooks("advance_payment_receivable_doctypes") + frappe.get_hooks(
+			"advance_payment_payable_doctypes"
+		)
+
+		for ref in self.get("references"):
+			ref_doc = frappe.get_doc(ref.reference_doctype, ref.reference_name)
+			if ref.reference_doctype in advance_payment_doctypes:
+				# set advance payment status
+				ref_doc.set_advance_payment_status()
 
 	def update_outstanding_amounts(self):
 		self.set_missing_ref_details(force=True)
@@ -309,6 +335,8 @@ class PaymentEntry(AccountsController):
 		if self.payment_type == "Internal Transfer":
 			return
 
+		self.validate_allocated_amount_as_of_pr()
+
 		if self.party_type in ("Customer", "Supplier"):
 			self.validate_allocated_amount_with_latest_data()
 		else:
@@ -320,6 +348,21 @@ class PaymentEntry(AccountsController):
 				# Check for negative outstanding invoices as well
 				if flt(d.allocated_amount) < 0 and flt(d.allocated_amount) < flt(d.outstanding_amount):
 					frappe.throw(fail_message.format(d.idx))
+
+	def validate_allocated_amount_as_of_pr(self):
+		from erpnext.accounts.doctype.payment_request.payment_request import (
+			get_outstanding_amount_of_payment_entry_references as get_outstanding_amounts,
+		)
+
+		outstanding_amounts = get_outstanding_amounts(self.references)
+
+		for ref in self.references:
+			if ref.payment_request and ref.allocated_amount > outstanding_amounts[ref.payment_request]:
+				frappe.throw(
+					_("Allocated Amount cannot be greater than Outstanding Amount of {0}").format(
+						get_link_to_form("Payment Request", ref.payment_request)
+					)
+				)
 
 	def term_based_allocation_enabled_for_reference(
 		self, reference_doctype: str, reference_name: str
@@ -1700,6 +1743,103 @@ class PaymentEntry(AccountsController):
 			current_tax_fraction *= -1.0
 
 		return current_tax_fraction
+
+	def check_payment_requests(self):
+		if not self.references:
+			return
+
+		not_set_count = sum(1 for row in self.references if not row.payment_request)
+
+		if not_set_count == 0:
+			return
+		elif not_set_count == 1:
+			msg = _("{0} {1} is not set in {2}").format(
+				not_set_count,
+				frappe.bold("Payment Request"),
+				frappe.bold("Payment References"),
+			)
+		else:
+			msg = _("{0} {1} are not set in {2}").format(
+				not_set_count,
+				frappe.bold("Payment Request"),
+				frappe.bold("Payment References"),
+			)
+
+		frappe.msgprint(msg=msg, alert=True, indicator="orange")
+
+	# todo: can be optimize
+	@frappe.whitelist()
+	def set_matched_payment_requests(self):
+		if not self.references:
+			return
+
+		matched_count = 0
+
+		for row in self.references:
+			if row.payment_request or (
+				not row.reference_doctype or not row.reference_name or not row.allocated_amount
+			):
+				continue
+
+			row.payment_request = get_matched_payment_request(
+				row.reference_doctype, row.reference_name, row.allocated_amount
+			)
+
+			if row.payment_request:
+				matched_count += 1
+
+		if matched_count == 0:
+			return
+		elif matched_count == 1:
+			msg = _("{0} matched {1} is set").format(matched_count, frappe.bold("Payment Request"))
+		else:
+			msg = _("{0} matched {1} are set").format(matched_count, frappe.bold("Payment Request"))
+
+		frappe.msgprint(
+			msg=msg,
+			alert=True,
+		)
+
+	@frappe.whitelist()
+	def set_matched_payment_request(self, row_idx):
+		row = next((row for row in self.references if row.idx == row_idx), None)
+
+		if not row:
+			frappe.throw(_("Row #{0} not found").format(row_idx), title=_("Row Not Found"))
+
+		# if payment entry already set then do not set it again
+		if row.payment_request:
+			return
+
+		row.payment_request = get_matched_payment_request(
+			row.reference_doctype, row.reference_name, row.allocated_amount
+		)
+
+		if row.payment_request:
+			frappe.msgprint(
+				msg=_("Matched {0} is set").format(frappe.bold("Payment Request")),
+				alert=True,
+			)
+
+
+# todo: can be optimize
+def get_matched_payment_request(reference_doctype, reference_name, outstanding_amount):
+	payment_requests = frappe.get_all(
+		doctype="Payment Request",
+		filters={
+			"reference_doctype": reference_doctype,
+			"reference_name": reference_name,
+			"outstanding_amount": outstanding_amount,
+			"status": ["!=", "Paid"],
+			"docstatus": 1,
+		},
+		pluck="name",
+	)
+
+	if len(payment_requests) == 1:
+		return payment_requests[0]
+
+	return None
 
 
 def validate_inclusive_tax(tax, doc):
