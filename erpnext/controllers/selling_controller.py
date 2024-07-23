@@ -432,6 +432,9 @@ class SellingController(StockController):
 		if self.doctype not in ("Delivery Note", "Sales Invoice"):
 			return
 
+		allow_at_arms_length_price = frappe.get_cached_value(
+			"Stock Settings", None, "allow_internal_transfer_at_arms_length_price"
+		)
 		items = self.get("items") + (self.get("packed_items") or [])
 		for d in items:
 			if not frappe.get_cached_value("Item", d.item_code, "is_stock_item"):
@@ -478,6 +481,9 @@ class SellingController(StockController):
 							if d.incoming_rate != incoming_rate:
 								d.incoming_rate = incoming_rate
 						else:
+							if allow_at_arms_length_price:
+								continue
+
 							rate = flt(
 								flt(d.incoming_rate, d.precision("incoming_rate")) * d.conversion_factor,
 								d.precision("rate"),
@@ -490,10 +496,6 @@ class SellingController(StockController):
 									).format(d.idx),
 									alert=1,
 								)
-
-							d.discount_percentage = 0.0
-							d.discount_amount = 0.0
-							d.margin_rate_or_amount = 0.0
 
 			elif self.get("return_against"):
 				# Get incoming rate of return entry from reference document
