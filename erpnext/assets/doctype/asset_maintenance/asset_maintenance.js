@@ -47,7 +47,10 @@ frappe.ui.form.on("Asset Maintenance", {
 					if (!r.message) {
 						return;
 					}
-					const section = frm.dashboard.add_section("", __("Maintenance Log"));
+					const section = frm.dashboard.add_section(
+						"",
+						__("Maintenance Log"),
+					);
 					var rows = $("<div></div>").appendTo(section);
 					// show
 					(r.message || []).forEach(function (d) {
@@ -96,7 +99,12 @@ var get_next_due_date = function (frm, cdt, cdn) {
 			},
 			callback: function (r) {
 				if (r.message) {
-					frappe.model.set_value(cdt, cdn, "next_due_date", r.message);
+					frappe.model.set_value(
+						cdt,
+						cdn,
+						"next_due_date",
+						r.message,
+					);
 				} else {
 					frappe.model.set_value(cdt, cdn, "next_due_date", "");
 				}

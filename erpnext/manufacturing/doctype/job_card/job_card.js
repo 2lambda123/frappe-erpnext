@@ -39,7 +39,11 @@ frappe.ui.form.on("Job Card", {
 		}
 
 		if (frm.doc.is_subcontracted) {
-			frm.set_df_property("wip_warehouse", "label", __("Supplier Warehouse"));
+			frm.set_df_property(
+				"wip_warehouse",
+				"label",
+				__("Supplier Warehouse"),
+			);
 		}
 	},
 
@@ -48,7 +52,8 @@ frappe.ui.form.on("Job Card", {
 			frm.doc.finished_good &&
 			frm.doc.docstatus === 1 &&
 			!frm.doc.is_subcontracted &&
-			flt(frm.doc.for_quantity) + flt(frm.doc.process_loss_qty) > flt(frm.doc.manufactured_qty)
+			flt(frm.doc.for_quantity) + flt(frm.doc.process_loss_qty) >
+				flt(frm.doc.manufactured_qty)
 		) {
 			frm.add_custom_button(__("Make Stock Entry"), () => {
 				frm.call({
@@ -82,13 +87,20 @@ frappe.ui.form.on("Job Card", {
 			return;
 		}
 
-		let has_stock_entry = frm.doc.__onload && frm.doc.__onload.has_stock_entry ? true : false;
+		let has_stock_entry =
+			frm.doc.__onload && frm.doc.__onload.has_stock_entry ? true : false;
 
 		frm.toggle_enable("for_quantity", !has_stock_entry);
 
-		if (!frm.is_new() && !frm.doc.skip_material_transfer && has_items && frm.doc.docstatus < 2) {
+		if (
+			!frm.is_new() &&
+			!frm.doc.skip_material_transfer &&
+			has_items &&
+			frm.doc.docstatus < 2
+		) {
 			let to_request = frm.doc.for_quantity > frm.doc.transferred_qty;
-			let excess_transfer_allowed = frm.doc.__onload.job_card_excess_transfer;
+			let excess_transfer_allowed =
+				frm.doc.__onload.job_card_excess_transfer;
 
 			if (to_request || excess_transfer_allowed) {
 				frm.add_custom_button(__("Material Request"), () => {
@@ -98,7 +110,9 @@ frappe.ui.form.on("Job Card", {
 
 			// check if any row has untransferred materials
 			// in case of multiple items in JC
-			let to_transfer = frm.doc.items.some((row) => row.transferred_qty < row.required_qty);
+			let to_transfer = frm.doc.items.some(
+				(row) => row.transferred_qty < row.required_qty,
+			);
 
 			if (to_transfer || excess_transfer_allowed) {
 				frm.add_custom_button(__("Material Transfer"), () => {
@@ -107,7 +121,11 @@ frappe.ui.form.on("Job Card", {
 			}
 		}
 
-		if (frm.doc.docstatus == 1 && !frm.doc.is_corrective_job_card && !frm.doc.finished_good) {
+		if (
+			frm.doc.docstatus == 1 &&
+			!frm.doc.is_corrective_job_card &&
+			!frm.doc.finished_good
+		) {
 			frm.trigger("setup_corrective_job_card");
 		}
 
@@ -124,15 +142,20 @@ frappe.ui.form.on("Job Card", {
 		frm.trigger("toggle_operation_number");
 
 		if (
-			frm.doc.for_quantity + frm.doc.process_loss_qty > frm.doc.total_completed_qty &&
+			frm.doc.for_quantity + frm.doc.process_loss_qty >
+				frm.doc.total_completed_qty &&
 			(frm.doc.skip_material_transfer ||
-				frm.doc.transferred_qty >= frm.doc.for_quantity + frm.doc.process_loss_qty ||
+				frm.doc.transferred_qty >=
+					frm.doc.for_quantity + frm.doc.process_loss_qty ||
 				!frm.doc.finished_good)
 		) {
 			if (!frm.doc.time_logs?.length) {
 				frm.add_custom_button(__("Start Job"), () => {
 					let from_time = frappe.datetime.now_datetime();
-					if ((frm.doc.employee && !frm.doc.employee.length) || !frm.doc.employee) {
+					if (
+						(frm.doc.employee && !frm.doc.employee.length) ||
+						!frm.doc.employee
+					) {
 						frappe.prompt(
 							{
 								fieldtype: "Table MultiSelect",
@@ -141,12 +164,20 @@ frappe.ui.form.on("Job Card", {
 								fieldname: "employees",
 							},
 							(d) => {
-								frm.events.start_timer(frm, from_time, d.employees);
+								frm.events.start_timer(
+									frm,
+									from_time,
+									d.employees,
+								);
 							},
-							__("Assign Job to Employee")
+							__("Assign Job to Employee"),
 						);
 					} else {
-						frm.events.start_timer(frm, from_time, frm.doc.employee);
+						frm.events.start_timer(
+							frm,
+							from_time,
+							frm.doc.employee,
+						);
 					}
 				});
 			} else if (frm.doc.is_paused) {
@@ -191,11 +222,20 @@ frappe.ui.form.on("Job Card", {
 		frm.trigger("setup_quality_inspection");
 
 		if (frm.doc.work_order) {
-			frappe.db.get_value("Work Order", frm.doc.work_order, "transfer_material_against").then((r) => {
-				if (r.message.transfer_material_against == "Work Order" && !frm.doc.operation_row_id) {
-					frm.set_df_property("items", "hidden", 1);
-				}
-			});
+			frappe.db
+				.get_value(
+					"Work Order",
+					frm.doc.work_order,
+					"transfer_material_against",
+				)
+				.then((r) => {
+					if (
+						r.message.transfer_material_against == "Work Order" &&
+						!frm.doc.operation_row_id
+					) {
+						frm.set_df_property("items", "hidden", 1);
+					}
+				});
 		}
 
 		let sbb_field = frm.get_docfield("serial_and_batch_bundle");
@@ -211,7 +251,10 @@ frappe.ui.form.on("Job Card", {
 	},
 
 	make_subcontracting_po(frm) {
-		if (frm.doc.docstatus === 1 && frm.doc.for_quantity > frm.doc.manufactured_qty) {
+		if (
+			frm.doc.docstatus === 1 &&
+			frm.doc.for_quantity > frm.doc.manufactured_qty
+		) {
 			frm.add_custom_button(__("Make Subcontracting PO"), () => {
 				frappe.model.open_mapped_doc({
 					method: "erpnext.manufacturing.doctype.job_card.job_card.make_subcontracting_po",
@@ -275,13 +318,15 @@ frappe.ui.form.on("Job Card", {
 			},
 			__("Enter Value"),
 			__("Update"),
-			__("Set Finished Good Quantity")
+			__("Set Finished Good Quantity"),
 		);
 	},
 
 	setup_quality_inspection: function (frm) {
 		let quality_inspection_field = frm.get_docfield("quality_inspection");
-		quality_inspection_field.get_route_options_for_new_doc = function (frm) {
+		quality_inspection_field.get_route_options_for_new_doc = function (
+			frm,
+		) {
 			return {
 				inspection_type: "In Process",
 				reference_type: "Job Card",
@@ -290,7 +335,8 @@ frappe.ui.form.on("Job Card", {
 				item_name: frm.doc.item_name,
 				item_serial_no: frm.doc.serial_no,
 				batch_no: frm.doc.batch_no,
-				quality_inspection_template: frm.doc.quality_inspection_template,
+				quality_inspection_template:
+					frm.doc.quality_inspection_template,
 			};
 		};
 	},
@@ -299,7 +345,9 @@ frappe.ui.form.on("Job Card", {
 		frm.add_custom_button(
 			__("Corrective Job Card"),
 			() => {
-				let operations = frm.doc.sub_operations.map((d) => d.sub_operation).concat(frm.doc.operation);
+				let operations = frm.doc.sub_operations
+					.map((d) => d.sub_operation)
+					.concat(frm.doc.operation);
 
 				let fields = [
 					{
@@ -333,12 +381,16 @@ frappe.ui.form.on("Job Card", {
 				frappe.prompt(
 					fields,
 					(d) => {
-						frm.events.make_corrective_job_card(frm, d.operation, d.for_operation);
+						frm.events.make_corrective_job_card(
+							frm,
+							d.operation,
+							d.for_operation,
+						);
 					},
-					__("Select Corrective Operation")
+					__("Select Corrective Operation"),
 				);
 			},
-			__("Make")
+			__("Make"),
 		);
 	},
 
@@ -380,13 +432,21 @@ frappe.ui.form.on("Job Card", {
 								args.push({ label: row.idx, value: row.name });
 							});
 
-							let description = __("Operation {0} added multiple times in the work order {1}", [
-								frm.doc.operation,
-								frm.doc.work_order,
-							]);
+							let description = __(
+								"Operation {0} added multiple times in the work order {1}",
+								[frm.doc.operation, frm.doc.work_order],
+							);
 
-							frm.set_df_property("operation_row_number", "options", args);
-							frm.set_df_property("operation_row_number", "description", description);
+							frm.set_df_property(
+								"operation_row_number",
+								"options",
+								args,
+							);
+							frm.set_df_property(
+								"operation_row_number",
+								"description",
+								description,
+							);
 						}
 
 						frm.trigger("toggle_operation_number");
@@ -403,8 +463,14 @@ frappe.ui.form.on("Job Card", {
 	},
 
 	toggle_operation_number(frm) {
-		frm.toggle_display("operation_row_number", !frm.doc.operation_id && frm.doc.operation);
-		frm.toggle_reqd("operation_row_number", !frm.doc.operation_id && frm.doc.operation);
+		frm.toggle_display(
+			"operation_row_number",
+			!frm.doc.operation_id && frm.doc.operation,
+		);
+		frm.toggle_reqd(
+			"operation_row_number",
+			!frm.doc.operation_id && frm.doc.operation,
+		);
 	},
 
 	make_time_log: function (frm, args) {
@@ -425,7 +491,9 @@ frappe.ui.form.on("Job Card", {
 
 	update_sub_operation: function (frm, args) {
 		if (frm.doc.sub_operations && frm.doc.sub_operations.length) {
-			let sub_operations = frm.doc.sub_operations.filter((d) => d.status != "Complete");
+			let sub_operations = frm.doc.sub_operations.filter(
+				(d) => d.status != "Complete",
+			);
 			if (sub_operations && sub_operations.length) {
 				args["sub_operation"] = sub_operations[0].sub_operation;
 			}
@@ -433,7 +501,10 @@ frappe.ui.form.on("Job Card", {
 	},
 
 	validate: function (frm) {
-		if ((!frm.doc.time_logs || !frm.doc.time_logs.length) && frm.doc.started_time) {
+		if (
+			(!frm.doc.time_logs || !frm.doc.time_logs.length) &&
+			frm.doc.started_time
+		) {
 			frm.trigger("reset_timer");
 		}
 	},
@@ -460,10 +531,18 @@ frappe.ui.form.on("Job Card", {
 				.text(hours < 10 ? "0" + hours.toString() : hours.toString());
 			$(section)
 				.find(".minutes")
-				.text(minutes < 10 ? "0" + minutes.toString() : minutes.toString());
+				.text(
+					minutes < 10
+						? "0" + minutes.toString()
+						: minutes.toString(),
+				);
 			$(section)
 				.find(".seconds")
-				.text(seconds < 10 ? "0" + seconds.toString() : seconds.toString());
+				.text(
+					seconds < 10
+						? "0" + seconds.toString()
+						: seconds.toString(),
+				);
 		}
 
 		function initialiseTimer() {
@@ -486,7 +565,10 @@ frappe.ui.form.on("Job Card", {
 
 		var section = frm.toolbar.page.add_inner_message(timer);
 		let currentIncrement = frm.events.get_current_time(frm);
-		if (frm.doc.time_logs?.length && frm.doc.time_logs[cint(frm.doc.time_logs.length) - 1].to_time) {
+		if (
+			frm.doc.time_logs?.length &&
+			frm.doc.time_logs[cint(frm.doc.time_logs.length) - 1].to_time
+		) {
 			updateStopwatch(currentIncrement);
 		} else if (frm.doc.status == "On Hold") {
 			updateStopwatch(currentIncrement);
@@ -506,7 +588,10 @@ frappe.ui.form.on("Job Card", {
 					current_time += get_seconds_diff(d.to_time, d.from_time);
 				}
 			} else {
-				current_time += get_seconds_diff(frappe.datetime.now_datetime(), d.from_time);
+				current_time += get_seconds_diff(
+					frappe.datetime.now_datetime(),
+					d.from_time,
+				);
 			}
 		});
 
@@ -556,10 +641,14 @@ frappe.ui.form.on("Job Card", {
 			}
 		});
 
-		if (frm.doc.total_completed_qty && frm.doc.for_quantity > frm.doc.total_completed_qty) {
+		if (
+			frm.doc.total_completed_qty &&
+			frm.doc.for_quantity > frm.doc.total_completed_qty
+		) {
 			let flt_precision = precision("for_quantity", frm.doc);
 			let process_loss_qty =
-				flt(frm.doc.for_quantity, flt_precision) - flt(frm.doc.total_completed_qty, flt_precision);
+				flt(frm.doc.for_quantity, flt_precision) -
+				flt(frm.doc.total_completed_qty, flt_precision);
 
 			frm.set_value("process_loss_qty", process_loss_qty);
 		}
@@ -570,7 +659,12 @@ frappe.ui.form.on("Job Card", {
 	source_warehouse(frm) {
 		if (frm.doc.source_warehouse) {
 			frm.doc.items.forEach((d) => {
-				frappe.model.set_value(d.doctype, d.name, "source_warehouse", frm.doc.source_warehouse);
+				frappe.model.set_value(
+					d.doctype,
+					d.name,
+					"source_warehouse",
+					frm.doc.source_warehouse,
+				);
 			});
 		}
 	},

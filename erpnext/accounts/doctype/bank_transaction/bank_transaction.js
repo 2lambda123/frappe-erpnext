@@ -35,7 +35,13 @@ frappe.ui.form.on("Bank Transaction", {
 
 	get_payment_doctypes: function () {
 		// get payment doctypes from all the apps
-		return ["Payment Entry", "Journal Entry", "Sales Invoice", "Purchase Invoice", "Bank Transaction"];
+		return [
+			"Payment Entry",
+			"Journal Entry",
+			"Sales Invoice",
+			"Purchase Invoice",
+			"Bank Transaction",
+		];
 	},
 });
 
@@ -48,11 +54,14 @@ frappe.ui.form.on("Bank Transaction Payments", {
 const update_clearance_date = (frm, cdt, cdn) => {
 	if (frm.doc.docstatus === 1) {
 		frappe
-			.xcall("erpnext.accounts.doctype.bank_transaction.bank_transaction.unclear_reference_payment", {
-				doctype: cdt,
-				docname: cdn,
-				bt_name: frm.doc.name,
-			})
+			.xcall(
+				"erpnext.accounts.doctype.bank_transaction.bank_transaction.unclear_reference_payment",
+				{
+					doctype: cdt,
+					docname: cdn,
+					bt_name: frm.doc.name,
+				},
+			)
 			.then((e) => {
 				if (e == "success") {
 					frappe.show_alert({

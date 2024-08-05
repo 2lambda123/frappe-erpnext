@@ -1,6 +1,10 @@
 frappe.listview_settings["Lead"] = {
 	get_indicator: function (doc) {
-		var indicator = [__(doc.status), frappe.utils.guess_colour(doc.status), "status,=," + doc.status];
+		var indicator = [
+			__(doc.status),
+			frappe.utils.guess_colour(doc.status),
+			"status,=," + doc.status,
+		];
 		return indicator;
 	},
 	onload: function (listview) {
@@ -33,11 +37,14 @@ frappe.listview_settings["Lead"] = {
 							prospect.prospect_owner = r.lead_owner;
 
 							leads.forEach(function (lead) {
-								let lead_prospect_row = frappe.model.add_child(prospect, "leads");
+								let lead_prospect_row = frappe.model.add_child(
+									prospect,
+									"leads",
+								);
 								lead_prospect_row.lead = lead.name;
 							});
 							frappe.set_route("Form", "Prospect", prospect.name);
-						}
+						},
 					);
 				});
 			});

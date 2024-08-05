@@ -8,7 +8,9 @@ frappe.listview_settings["Bank Statement Import"] = {
 			}
 		});
 		frappe.realtime.on("data_import_refresh", (data) => {
-			imports_in_progress = imports_in_progress.filter((d) => d !== data.data_import);
+			imports_in_progress = imports_in_progress.filter(
+				(d) => d !== data.data_import,
+			);
 			listview.refresh();
 		});
 	},

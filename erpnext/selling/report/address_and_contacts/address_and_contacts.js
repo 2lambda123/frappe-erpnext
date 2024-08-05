@@ -22,7 +22,8 @@ frappe.query_reports["Address And Contacts"] = {
 			label: __("Party Name"),
 			fieldtype: "Dynamic Link",
 			get_options: function () {
-				let party_type = frappe.query_report.get_filter_value("party_type");
+				let party_type =
+					frappe.query_report.get_filter_value("party_type");
 				if (!party_type) {
 					frappe.throw(__("Please select Party Type first"));
 				}

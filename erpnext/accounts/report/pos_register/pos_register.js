@@ -15,7 +15,10 @@ frappe.query_reports["POS Register"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 			width: "60px",
 		},
@@ -55,7 +58,13 @@ frappe.query_reports["POS Register"] = {
 			fieldname: "group_by",
 			label: __("Group by"),
 			fieldtype: "Select",
-			options: ["", "POS Profile", "Cashier", "Payment Method", "Customer"],
+			options: [
+				"",
+				"POS Profile",
+				"Cashier",
+				"Payment Method",
+				"Customer",
+			],
 			default: "POS Profile",
 		},
 		{

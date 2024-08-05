@@ -3,6 +3,7 @@
 
 
 """Global Defaults"""
+
 import frappe
 import frappe.defaults
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter

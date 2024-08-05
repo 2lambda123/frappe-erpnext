@@ -62,7 +62,11 @@ frappe.ui.form.on("Maintenance Visit", {
 		erpnext.utils.get_party_details(frm);
 	},
 	customer_address: function (frm) {
-		erpnext.utils.get_address_display(frm, "customer_address", "address_display");
+		erpnext.utils.get_address_display(
+			frm,
+			"customer_address",
+			"address_display",
+		);
 	},
 	contact_person: function (frm) {
 		erpnext.utils.get_contact_details(frm);
@@ -70,9 +74,15 @@ frappe.ui.form.on("Maintenance Visit", {
 });
 
 // TODO commonify this code
-erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.form.Controller {
+erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends (
+	frappe.ui.form.Controller
+) {
 	refresh() {
-		frappe.dynamic_link = { doc: this.frm.doc, fieldname: "customer", doctype: "Customer" };
+		frappe.dynamic_link = {
+			doc: this.frm.doc,
+			fieldname: "customer",
+			doctype: "Customer",
+		};
 
 		var me = this;
 
@@ -97,7 +107,7 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 			this.frm.add_custom_button(
 				__("Warranty Claim"),
@@ -116,7 +126,7 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 			this.frm.add_custom_button(
 				__("Sales Order"),
@@ -139,10 +149,13 @@ erpnext.maintenance.MaintenanceVisit = class MaintenanceVisit extends frappe.ui.
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		}
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.maintenance.MaintenanceVisit({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.maintenance.MaintenanceVisit({ frm: cur_frm }),
+);

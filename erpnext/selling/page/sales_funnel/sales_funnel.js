@@ -34,7 +34,8 @@ erpnext.SalesFunnel = class SalesFunnel {
 			reqd: 1,
 			default: frappe.defaults.get_user_default("company"),
 			change: function () {
-				me.company = this.value || frappe.defaults.get_user_default("company");
+				me.company =
+					this.value || frappe.defaults.get_user_default("company");
 				me.get_data();
 			},
 		})),
@@ -45,28 +46,36 @@ erpnext.SalesFunnel = class SalesFunnel {
 				chart: wrapper.page.add_select(__("Chart"), [
 					{ value: "sales_funnel", label: __("Sales Funnel") },
 					{ value: "sales_pipeline", label: __("Sales Pipeline") },
-					{ value: "opp_by_lead_source", label: __("Opportunities by lead source") },
+					{
+						value: "opp_by_lead_source",
+						label: __("Opportunities by lead source"),
+					},
 				]),
 				refresh_btn: wrapper.page.set_primary_action(
 					__("Refresh"),
 					function () {
 						me.get_data();
 					},
-					"fa fa-refresh"
+					"fa fa-refresh",
 				),
 			});
 
-		this.elements.no_data = $('<div class="alert alert-warning">' + __("No Data") + "</div>")
+		this.elements.no_data = $(
+			'<div class="alert alert-warning">' + __("No Data") + "</div>",
+		)
 			.toggle(false)
 			.appendTo(this.elements.layout);
 
-		this.elements.funnel_wrapper = $('<div class="funnel-wrapper text-center"></div>').appendTo(
-			this.elements.layout
-		);
+		this.elements.funnel_wrapper = $(
+			'<div class="funnel-wrapper text-center"></div>',
+		).appendTo(this.elements.layout);
 
 		this.company = frappe.defaults.get_user_default("company");
 		this.options = {
-			from_date: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			from_date: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			to_date: frappe.datetime.get_today(),
 			chart: "sales_funnel",
 		};
@@ -82,7 +91,8 @@ erpnext.SalesFunnel = class SalesFunnel {
 			me.elements[k].on("change", function () {
 				if (["from_date", "to_date"].includes(k)) {
 					me.options[k] =
-						frappe.datetime.user_to_str($(this).val()) != "Invalid date"
+						frappe.datetime.user_to_str($(this).val()) !=
+						"Invalid date"
 							? frappe.datetime.user_to_str($(this).val())
 							: frappe.datetime.get_today();
 				} else {
@@ -110,9 +120,12 @@ erpnext.SalesFunnel = class SalesFunnel {
 		}
 
 		const method_map = {
-			sales_funnel: "erpnext.selling.page.sales_funnel.sales_funnel.get_funnel_data",
-			opp_by_lead_source: "erpnext.selling.page.sales_funnel.sales_funnel.get_opp_by_lead_source",
-			sales_pipeline: "erpnext.selling.page.sales_funnel.sales_funnel.get_pipeline_data",
+			sales_funnel:
+				"erpnext.selling.page.sales_funnel.sales_funnel.get_funnel_data",
+			opp_by_lead_source:
+				"erpnext.selling.page.sales_funnel.sales_funnel.get_opp_by_lead_source",
+			sales_pipeline:
+				"erpnext.selling.page.sales_funnel.sales_funnel.get_pipeline_data",
 		};
 		frappe.call({
 			method: method_map[this.options.chart],
@@ -180,7 +193,13 @@ erpnext.SalesFunnel = class SalesFunnel {
 
 			var y_mid = y_old + (y - y_old) / 2.0;
 
-			me.draw_legend(x_mid, y_mid, me.options.width, me.options.height, d.value + " - " + d.title);
+			me.draw_legend(
+				x_mid,
+				y_mid,
+				me.options.width,
+				me.options.height,
+				d.value + " - " + d.title,
+			);
 		});
 	}
 
@@ -190,19 +209,26 @@ erpnext.SalesFunnel = class SalesFunnel {
 		this.elements.no_data.toggle(false);
 
 		// calculate width and height options
-		this.options.width = ($(this.elements.funnel_wrapper).width() * 2.0) / 3.0;
+		this.options.width =
+			($(this.elements.funnel_wrapper).width() * 2.0) / 3.0;
 		this.options.height = (Math.sqrt(3) * this.options.width) / 2.0;
 
 		// calculate total weightage
 		// as height decreases, area decreases by the square of the reduction
 		// hence, compensating by squaring the index value
-		this.options.total_weightage = this.options.data.reduce(function (prev, curr, i) {
+		this.options.total_weightage = this.options.data.reduce(function (
+			prev,
+			curr,
+			i,
+		) {
 			return prev + Math.pow(i + 1, 2) * curr.value;
 		}, 0.0);
 
 		// calculate height for each data
 		$.each(this.options.data, function (i, d) {
-			d.height = (me.options.height * d.value * Math.pow(i + 1, 2)) / me.options.total_weightage;
+			d.height =
+				(me.options.height * d.value * Math.pow(i + 1, 2)) /
+				me.options.total_weightage;
 		});
 
 		this.elements.canvas = $("<canvas></canvas>")

@@ -17,7 +17,10 @@ class CallPopup {
 		this.set_call_status();
 		frappe.utils.bind_actions_with_object(this.dialog.$body, this);
 		this.dialog.$wrapper.addClass("call-popup");
-		this.dialog.get_close_btn().unbind("click").click(this.close_modal.bind(this));
+		this.dialog
+			.get_close_btn()
+			.unbind("click")
+			.click(this.close_modal.bind(this));
 		this.dialog.show();
 	}
 
@@ -35,7 +38,9 @@ class CallPopup {
 		let title = "";
 		call_status = call_status || this.call_log.status;
 		if (["Ringing"].includes(call_status) || !call_status) {
-			title = __("Incoming call from {0}", [this.get_caller_name() || this.caller_number]);
+			title = __("Incoming call from {0}", [
+				this.get_caller_name() || this.caller_number,
+			]);
 			this.set_indicator("blue", true);
 		} else if (call_status === "In Progress") {
 			title = __("Call Connected");
@@ -114,7 +119,12 @@ class CallPopup {
 				{
 					fieldtype: "Button",
 					label: __("Open Contact"),
-					click: () => frappe.set_route("Form", "Contact", this.get_contact_link().link_name),
+					click: () =>
+						frappe.set_route(
+							"Form",
+							"Contact",
+							this.get_contact_link().link_name,
+						),
 					depends_on: () => this.get_caller_name(),
 				},
 				{
@@ -132,7 +142,10 @@ class CallPopup {
 				{
 					fieldtype: "Button",
 					label: __("Create New Lead"),
-					click: () => frappe.new_doc("Lead", { mobile_no: this.caller_number }),
+					click: () =>
+						frappe.new_doc("Lead", {
+							mobile_no: this.caller_number,
+						}),
 					depends_on: () => !this.get_caller_name(),
 				},
 				{
@@ -168,8 +181,10 @@ class CallPopup {
 					fieldtype: "Button",
 					label: __("Save"),
 					click: () => {
-						const call_summary = this.call_details.get_value("call_summary");
-						const call_type = this.call_details.get_value("call_type");
+						const call_summary =
+							this.call_details.get_value("call_summary");
+						const call_type =
+							this.call_details.get_value("call_type");
 						if (!call_summary) return;
 						frappe
 							.xcall(
@@ -178,7 +193,7 @@ class CallPopup {
 									call_log: this.call_log.name,
 									summary: call_summary,
 									call_type: call_type,
-								}
+								},
 							)
 							.then(() => {
 								this.close_modal();
@@ -217,7 +232,11 @@ class CallPopup {
 	create_new_contact() {
 		// TODO: fix new_doc, it should accept child table values
 		const new_contact = frappe.model.get_new_doc("Contact");
-		const phone_no = frappe.model.add_child(new_contact, "Contact Phone", "phone_nos");
+		const phone_no = frappe.model.add_child(
+			new_contact,
+			"Contact Phone",
+			"phone_nos",
+		);
 		phone_no.phone = this.caller_number;
 		phone_no.is_primary_mobile_no = 1;
 		frappe.set_route("Form", new_contact.doctype, new_contact.name);

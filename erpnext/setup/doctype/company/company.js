@@ -6,11 +6,16 @@ frappe.provide("erpnext.company");
 frappe.ui.form.on("Company", {
 	onload: function (frm) {
 		if (frm.doc.__islocal && frm.doc.parent_company) {
-			frappe.db.get_value("Company", frm.doc.parent_company, "is_group", (r) => {
-				if (!r.is_group) {
-					frm.set_value("parent_company", "");
-				}
-			});
+			frappe.db.get_value(
+				"Company",
+				frm.doc.parent_company,
+				"is_group",
+				(r) => {
+					if (!r.is_group) {
+						frm.set_value("parent_company", "");
+					}
+				},
+			);
 		}
 		if (!frm.doc.__islocal) {
 			frm.call("check_if_transactions_exist").then((r) => {
@@ -66,14 +71,21 @@ frappe.ui.form.on("Company", {
 
 	parent_company: function (frm) {
 		var bool = frm.doc.parent_company ? true : false;
-		frm.set_value("create_chart_of_accounts_based_on", bool ? "Existing Company" : "");
+		frm.set_value(
+			"create_chart_of_accounts_based_on",
+			bool ? "Existing Company" : "",
+		);
 		frm.set_value("existing_company", bool ? frm.doc.parent_company : "");
 		disbale_coa_fields(frm, bool);
 	},
 
 	date_of_commencement: function (frm) {
 		if (frm.doc.date_of_commencement < frm.doc.date_of_incorporation) {
-			frappe.throw(__("Date of Commencement should be greater than Date of Incorporation"));
+			frappe.throw(
+				__(
+					"Date of Commencement should be greater than Date of Incorporation",
+				),
+			);
 		}
 		if (!frm.doc.date_of_commencement) {
 			frm.doc.date_of_incorporation = "";
@@ -92,9 +104,11 @@ frappe.ui.form.on("Company", {
 				frm.add_custom_button(
 					__("Cost Centers"),
 					function () {
-						frappe.set_route("Tree", "Cost Center", { company: frm.doc.name });
+						frappe.set_route("Tree", "Cost Center", {
+							company: frm.doc.name,
+						});
 					},
-					__("View")
+					__("View"),
 				);
 			}
 
@@ -102,33 +116,55 @@ frappe.ui.form.on("Company", {
 				frm.add_custom_button(
 					__("Chart of Accounts"),
 					function () {
-						frappe.set_route("Tree", "Account", { company: frm.doc.name });
+						frappe.set_route("Tree", "Account", {
+							company: frm.doc.name,
+						});
 					},
-					__("View")
+					__("View"),
 				);
 			}
 
-			if (frappe.perm.has_perm("Sales Taxes and Charges Template", 0, "read")) {
+			if (
+				frappe.perm.has_perm(
+					"Sales Taxes and Charges Template",
+					0,
+					"read",
+				)
+			) {
 				frm.add_custom_button(
 					__("Sales Tax Template"),
 					function () {
-						frappe.set_route("List", "Sales Taxes and Charges Template", {
-							company: frm.doc.name,
-						});
+						frappe.set_route(
+							"List",
+							"Sales Taxes and Charges Template",
+							{
+								company: frm.doc.name,
+							},
+						);
 					},
-					__("View")
+					__("View"),
 				);
 			}
 
-			if (frappe.perm.has_perm("Purchase Taxes and Charges Template", 0, "read")) {
+			if (
+				frappe.perm.has_perm(
+					"Purchase Taxes and Charges Template",
+					0,
+					"read",
+				)
+			) {
 				frm.add_custom_button(
 					__("Purchase Tax Template"),
 					function () {
-						frappe.set_route("List", "Purchase Taxes and Charges Template", {
-							company: frm.doc.name,
-						});
+						frappe.set_route(
+							"List",
+							"Purchase Taxes and Charges Template",
+							{
+								company: frm.doc.name,
+							},
+						);
 					},
-					__("View")
+					__("View"),
 				);
 			}
 
@@ -138,7 +174,7 @@ frappe.ui.form.on("Company", {
 					function () {
 						frm.trigger("make_default_tax_template");
 					},
-					__("Manage")
+					__("Manage"),
 				);
 			}
 
@@ -149,7 +185,7 @@ frappe.ui.form.on("Company", {
 						function () {
 							frm.trigger("delete_company_transactions");
 						},
-						__("Manage")
+						__("Manage"),
 					);
 				}
 			}
@@ -164,7 +200,11 @@ frappe.ui.form.on("Company", {
 			doc: frm.doc,
 			freeze: true,
 			callback: function () {
-				frappe.msgprint(__("Default tax templates for sales, purchase and items are created."));
+				frappe.msgprint(
+					__(
+						"Default tax templates for sales, purchase and items are created.",
+					),
+				);
 			},
 		});
 	},
@@ -187,15 +227,19 @@ frappe.ui.form.on("Company", {
 							{
 								fieldtype: "Data",
 								fieldname: "company_name",
-								label: __("Please enter the company name to confirm"),
+								label: __(
+									"Please enter the company name to confirm",
+								),
 								reqd: 1,
 								description: __(
-									"Please make sure you really want to delete all the transactions for this company. Your master data will remain as it is. This action cannot be undone."
+									"Please make sure you really want to delete all the transactions for this company. Your master data will remain as it is. This action cannot be undone.",
 								),
 							},
 							function (data) {
 								if (data.company_name !== frm.doc.name) {
-									frappe.msgprint(__("Company name not same"));
+									frappe.msgprint(
+										__("Company name not same"),
+									);
 									return;
 								}
 								frappe.call({
@@ -211,7 +255,7 @@ frappe.ui.form.on("Company", {
 								});
 							},
 							__("Delete all the Transactions for this Company"),
-							__("Delete")
+							__("Delete"),
 						);
 						d.get_primary_btn().addClass("btn-danger");
 					});
@@ -232,7 +276,10 @@ erpnext.company.set_chart_of_accounts_options = function (doc) {
 			},
 			callback: function (r) {
 				if (!r.exc) {
-					set_field_options("chart_of_accounts", [""].concat(r.message).join("\n"));
+					set_field_options(
+						"chart_of_accounts",
+						[""].concat(r.message).join("\n"),
+					);
 					if (in_list(r.message, selected_value))
 						cur_frm.set_value("chart_of_accounts", selected_value);
 				}
@@ -246,8 +293,14 @@ erpnext.company.setup_queries = function (frm) {
 		[
 			["default_bank_account", { account_type: "Bank" }],
 			["default_cash_account", { account_type: "Cash" }],
-			["default_receivable_account", { root_type: "Asset", account_type: "Receivable" }],
-			["default_payable_account", { root_type: "Liability", account_type: "Payable" }],
+			[
+				"default_receivable_account",
+				{ root_type: "Asset", account_type: "Receivable" },
+			],
+			[
+				"default_payable_account",
+				{ root_type: "Liability", account_type: "Payable" },
+			],
 			["default_expense_account", { root_type: "Expense" }],
 			["default_income_account", { root_type: "Income" }],
 			["round_off_account", { root_type: "Expense" }],
@@ -257,49 +310,90 @@ erpnext.company.setup_queries = function (frm) {
 			["default_discount_account", {}],
 			["discount_allowed_account", { root_type: "Expense" }],
 			["discount_received_account", { root_type: "Income" }],
-			["exchange_gain_loss_account", { root_type: ["in", ["Expense", "Income"]] }],
+			[
+				"exchange_gain_loss_account",
+				{ root_type: ["in", ["Expense", "Income"]] },
+			],
 			[
 				"unrealized_exchange_gain_loss_account",
-				{ root_type: ["in", ["Expense", "Income", "Equity", "Liability"]] },
+				{
+					root_type: [
+						"in",
+						["Expense", "Income", "Equity", "Liability"],
+					],
+				},
 			],
 			[
 				"accumulated_depreciation_account",
-				{ root_type: "Asset", account_type: "Accumulated Depreciation" },
+				{
+					root_type: "Asset",
+					account_type: "Accumulated Depreciation",
+				},
 			],
-			["depreciation_expense_account", { root_type: "Expense", account_type: "Depreciation" }],
+			[
+				"depreciation_expense_account",
+				{ root_type: "Expense", account_type: "Depreciation" },
+			],
 			["disposal_account", { report_type: "Profit and Loss" }],
 			["default_inventory_account", { account_type: "Stock" }],
 			["cost_center", {}],
 			["round_off_cost_center", {}],
 			["depreciation_cost_center", {}],
-			["capital_work_in_progress_account", { account_type: "Capital Work in Progress" }],
-			["asset_received_but_not_billed", { account_type: "Asset Received But Not Billed" }],
-			["unrealized_profit_loss_account", { root_type: ["in", ["Liability", "Asset"]] }],
-			["default_provisional_account", { root_type: ["in", ["Liability", "Asset"]] }],
-			["default_advance_received_account", { root_type: "Liability", account_type: "Receivable" }],
-			["default_advance_paid_account", { root_type: "Asset", account_type: "Payable" }],
+			[
+				"capital_work_in_progress_account",
+				{ account_type: "Capital Work in Progress" },
+			],
+			[
+				"asset_received_but_not_billed",
+				{ account_type: "Asset Received But Not Billed" },
+			],
+			[
+				"unrealized_profit_loss_account",
+				{ root_type: ["in", ["Liability", "Asset"]] },
+			],
+			[
+				"default_provisional_account",
+				{ root_type: ["in", ["Liability", "Asset"]] },
+			],
+			[
+				"default_advance_received_account",
+				{ root_type: "Liability", account_type: "Receivable" },
+			],
+			[
+				"default_advance_paid_account",
+				{ root_type: "Asset", account_type: "Payable" },
+			],
 		],
 		function (i, v) {
 			erpnext.company.set_custom_query(frm, v);
-		}
+		},
 	);
 
 	if (frm.doc.enable_perpetual_inventory) {
 		$.each(
 			[
-				["stock_adjustment_account", { root_type: "Expense", account_type: "Stock Adjustment" }],
+				[
+					"stock_adjustment_account",
+					{ root_type: "Expense", account_type: "Stock Adjustment" },
+				],
 				[
 					"stock_received_but_not_billed",
-					{ root_type: "Liability", account_type: "Stock Received But Not Billed" },
+					{
+						root_type: "Liability",
+						account_type: "Stock Received But Not Billed",
+					},
 				],
 				[
 					"service_received_but_not_billed",
-					{ root_type: "Liability", account_type: "Service Received But Not Billed" },
+					{
+						root_type: "Liability",
+						account_type: "Service Received But Not Billed",
+					},
 				],
 			],
 			function (i, v) {
 				erpnext.company.set_custom_query(frm, v);
-			}
+			},
 		);
 	}
 };

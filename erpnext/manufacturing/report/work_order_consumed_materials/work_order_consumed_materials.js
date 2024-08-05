@@ -15,7 +15,10 @@ frappe.query_reports["Work Order Consumed Materials"] = {
 			label: __("From Date"),
 			fieldname: "from_date",
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 		},
 		{
@@ -60,7 +63,11 @@ frappe.query_reports["Work Order Consumed Materials"] = {
 	formatter: function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 
-		if (column.fieldname == "raw_material_name" && data && data.extra_consumed_qty > 0) {
+		if (
+			column.fieldname == "raw_material_name" &&
+			data &&
+			data.extra_consumed_qty > 0
+		) {
 			value = `<div style="color:red">${value}</div>`;
 		}
 

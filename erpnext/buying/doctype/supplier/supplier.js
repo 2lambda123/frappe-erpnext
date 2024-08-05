@@ -67,7 +67,9 @@ frappe.ui.form.on("Supplier", {
 	},
 
 	refresh: function (frm) {
-		if (frappe.defaults.get_default("supp_master_name") != "Naming Series") {
+		if (
+			frappe.defaults.get_default("supp_master_name") != "Naming Series"
+		) {
 			frm.toggle_display("naming_series", false);
 		} else {
 			erpnext.toggle_naming_series();
@@ -90,7 +92,7 @@ frappe.ui.form.on("Supplier", {
 						party_name: frm.doc.supplier_name,
 					});
 				},
-				__("View")
+				__("View"),
 			);
 
 			frm.add_custom_button(
@@ -101,23 +103,29 @@ frappe.ui.form.on("Supplier", {
 						party: frm.doc.name,
 					});
 				},
-				__("View")
+				__("View"),
 			);
 
 			frm.add_custom_button(
 				__("Bank Account"),
 				function () {
-					erpnext.utils.make_bank_account(frm.doc.doctype, frm.doc.name);
+					erpnext.utils.make_bank_account(
+						frm.doc.doctype,
+						frm.doc.name,
+					);
 				},
-				__("Create")
+				__("Create"),
 			);
 
 			frm.add_custom_button(
 				__("Pricing Rule"),
 				function () {
-					erpnext.utils.make_pricing_rule(frm.doc.doctype, frm.doc.name);
+					erpnext.utils.make_pricing_rule(
+						frm.doc.doctype,
+						frm.doc.name,
+					);
 				},
-				__("Create")
+				__("Create"),
 			);
 
 			frm.add_custom_button(
@@ -125,16 +133,22 @@ frappe.ui.form.on("Supplier", {
 				function () {
 					frm.trigger("get_supplier_group_details");
 				},
-				__("Actions")
+				__("Actions"),
 			);
 
-			if (cint(frappe.defaults.get_default("enable_common_party_accounting"))) {
+			if (
+				cint(
+					frappe.defaults.get_default(
+						"enable_common_party_accounting",
+					),
+				)
+			) {
 				frm.add_custom_button(
 					__("Link with Customer"),
 					function () {
 						frm.trigger("show_party_link_dialog");
 					},
-					__("Actions")
+					__("Actions"),
 				);
 			}
 
@@ -214,7 +228,9 @@ frappe.ui.form.on("Supplier", {
 					error: function () {
 						dialog.hide();
 						frappe.msgprint({
-							message: __("Linking to Customer Failed. Please try again."),
+							message: __(
+								"Linking to Customer Failed. Please try again.",
+							),
 							title: __("Linking Failed"),
 							indicator: "red",
 						});

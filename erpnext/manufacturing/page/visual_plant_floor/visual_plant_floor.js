@@ -7,6 +7,6 @@ frappe.pages["visual-plant-floor"].on_page_load = function (wrapper) {
 
 	frappe.visual_plant_floor = new frappe.ui.VisualPlantFloor(
 		{ wrapper: $(wrapper).find(".layout-main-section") },
-		wrapper.page
+		wrapper.page,
 	);
 };

@@ -69,8 +69,13 @@ frappe.ui.form.on("Ledger Merge", {
 		frm.disable_save();
 		if (frm.doc.status !== "Success") {
 			if (!frm.is_new()) {
-				let label = frm.doc.status === "Pending" ? __("Start Merge") : __("Retry");
-				frm.page.set_primary_action(label, () => frm.events.start_merge(frm));
+				let label =
+					frm.doc.status === "Pending"
+						? __("Start Merge")
+						: __("Retry");
+				frm.page.set_primary_action(label, () =>
+					frm.events.start_merge(frm),
+				);
 			} else {
 				frm.page.set_primary_action(__("Save"), () => frm.save());
 			}
@@ -96,7 +101,9 @@ frappe.ui.form.on("Ledger Merge", {
 			if (row.merged) successful_records += 1;
 		});
 		let message_args = [successful_records, frm.doc.merge_accounts.length];
-		frm.dashboard.set_headline(__("Successfully merged {0} out of {1}.", message_args));
+		frm.dashboard.set_headline(
+			__("Successfully merged {0} out of {1}.", message_args),
+		);
 	},
 
 	root_type: function (frm) {

@@ -2,7 +2,15 @@
 // For license information, please see license.txt
 
 frappe.views.calendar["Work Order"] = {
-	fields: ["planned_start_date", "planned_end_date", "status", "produced_qty", "qty", "name", "name"],
+	fields: [
+		"planned_start_date",
+		"planned_end_date",
+		"status",
+		"produced_qty",
+		"qty",
+		"name",
+		"name",
+	],
 	field_map: {
 		start: "planned_start_date",
 		end: "planned_end_date",

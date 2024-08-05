@@ -23,7 +23,9 @@ frappe.ui.form.on("Delivery Note", {
 			Shipment: "Shipment",
 		}),
 			frm.set_indicator_formatter("item_code", function (doc) {
-				return doc.docstatus == 1 || doc.qty <= doc.actual_qty ? "green" : "orange";
+				return doc.docstatus == 1 || doc.qty <= doc.actual_qty
+					? "green"
+					: "orange";
 			});
 
 		erpnext.queries.setup_queries(frm, "Warehouse", function () {
@@ -93,7 +95,7 @@ frappe.ui.form.on("Delivery Note", {
 						frm: cur_frm,
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 			frm.page.set_inner_btn_group_as_primary(__("Create"));
 		}
@@ -118,7 +120,7 @@ frappe.ui.form.on("Delivery Note", {
 							frm: frm,
 						});
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 		}
@@ -184,7 +186,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		}
 
@@ -195,7 +197,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 					function () {
 						me.make_shipment();
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -209,7 +211,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 					function () {
 						me.make_installation_note();
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -219,17 +221,21 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 					function () {
 						me.make_sales_return();
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
-			if (doc.docstatus == 1 && doc.status != "Completed" && frappe.model.can_create("Delivery Trip")) {
+			if (
+				doc.docstatus == 1 &&
+				doc.status != "Completed" &&
+				frappe.model.can_create("Delivery Trip")
+			) {
 				this.frm.add_custom_button(
 					__("Delivery Trip"),
 					function () {
 						me.make_delivery_trip();
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -248,7 +254,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 							frm: me.frm,
 						});
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -257,7 +263,9 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 			}
 		}
 
-		erpnext.accounts.ledger_preview.show_accounting_ledger_preview(this.frm);
+		erpnext.accounts.ledger_preview.show_accounting_ledger_preview(
+			this.frm,
+		);
 		erpnext.accounts.ledger_preview.show_stock_ledger_preview(this.frm);
 
 		if (doc.docstatus > 0) {
@@ -271,7 +279,7 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 					function () {
 						me.close_delivery_note();
 					},
-					__("Status")
+					__("Status"),
 				);
 			}
 		}
@@ -295,18 +303,22 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 					function () {
 						me.make_sales_invoice();
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 		}
 
-		if (doc.docstatus == 1 && doc.status === "Closed" && this.frm.has_perm("submit")) {
+		if (
+			doc.docstatus == 1 &&
+			doc.status === "Closed" &&
+			this.frm.has_perm("submit")
+		) {
 			this.frm.add_custom_button(
 				__("Reopen"),
 				function () {
 					me.reopen_delivery_note();
 				},
-				__("Status")
+				__("Status"),
 			);
 		}
 		erpnext.stock.delivery_note.set_print_hide(doc, dt, dn);
@@ -383,7 +395,10 @@ erpnext.stock.DeliveryNoteController = class DeliveryNoteController extends (
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.stock.DeliveryNoteController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.stock.DeliveryNoteController({ frm: cur_frm }),
+);
 
 frappe.ui.form.on("Delivery Note", {
 	setup: function (frm) {
@@ -399,8 +414,13 @@ frappe.ui.form.on("Delivery Note", {
 
 	unhide_account_head: function (frm) {
 		// unhide expense_account and cost_center if perpetual inventory is enabled in the company
-		var aii_enabled = erpnext.is_perpetual_inventory_enabled(frm.doc.company);
-		frm.fields_dict["items"].grid.set_column_disp(["expense_account", "cost_center"], aii_enabled);
+		var aii_enabled = erpnext.is_perpetual_inventory_enabled(
+			frm.doc.company,
+		);
+		frm.fields_dict["items"].grid.set_column_disp(
+			["expense_account", "cost_center"],
+			aii_enabled,
+		);
 	},
 });
 
@@ -418,12 +438,16 @@ erpnext.stock.delivery_note.set_print_hide = function (doc, cdt, cdn) {
 		dn_item_fields["discount_amount"].print_hide = 1;
 		dn_fields["taxes"].print_hide = 1;
 	} else {
-		if (dn_fields_copy["currency"].print_hide != 1) dn_fields["currency"].print_hide = 0;
-		if (dn_item_fields_copy["rate"].print_hide != 1) dn_item_fields["rate"].print_hide = 0;
-		if (dn_item_fields_copy["amount"].print_hide != 1) dn_item_fields["amount"].print_hide = 0;
+		if (dn_fields_copy["currency"].print_hide != 1)
+			dn_fields["currency"].print_hide = 0;
+		if (dn_item_fields_copy["rate"].print_hide != 1)
+			dn_item_fields["rate"].print_hide = 0;
+		if (dn_item_fields_copy["amount"].print_hide != 1)
+			dn_item_fields["amount"].print_hide = 0;
 		if (dn_item_fields_copy["discount_amount"].print_hide != 1)
 			dn_item_fields["discount_amount"].print_hide = 0;
-		if (dn_fields_copy["taxes"].print_hide != 1) dn_fields["taxes"].print_hide = 0;
+		if (dn_fields_copy["taxes"].print_hide != 1)
+			dn_fields["taxes"].print_hide = 0;
 	}
 };
 
@@ -437,13 +461,19 @@ frappe.tour["Delivery Note"] = [
 		fieldname: "items",
 		title: __("Items"),
 		description:
-			__("This table is used to set details about the 'Item', 'Qty', 'Basic Rate', etc.") +
+			__(
+				"This table is used to set details about the 'Item', 'Qty', 'Basic Rate', etc.",
+			) +
 			" " +
-			__("Different 'Source Warehouse' and 'Target Warehouse' can be set for each row."),
+			__(
+				"Different 'Source Warehouse' and 'Target Warehouse' can be set for each row.",
+			),
 	},
 	{
 		fieldname: "set_posting_time",
 		title: __("Edit Posting Date and Time"),
-		description: __("This option can be checked to edit the 'Posting Date' and 'Posting Time' fields."),
+		description: __(
+			"This option can be checked to edit the 'Posting Date' and 'Posting Time' fields.",
+		),
 	},
 ];

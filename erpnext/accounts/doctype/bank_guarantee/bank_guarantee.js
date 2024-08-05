@@ -43,7 +43,10 @@ frappe.ui.form.on("Bank Guarantee", {
 
 	reference_docname: function (frm) {
 		if (frm.doc.reference_docname && frm.doc.reference_doctype) {
-			let party_field = frm.doc.reference_doctype == "Sales Order" ? "customer" : "supplier";
+			let party_field =
+				frm.doc.reference_doctype == "Sales Order"
+					? "customer"
+					: "supplier";
 
 			frappe.call({
 				method: "erpnext.accounts.doctype.bank_guarantee.bank_guarantee.get_voucher_details",
@@ -53,9 +56,12 @@ frappe.ui.form.on("Bank Guarantee", {
 				},
 				callback: function (r) {
 					if (r.message) {
-						if (r.message[party_field]) frm.set_value(party_field, r.message[party_field]);
-						if (r.message.project) frm.set_value("project", r.message.project);
-						if (r.message.grand_total) frm.set_value("amount", r.message.grand_total);
+						if (r.message[party_field])
+							frm.set_value(party_field, r.message[party_field]);
+						if (r.message.project)
+							frm.set_value("project", r.message.project);
+						if (r.message.grand_total)
+							frm.set_value("amount", r.message.grand_total);
 					}
 				},
 			});
@@ -63,11 +69,17 @@ frappe.ui.form.on("Bank Guarantee", {
 	},
 
 	start_date: function (frm) {
-		var end_date = frappe.datetime.add_days(cur_frm.doc.start_date, cur_frm.doc.validity - 1);
+		var end_date = frappe.datetime.add_days(
+			cur_frm.doc.start_date,
+			cur_frm.doc.validity - 1,
+		);
 		cur_frm.set_value("end_date", end_date);
 	},
 	validity: function (frm) {
-		var end_date = frappe.datetime.add_days(cur_frm.doc.start_date, cur_frm.doc.validity - 1);
+		var end_date = frappe.datetime.add_days(
+			cur_frm.doc.start_date,
+			cur_frm.doc.validity - 1,
+		);
 		cur_frm.set_value("end_date", end_date);
 	},
 });

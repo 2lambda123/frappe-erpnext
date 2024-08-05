@@ -11,7 +11,7 @@ frappe.ui.form.on("Bulk Transaction Log", {
 					transaction_status: "Success",
 				});
 			},
-			__("View")
+			__("View"),
 		);
 		frm.add_custom_button(
 			__("Failed Entries"),
@@ -21,7 +21,7 @@ frappe.ui.form.on("Bulk Transaction Log", {
 					transaction_status: "Failed",
 				});
 			},
-			__("View")
+			__("View"),
 		);
 		if (frm.doc.failed) {
 			frm.add_custom_button(__("Retry Failed Transactions"), function () {

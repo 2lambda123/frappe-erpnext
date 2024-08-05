@@ -8,7 +8,7 @@ frappe.query_reports["Downtime Analysis"] = {
 			fieldname: "from_date",
 			fieldtype: "Datetime",
 			default: frappe.datetime.convert_to_system_tz(
-				frappe.datetime.add_months(frappe.datetime.now_datetime(), -1)
+				frappe.datetime.add_months(frappe.datetime.now_datetime(), -1),
 			),
 			reqd: 1,
 		},

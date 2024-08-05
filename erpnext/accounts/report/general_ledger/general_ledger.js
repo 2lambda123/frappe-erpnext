@@ -21,7 +21,10 @@ frappe.query_reports["General Ledger"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 			width: "60px",
 		},
@@ -49,7 +52,10 @@ frappe.query_reports["General Ledger"] = {
 			label: __("Voucher No"),
 			fieldtype: "Data",
 			on_change: function () {
-				frappe.query_report.set_filter_value("group_by", "Group by Voucher (Consolidated)");
+				frappe.query_report.set_filter_value(
+					"group_by",
+					"Group by Voucher (Consolidated)",
+				);
 			},
 		},
 		{
@@ -76,13 +82,15 @@ frappe.query_reports["General Ledger"] = {
 			get_data: function (txt) {
 				if (!frappe.query_report.filters) return;
 
-				let party_type = frappe.query_report.get_filter_value("party_type");
+				let party_type =
+					frappe.query_report.get_filter_value("party_type");
 				if (!party_type) return;
 
 				return frappe.db.get_link_options(party_type, txt);
 			},
 			on_change: function () {
-				var party_type = frappe.query_report.get_filter_value("party_type");
+				var party_type =
+					frappe.query_report.get_filter_value("party_type");
 				var parties = frappe.query_report.get_filter_value("party");
 
 				if (!party_type || parties.length === 0 || parties.length > 1) {
@@ -91,15 +99,35 @@ frappe.query_reports["General Ledger"] = {
 					return;
 				} else {
 					var party = parties[0];
-					var fieldname = erpnext.utils.get_party_name(party_type) || "name";
-					frappe.db.get_value(party_type, party, fieldname, function (value) {
-						frappe.query_report.set_filter_value("party_name", value[fieldname]);
-					});
+					var fieldname =
+						erpnext.utils.get_party_name(party_type) || "name";
+					frappe.db.get_value(
+						party_type,
+						party,
+						fieldname,
+						function (value) {
+							frappe.query_report.set_filter_value(
+								"party_name",
+								value[fieldname],
+							);
+						},
+					);
 
-					if (party_type === "Customer" || party_type === "Supplier") {
-						frappe.db.get_value(party_type, party, "tax_id", function (value) {
-							frappe.query_report.set_filter_value("tax_id", value["tax_id"]);
-						});
+					if (
+						party_type === "Customer" ||
+						party_type === "Supplier"
+					) {
+						frappe.db.get_value(
+							party_type,
+							party,
+							"tax_id",
+							function (value) {
+								frappe.query_report.set_filter_value(
+									"tax_id",
+									value["tax_id"],
+								);
+							},
+						);
 					}
 				}
 			},

@@ -22,10 +22,19 @@ frappe.listview_settings["Purchase Invoice"] = {
 			return [__(doc.status), "gray", "status,=," + doc.status];
 		}
 
-		if (flt(doc.outstanding_amount) > 0 && doc.docstatus == 1 && cint(doc.on_hold)) {
+		if (
+			flt(doc.outstanding_amount) > 0 &&
+			doc.docstatus == 1 &&
+			cint(doc.on_hold)
+		) {
 			if (!doc.release_date) {
 				return [__("On Hold"), "darkgrey"];
-			} else if (frappe.datetime.get_diff(doc.release_date, frappe.datetime.nowdate()) > 0) {
+			} else if (
+				frappe.datetime.get_diff(
+					doc.release_date,
+					frappe.datetime.nowdate(),
+				) > 0
+			) {
 				return [__("Temporarily on Hold"), "darkgrey"];
 			}
 		}
@@ -40,17 +49,29 @@ frappe.listview_settings["Purchase Invoice"] = {
 		};
 
 		if (status_colors[doc.status]) {
-			return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
+			return [
+				__(doc.status),
+				status_colors[doc.status],
+				"status,=," + doc.status,
+			];
 		}
 	},
 
 	onload: function (listview) {
 		listview.page.add_action_item(__("Purchase Receipt"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Purchase Receipt");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Purchase Invoice",
+				"Purchase Receipt",
+			);
 		});
 
 		listview.page.add_action_item(__("Payment"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Invoice", "Payment Entry");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Purchase Invoice",
+				"Payment Entry",
+			);
 		});
 	},
 };

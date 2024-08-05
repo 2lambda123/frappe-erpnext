@@ -3,7 +3,11 @@
 
 frappe.ui.form.on("Installation Note", {
 	setup: function (frm) {
-		frappe.dynamic_link = { doc: frm.doc, fieldname: "customer", doctype: "Customer" };
+		frappe.dynamic_link = {
+			doc: frm.doc,
+			fieldname: "customer",
+			doctype: "Customer",
+		};
 		frm.set_query("customer_address", erpnext.queries.address_query);
 		frm.set_query("contact_person", erpnext.queries.contact_query);
 		frm.set_query("customer", erpnext.queries.customer);
@@ -51,7 +55,9 @@ frappe.ui.form.on("Installation Note", {
 frappe.provide("erpnext.selling");
 
 // TODO commonify this code
-erpnext.selling.InstallationNote = class InstallationNote extends frappe.ui.form.Controller {
+erpnext.selling.InstallationNote = class InstallationNote extends (
+	frappe.ui.form.Controller
+) {
 	refresh() {
 		var me = this;
 		if (this.frm.doc.docstatus === 0) {
@@ -75,10 +81,13 @@ erpnext.selling.InstallationNote = class InstallationNote extends frappe.ui.form
 					});
 				},
 				"fa fa-download",
-				"btn-default"
+				"btn-default",
 			);
 		}
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.selling.InstallationNote({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.selling.InstallationNote({ frm: cur_frm }),
+);

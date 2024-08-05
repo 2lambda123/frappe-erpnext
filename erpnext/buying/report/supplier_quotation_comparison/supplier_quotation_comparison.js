@@ -17,7 +17,10 @@ frappe.query_reports["Supplier Quotation Comparison"] = {
 			fieldtype: "Date",
 			width: "80",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "to_date",
@@ -34,7 +37,8 @@ frappe.query_reports["Supplier Quotation Comparison"] = {
 			fieldname: "item_code",
 			fieldtype: "Link",
 			get_query: () => {
-				let quote = frappe.query_report.get_filter_value("supplier_quotation");
+				let quote =
+					frappe.query_report.get_filter_value("supplier_quotation");
 				if (quote != "") {
 					return {
 						query: "erpnext.stock.doctype.quality_inspection.quality_inspection.item_query",
@@ -60,7 +64,9 @@ frappe.query_reports["Supplier Quotation Comparison"] = {
 			fieldname: "supplier_quotation",
 			default: "",
 			get_data: function (txt) {
-				return frappe.db.get_link_options("Supplier Quotation", txt, { docstatus: ["<", 2] });
+				return frappe.db.get_link_options("Supplier Quotation", txt, {
+					docstatus: ["<", 2],
+				});
 			},
 		},
 		{
@@ -95,14 +101,29 @@ frappe.query_reports["Supplier Quotation Comparison"] = {
 		value = default_formatter(value, row, column, data);
 
 		if (column.fieldname === "valid_till" && data.valid_till) {
-			if (frappe.datetime.get_diff(data.valid_till, frappe.datetime.nowdate()) <= 1) {
+			if (
+				frappe.datetime.get_diff(
+					data.valid_till,
+					frappe.datetime.nowdate(),
+				) <= 1
+			) {
 				value = `<div style="color:red">${value}</div>`;
-			} else if (frappe.datetime.get_diff(data.valid_till, frappe.datetime.nowdate()) <= 7) {
+			} else if (
+				frappe.datetime.get_diff(
+					data.valid_till,
+					frappe.datetime.nowdate(),
+				) <= 7
+			) {
 				value = `<div style="color:darkorange">${value}</div>`;
 			}
 		}
 
-		if (column.fieldname === "price_per_unit" && data.price_per_unit && data.min && data.min === 1) {
+		if (
+			column.fieldname === "price_per_unit" &&
+			data.price_per_unit &&
+			data.min &&
+			data.min === 1
+		) {
 			value = `<div style="color:green">${value}</div>`;
 		}
 		return value;
@@ -113,12 +134,13 @@ frappe.query_reports["Supplier Quotation Comparison"] = {
 		report.page.add_inner_button(
 			__("Select Default Supplier"),
 			() => {
-				let reporter = frappe.query_reports["Supplier Quotation Comparison"];
+				let reporter =
+					frappe.query_reports["Supplier Quotation Comparison"];
 
 				//Always make a new one so that the latest values get updated
 				reporter.make_default_supplier_dialog(report);
 			},
-			__("Tools")
+			__("Tools"),
 		);
 	},
 	make_default_supplier_dialog: (report) => {

@@ -16,7 +16,10 @@ function get_filters() {
 			label: __("Start Date"),
 			fieldtype: "Date",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "period_end_date",

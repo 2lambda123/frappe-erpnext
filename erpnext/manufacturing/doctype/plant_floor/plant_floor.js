@@ -116,15 +116,17 @@ class VisualStock {
 	prepare_stock_summary(args) {
 		let { start, item_code, item_group } = args;
 
-		this.get_stock_summary(start, item_code, item_group).then((stock_summary) => {
-			this.wrapper.find(".stock-summary-container").remove();
-			this.wrapper.append(
-				`<div class="col-sm-12 stock-summary-container" style="margin-bottom:20px"></div>`
-			);
-			this.stock_summary = stock_summary.message;
-			this.render_stock_summary();
-			this.bind_events();
-		});
+		this.get_stock_summary(start, item_code, item_group).then(
+			(stock_summary) => {
+				this.wrapper.find(".stock-summary-container").remove();
+				this.wrapper.append(
+					`<div class="col-sm-12 stock-summary-container" style="margin-bottom:20px"></div>`,
+				);
+				this.stock_summary = stock_summary.message;
+				this.render_stock_summary();
+				this.bind_events();
+			},
+		);
 	}
 
 	async get_stock_summary(start, item_code, item_group) {
@@ -151,7 +153,9 @@ class VisualStock {
 
 	bind_events() {
 		this.wrapper.find(".btn-add").click((e) => {
-			this.item_code = decodeURI($(e.currentTarget).attr("data-item-code"));
+			this.item_code = decodeURI(
+				$(e.currentTarget).attr("data-item-code"),
+			);
 
 			this.make_stock_entry(
 				[
@@ -170,12 +174,14 @@ class VisualStock {
 					},
 				],
 				__("Add Stock"),
-				"Material Receipt"
+				"Material Receipt",
 			);
 		});
 
 		this.wrapper.find(".btn-move").click((e) => {
-			this.item_code = decodeURI($(e.currentTarget).attr("data-item-code"));
+			this.item_code = decodeURI(
+				$(e.currentTarget).attr("data-item-code"),
+			);
 
 			this.make_stock_entry(
 				[
@@ -209,7 +215,7 @@ class VisualStock {
 					},
 				],
 				__("Move Stock"),
-				"Material Transfer"
+				"Material Transfer",
 			);
 		});
 	}
@@ -231,13 +237,17 @@ class VisualStock {
 					callback: (r) => {
 						if (!r.exc) {
 							var doc = frappe.model.sync(r.message);
-							frappe.set_route("Form", r.message.doctype, r.message.name);
+							frappe.set_route(
+								"Form",
+								r.message.doctype,
+								r.message.name,
+							);
 						}
 					},
 				});
 			},
 			__(title),
-			__("Create")
+			__("Create"),
 		);
 	}
 

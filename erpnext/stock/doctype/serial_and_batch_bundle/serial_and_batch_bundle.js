@@ -42,8 +42,15 @@ frappe.ui.form.on("Serial and Batch Bundle", {
 	},
 
 	prepare_serial_batch_prompt(frm) {
-		if (frm.doc.docstatus === 0 && frm.doc.item_code && frm.doc.type_of_transaction === "Inward") {
-			let label = frm.doc?.has_serial_no === 1 ? __("Serial Nos") : __("Batch Nos");
+		if (
+			frm.doc.docstatus === 0 &&
+			frm.doc.item_code &&
+			frm.doc.type_of_transaction === "Inward"
+		) {
+			let label =
+				frm.doc?.has_serial_no === 1
+					? __("Serial Nos")
+					: __("Batch Nos");
 
 			if (frm.doc?.has_serial_no === 1 && frm.doc?.has_batch_no === 1) {
 				label = __("Serial and Batch Nos");
@@ -58,7 +65,7 @@ frappe.ui.form.on("Serial and Batch Bundle", {
 						frm.events.add_serial_batch(frm, data);
 					},
 					"Add " + label,
-					"Make " + label
+					"Make " + label,
 				);
 			});
 		}
@@ -124,7 +131,11 @@ frappe.ui.form.on("Serial and Batch Bundle", {
 			frappe.throw(__("Please attach CSV file"));
 		}
 
-		if (frm.doc.has_serial_no && !prompt_data.csv_file && !prompt_data.serial_nos) {
+		if (
+			frm.doc.has_serial_no &&
+			!prompt_data.csv_file &&
+			!prompt_data.serial_nos
+		) {
 			frappe.throw(__("Please enter serial nos"));
 		}
 	},
@@ -141,12 +152,20 @@ frappe.ui.form.on("Serial and Batch Bundle", {
 		frm.fields_dict.entries.grid.update_docfield_property(
 			"serial_no",
 			"read_only",
-			!frm.doc.has_serial_no
+			!frm.doc.has_serial_no,
 		);
 
-		frm.fields_dict.entries.grid.update_docfield_property("batch_no", "read_only", !frm.doc.has_batch_no);
+		frm.fields_dict.entries.grid.update_docfield_property(
+			"batch_no",
+			"read_only",
+			!frm.doc.has_batch_no,
+		);
 
-		frm.fields_dict.entries.grid.update_docfield_property("qty", "read_only", frm.doc.has_serial_no);
+		frm.fields_dict.entries.grid.update_docfield_property(
+			"qty",
+			"read_only",
+			frm.doc.has_serial_no,
+		);
 	},
 
 	set_queries(frm) {

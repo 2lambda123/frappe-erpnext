@@ -59,7 +59,10 @@ frappe.query_reports["Stock Ledger Variance"] = {
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 
-		if (DIFFERENCE_FIELD_NAMES.includes(column.fieldname) && Math.abs(data[column.fieldname]) > 0.001) {
+		if (
+			DIFFERENCE_FIELD_NAMES.includes(column.fieldname) &&
+			Math.abs(data[column.fieldname]) > 0.001
+		) {
 			value = "<span style='color:red'>" + value + "</span>";
 		}
 
@@ -84,11 +87,14 @@ frappe.query_reports["Stock Ledger Variance"] = {
 					</p>
 					<p>Are you sure you want to create Reposting Entries?</p>
 				</div>`;
-			let indexes = frappe.query_report.datatable.rowmanager.getCheckedRows();
+			let indexes =
+				frappe.query_report.datatable.rowmanager.getCheckedRows();
 			let selected_rows = indexes.map((i) => frappe.query_report.data[i]);
 
 			if (!selected_rows.length) {
-				frappe.throw(__("Please select rows to create Reposting Entries"));
+				frappe.throw(
+					__("Please select rows to create Reposting Entries"),
+				);
 			}
 
 			frappe.confirm(__(message), () => {

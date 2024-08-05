@@ -15,7 +15,10 @@ frappe.query_reports["Reserved Stock"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 		},
 		{
@@ -110,7 +113,9 @@ frappe.query_reports["Reserved Stock"] = {
 				},
 			}),
 			get_options: function () {
-				return frappe.query_report.get_filter_value("from_voucher_type");
+				return frappe.query_report.get_filter_value(
+					"from_voucher_type",
+				);
 			},
 		},
 		{
@@ -123,7 +128,13 @@ frappe.query_reports["Reserved Stock"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "Partially Reserved", "Reserved", "Partially Delivered", "Delivered"],
+			options: [
+				"",
+				"Partially Reserved",
+				"Reserved",
+				"Partially Delivered",
+				"Delivered",
+			],
 		},
 		{
 			fieldname: "project",
@@ -144,16 +155,19 @@ frappe.query_reports["Reserved Stock"] = {
 			if (column.fieldname == "status") {
 				switch (data.status) {
 					case "Partially Reserved":
-						value = "<span style='color:orange'>" + value + "</span>";
+						value =
+							"<span style='color:orange'>" + value + "</span>";
 						break;
 					case "Reserved":
 						value = "<span style='color:blue'>" + value + "</span>";
 						break;
 					case "Partially Delivered":
-						value = "<span style='color:purple'>" + value + "</span>";
+						value =
+							"<span style='color:purple'>" + value + "</span>";
 						break;
 					case "Delivered":
-						value = "<span style='color:green'>" + value + "</span>";
+						value =
+							"<span style='color:green'>" + value + "</span>";
 						break;
 				}
 			} else if (column.fieldname == "delivered_qty") {
@@ -161,7 +175,8 @@ frappe.query_reports["Reserved Stock"] = {
 					if (data.reserved_qty > data.delivered_qty) {
 						value = "<span style='color:blue'>" + value + "</span>";
 					} else {
-						value = "<span style='color:green'>" + value + "</span>";
+						value =
+							"<span style='color:green'>" + value + "</span>";
 					}
 				} else {
 					value = "<span style='color:red'>" + value + "</span>";

@@ -23,15 +23,17 @@ frappe.ui.form.on("Accounting Dimension Filter", {
 			};
 		});
 
-		frappe.db.get_list("Accounting Dimension", { fields: ["document_type"] }).then((res) => {
-			let options = ["Cost Center", "Project"];
+		frappe.db
+			.get_list("Accounting Dimension", { fields: ["document_type"] })
+			.then((res) => {
+				let options = ["Cost Center", "Project"];
 
-			res.forEach((dimension) => {
-				options.push(dimension.document_type);
+				res.forEach((dimension) => {
+					options.push(dimension.document_type);
+				});
+
+				frm.set_df_property("accounting_dimension", "options", options);
 			});
-
-			frm.set_df_property("accounting_dimension", "options", options);
-		});
 
 		frm.trigger("setup_filters");
 	},
@@ -40,21 +42,29 @@ frappe.ui.form.on("Accounting Dimension Filter", {
 		let filters = {};
 
 		if (frm.doc.accounting_dimension) {
-			frappe.model.with_doctype(frm.doc.accounting_dimension, function () {
-				if (frappe.model.is_tree(frm.doc.accounting_dimension)) {
-					filters["is_group"] = 0;
-				}
+			frappe.model.with_doctype(
+				frm.doc.accounting_dimension,
+				function () {
+					if (frappe.model.is_tree(frm.doc.accounting_dimension)) {
+						filters["is_group"] = 0;
+					}
 
-				if (frappe.meta.has_field(frm.doc.accounting_dimension, "company")) {
-					filters["company"] = frm.doc.company;
-				}
+					if (
+						frappe.meta.has_field(
+							frm.doc.accounting_dimension,
+							"company",
+						)
+					) {
+						filters["company"] = frm.doc.company;
+					}
 
-				frm.set_query("dimension_value", "dimensions", function () {
-					return {
-						filters: filters,
-					};
-				});
-			});
+					frm.set_query("dimension_value", "dimensions", function () {
+						return {
+							filters: filters,
+						};
+					});
+				},
+			);
 		}
 	},
 
@@ -65,7 +75,7 @@ frappe.ui.form.on("Accounting Dimension Filter", {
 		frm.fields_dict["dimensions"].grid.update_docfield_property(
 			"dimension_value",
 			"label",
-			frm.doc.accounting_dimension
+			frm.doc.accounting_dimension,
 		);
 		frm.refresh_field("dimensions");
 		frm.trigger("setup_filters");

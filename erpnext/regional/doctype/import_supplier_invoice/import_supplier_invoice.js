@@ -4,9 +4,17 @@
 frappe.ui.form.on("Import Supplier Invoice", {
 	onload: function (frm) {
 		frappe.realtime.on("import_invoice_update", function (data) {
-			frm.dashboard.show_progress(data.title, (data.count / data.total) * 100, data.message);
+			frm.dashboard.show_progress(
+				data.title,
+				(data.count / data.total) * 100,
+				data.message,
+			);
 			if (data.count == data.total) {
-				window.setTimeout((title) => frm.dashboard.hide_progress(title), 1500, data.title);
+				window.setTimeout(
+					(title) => frm.dashboard.hide_progress(title),
+					1500,
+					data.title,
+				);
 			}
 		});
 	},
@@ -23,7 +31,8 @@ frappe.ui.form.on("Import Supplier Invoice", {
 		frm.set_query("default_buying_price_list", function (doc) {
 			return {
 				filters: {
-					currency: frappe.get_doc(":Company", doc.company).default_currency,
+					currency: frappe.get_doc(":Company", doc.company)
+						.default_currency,
 				},
 			};
 		});
@@ -34,7 +43,11 @@ frappe.ui.form.on("Import Supplier Invoice", {
 	},
 
 	toggle_read_only_fields: function (frm) {
-		if (["File Import Completed", "Processing File Data"].includes(frm.doc.status)) {
+		if (
+			["File Import Completed", "Processing File Data"].includes(
+				frm.doc.status,
+			)
+		) {
 			cur_frm.set_read_only();
 			frm.set_df_property("import_invoices", "hidden", 1);
 		} else {

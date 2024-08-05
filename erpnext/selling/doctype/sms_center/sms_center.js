@@ -12,6 +12,9 @@ extend_cscript(cur_frm.cscript, {
 		}
 
 		this.frm.set_value("total_characters", total_characters);
-		this.frm.set_value("total_messages", this.frm.doc.message ? total_msg : 0);
+		this.frm.set_value(
+			"total_messages",
+			this.frm.doc.message ? total_msg : 0,
+		);
 	},
 });

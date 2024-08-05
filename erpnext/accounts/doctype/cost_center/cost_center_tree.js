@@ -23,13 +23,18 @@ frappe.treeview_settings["Cost Center"] = {
 		},
 	],
 	fields: [
-		{ fieldtype: "Data", fieldname: "cost_center_name", label: __("New Cost Center Name"), reqd: true },
+		{
+			fieldtype: "Data",
+			fieldname: "cost_center_name",
+			label: __("New Cost Center Name"),
+			reqd: true,
+		},
 		{
 			fieldtype: "Check",
 			fieldname: "is_group",
 			label: __("Is Group"),
 			description: __(
-				"Further cost centers can be made under Groups but entries can be made against non-Groups"
+				"Further cost centers can be made under Groups but entries can be made against non-Groups",
 			),
 		},
 		{
@@ -37,7 +42,7 @@ frappe.treeview_settings["Cost Center"] = {
 			fieldname: "cost_center_number",
 			label: __("Cost Center Number"),
 			description: __(
-				"Number of new Cost Center, it will be included in the cost center name as a prefix"
+				"Number of new Cost Center, it will be included in the cost center name as a prefix",
 			),
 		},
 	],
@@ -53,7 +58,7 @@ frappe.treeview_settings["Cost Center"] = {
 			function () {
 				frappe.set_route("Tree", "Account", { company: get_company() });
 			},
-			__("View")
+			__("View"),
 		);
 
 		// make
@@ -62,23 +67,27 @@ frappe.treeview_settings["Cost Center"] = {
 			function () {
 				frappe.set_route("List", "Budget", { company: get_company() });
 			},
-			__("Budget")
+			__("Budget"),
 		);
 
 		treeview.page.add_inner_button(
 			__("Monthly Distribution"),
 			function () {
-				frappe.set_route("List", "Monthly Distribution", { company: get_company() });
+				frappe.set_route("List", "Monthly Distribution", {
+					company: get_company(),
+				});
 			},
-			__("Budget")
+			__("Budget"),
 		);
 
 		treeview.page.add_inner_button(
 			__("Budget Variance Report"),
 			function () {
-				frappe.set_route("query-report", "Budget Variance Report", { company: get_company() });
+				frappe.set_route("query-report", "Budget Variance Report", {
+					company: get_company(),
+				});
 			},
-			__("Budget")
+			__("Budget"),
 		);
 	},
 };

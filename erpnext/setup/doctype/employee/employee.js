@@ -2,7 +2,9 @@
 // License: GNU General Public License v3. See license.txt
 
 frappe.provide("erpnext.setup");
-erpnext.setup.EmployeeController = class EmployeeController extends frappe.ui.form.Controller {
+erpnext.setup.EmployeeController = class EmployeeController extends (
+	frappe.ui.form.Controller
+) {
 	setup() {
 		this.frm.fields_dict.user_id.get_query = function (doc, cdt, cdn) {
 			return {
@@ -47,8 +49,12 @@ frappe.ui.form.on("Employee", {
 	},
 
 	update_contact: function (frm) {
-		var prefered_email_fieldname = frappe.model.scrub(frm.doc.prefered_contact_email) || "user_id";
-		frm.set_value("prefered_email", frm.fields_dict[prefered_email_fieldname].value);
+		var prefered_email_fieldname =
+			frappe.model.scrub(frm.doc.prefered_contact_email) || "user_id";
+		frm.set_value(
+			"prefered_email",
+			frm.fields_dict[prefered_email_fieldname].value,
+		);
 	},
 
 	status: function (frm) {
@@ -89,7 +95,7 @@ frappe.tour["Employee"] = [
 		fieldname: "first_name",
 		title: "First Name",
 		description: __(
-			"Enter First and Last name of Employee, based on Which Full Name will be updated. IN transactions, it will be Full Name which will be fetched."
+			"Enter First and Last name of Employee, based on Which Full Name will be updated. IN transactions, it will be Full Name which will be fetched.",
 		),
 	},
 	{
@@ -101,21 +107,21 @@ frappe.tour["Employee"] = [
 		fieldname: "date_of_birth",
 		title: "Date of Birth",
 		description: __(
-			"Select Date of Birth. This will validate Employees age and prevent hiring of under-age staff."
+			"Select Date of Birth. This will validate Employees age and prevent hiring of under-age staff.",
 		),
 	},
 	{
 		fieldname: "date_of_joining",
 		title: "Date of Joining",
 		description: __(
-			"Select Date of joining. It will have impact on the first salary calculation, Leave allocation on pro-rata bases."
+			"Select Date of joining. It will have impact on the first salary calculation, Leave allocation on pro-rata bases.",
 		),
 	},
 	{
 		fieldname: "reports_to",
 		title: "Reports To",
 		description: __(
-			"Here, you can select a senior of this Employee. Based on this, Organization Chart will be populated."
+			"Here, you can select a senior of this Employee. Based on this, Organization Chart will be populated.",
 		),
 	},
 ];

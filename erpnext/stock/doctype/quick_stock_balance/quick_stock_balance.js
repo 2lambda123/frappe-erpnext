@@ -75,7 +75,11 @@ frappe.ui.form.on("Quick Stock Balance", {
 				callback: (r) => {
 					if (r.message) {
 						let fields = ["item", "qty", "value", "image"];
-						if (!r.message["barcodes"].includes(frm.doc.item_barcode)) {
+						if (
+							!r.message["barcodes"].includes(
+								frm.doc.item_barcode,
+							)
+						) {
 							frm.doc.item_barcode = "";
 							frm.refresh();
 						}

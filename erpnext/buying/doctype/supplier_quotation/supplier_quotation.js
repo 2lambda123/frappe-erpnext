@@ -19,16 +19,23 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 		super.refresh();
 
 		if (this.frm.doc.__islocal && !this.frm.doc.valid_till) {
-			this.frm.set_value("valid_till", frappe.datetime.add_months(this.frm.doc.transaction_date, 1));
+			this.frm.set_value(
+				"valid_till",
+				frappe.datetime.add_months(this.frm.doc.transaction_date, 1),
+			);
 		}
 		if (this.frm.doc.docstatus === 1) {
 			this.frm.add_custom_button(
 				__("Purchase Order"),
 				this.make_purchase_order.bind(this),
-				__("Create")
+				__("Create"),
 			);
 			this.frm.page.set_inner_btn_group_as_primary(__("Create"));
-			this.frm.add_custom_button(__("Quotation"), this.make_quotation.bind(this), __("Create"));
+			this.frm.add_custom_button(
+				__("Quotation"),
+				this.make_quotation.bind(this),
+				__("Create"),
+			);
 		} else if (this.frm.doc.docstatus === 0) {
 			this.frm.add_custom_button(
 				__("Material Request"),
@@ -50,7 +57,7 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 
 			// Link Material Requests
@@ -59,14 +66,17 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 				function () {
 					erpnext.buying.link_to_mrs(me.frm);
 				},
-				__("Tools")
+				__("Tools"),
 			);
 
 			this.frm.add_custom_button(
 				__("Request for Quotation"),
 				function () {
 					if (!me.frm.doc.supplier) {
-						frappe.throw({ message: __("Please select a Supplier"), title: __("Mandatory") });
+						frappe.throw({
+							message: __("Please select a Supplier"),
+							title: __("Mandatory"),
+						});
 					}
 					erpnext.utils.map_current_doc({
 						method: "erpnext.buying.doctype.request_for_quotation.request_for_quotation.make_supplier_quotation_from_rfq",
@@ -83,7 +93,7 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 							"erpnext.buying.doctype.request_for_quotation.request_for_quotation.get_rfq_containing_supplier",
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		}
 	}
@@ -103,9 +113,16 @@ erpnext.buying.SupplierQuotationController = class SupplierQuotationController e
 };
 
 // for backward compatibility: combine new and previous states
-extend_cscript(cur_frm.cscript, new erpnext.buying.SupplierQuotationController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.buying.SupplierQuotationController({ frm: cur_frm }),
+);
 
-cur_frm.fields_dict["items"].grid.get_field("project").get_query = function (doc, cdt, cdn) {
+cur_frm.fields_dict["items"].grid.get_field("project").get_query = function (
+	doc,
+	cdt,
+	cdn,
+) {
 	return {
 		filters: [["Project", "status", "not in", "Completed, Cancelled"]],
 	};

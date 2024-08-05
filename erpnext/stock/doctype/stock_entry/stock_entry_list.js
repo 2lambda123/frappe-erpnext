@@ -8,7 +8,10 @@ frappe.listview_settings["Stock Entry"] = {
 		"`tabStock Entry`.`is_return`",
 	],
 	get_indicator: function (doc) {
-		if (doc.is_return === 1 && doc.purpose === "Material Transfer for Manufacture") {
+		if (
+			doc.is_return === 1 &&
+			doc.purpose === "Material Transfer for Manufacture"
+		) {
 			return [
 				__("Material Returned from WIP"),
 				"orange",
@@ -16,10 +19,16 @@ frappe.listview_settings["Stock Entry"] = {
 			];
 		} else if (doc.docstatus === 0) {
 			return [__("Draft"), "red", "docstatus,=,0"];
-		} else if (doc.purpose === "Send to Warehouse" && doc.per_transferred < 100) {
+		} else if (
+			doc.purpose === "Send to Warehouse" &&
+			doc.per_transferred < 100
+		) {
 			// not delivered & overdue
 			return [__("Goods In Transit"), "grey", "per_transferred,<,100"];
-		} else if (doc.purpose === "Send to Warehouse" && doc.per_transferred === 100) {
+		} else if (
+			doc.purpose === "Send to Warehouse" &&
+			doc.per_transferred === 100
+		) {
 			return [__("Goods Transferred"), "green", "per_transferred,=,100"];
 		} else if (doc.docstatus === 2) {
 			return [__("Canceled"), "red", "docstatus,=,2"];

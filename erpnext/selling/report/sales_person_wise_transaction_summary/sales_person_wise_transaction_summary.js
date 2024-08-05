@@ -20,7 +20,10 @@ frappe.query_reports["Sales Person-wise Transaction Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), true)[1],
+			default: erpnext.utils.get_fiscal_year(
+				frappe.datetime.get_today(),
+				true,
+			)[1],
 		},
 		{
 			fieldname: "to_date",

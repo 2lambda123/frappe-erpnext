@@ -1,4 +1,6 @@
-frappe.ui.form.ControlData = class ControlData extends frappe.ui.form.ControlData {
+frappe.ui.form.ControlData = class ControlData extends (
+	frappe.ui.form.ControlData
+) {
 	make_input() {
 		super.make_input();
 		if (this.df.options == "Phone") {
@@ -20,7 +22,9 @@ frappe.ui.form.ControlData = class ControlData extends frappe.ui.form.ControlDat
 	}
 	setup_phone() {
 		if (frappe.phone_call.handler) {
-			let control = this.df.read_only ? ".control-value" : ".control-input";
+			let control = this.df.read_only
+				? ".control-value"
+				: ".control-input";
 			this.$wrapper
 				.find(control)
 				.append(
@@ -29,7 +33,7 @@ frappe.ui.form.ControlData = class ControlData extends frappe.ui.form.ControlDat
 						<a class="btn-open no-decoration" title="${__("Make a call")}">
 							${frappe.utils.icon("call")}
 					</span>
-				`
+				`,
 				)
 				.find(".phone-btn")
 				.click(() => {

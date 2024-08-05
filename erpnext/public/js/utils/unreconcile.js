@@ -4,10 +4,14 @@ erpnext.accounts.unreconcile_payment = {
 	add_unreconcile_btn(frm) {
 		if (frm.doc.docstatus == 1) {
 			if (
-				(frm.doc.doctype == "Journal Entry" && frm.doc.voucher_type != "Journal Entry") ||
-				!["Purchase Invoice", "Sales Invoice", "Journal Entry", "Payment Entry"].includes(
-					frm.doc.doctype
-				)
+				(frm.doc.doctype == "Journal Entry" &&
+					frm.doc.voucher_type != "Journal Entry") ||
+				![
+					"Purchase Invoice",
+					"Sales Invoice",
+					"Journal Entry",
+					"Payment Entry",
+				].includes(frm.doc.doctype)
 			) {
 				return;
 			}
@@ -23,9 +27,11 @@ erpnext.accounts.unreconcile_payment = {
 						frm.add_custom_button(
 							__("UnReconcile"),
 							function () {
-								erpnext.accounts.unreconcile_payment.build_unreconcile_dialog(frm);
+								erpnext.accounts.unreconcile_payment.build_unreconcile_dialog(
+									frm,
+								);
 							},
-							__("Actions")
+							__("Actions"),
 						);
 					}
 				},
@@ -47,7 +53,9 @@ erpnext.accounts.unreconcile_payment = {
 					against_voucher_no: frm.doc.name,
 				};
 			});
-		} else if (["Payment Entry", "Journal Entry"].includes(frm.doc.doctype)) {
+		} else if (
+			["Payment Entry", "Journal Entry"].includes(frm.doc.doctype)
+		) {
 			selection_map = selections.map(function (elem) {
 				return {
 					company: elem.company,
@@ -63,7 +71,12 @@ erpnext.accounts.unreconcile_payment = {
 
 	build_unreconcile_dialog(frm) {
 		if (
-			["Sales Invoice", "Purchase Invoice", "Payment Entry", "Journal Entry"].includes(frm.doc.doctype)
+			[
+				"Sales Invoice",
+				"Purchase Invoice",
+				"Payment Entry",
+				"Journal Entry",
+			].includes(frm.doc.doctype)
 		) {
 			let child_table_fields = [
 				{
@@ -90,7 +103,12 @@ erpnext.accounts.unreconcile_payment = {
 					read_only: 1,
 					options: "account_currency",
 				},
-				{ label: __("Currency"), fieldname: "account_currency", fieldtype: "Currency", read_only: 1 },
+				{
+					label: __("Currency"),
+					fieldname: "account_currency",
+					fieldtype: "Currency",
+					read_only: 1,
+				},
 			];
 			let unreconcile_dialog_fields = [
 				{
@@ -125,15 +143,18 @@ erpnext.accounts.unreconcile_payment = {
 							cannot_add_rows: true,
 							primary_action_label: "UnReconcile",
 							primary_action(values) {
-								let selected_allocations = values.allocations.filter((x) => x.__checked);
+								let selected_allocations =
+									values.allocations.filter(
+										(x) => x.__checked,
+									);
 								if (selected_allocations.length > 0) {
 									let selection_map =
 										erpnext.accounts.unreconcile_payment.build_selection_map(
 											frm,
-											selected_allocations
+											selected_allocations,
 										);
 									erpnext.accounts.unreconcile_payment.create_unreconcile_docs(
-										selection_map
+										selection_map,
 									);
 									d.hide();
 								} else {

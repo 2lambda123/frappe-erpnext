@@ -10,7 +10,7 @@ function render_clear_demo_action() {
 	let demo_action = $(
 		`<a class="dropdown-item" onclick="return erpnext.demo.clear_demo()">
 			${__("Clear Demo Data")}
-		</a>`
+		</a>`,
 	);
 
 	demo_action.appendTo($("#toolbar-user"));

@@ -1,5 +1,8 @@
 class VisualPlantFloor {
-	constructor({ wrapper, skip_filters = false, plant_floor = null }, page = null) {
+	constructor(
+		{ wrapper, skip_filters = false, plant_floor = null },
+		page = null,
+	) {
 		this.wrapper = wrapper;
 		this.plant_floor = plant_floor;
 		this.skip_filters = skip_filters;
@@ -24,7 +27,9 @@ class VisualPlantFloor {
 
 		if (!this.skip_filters) {
 			this.filter_wrapper = this.wrapper.find(".plant-floor-filter");
-			this.visualization_wrapper = this.wrapper.find(".plant-floor-visualization");
+			this.visualization_wrapper = this.wrapper.find(
+				".plant-floor-visualization",
+			);
 		} else if (this.plant_floor) {
 			this.wrapper.find(".plant-floor").css("border", "none");
 			this.prepare_data();
@@ -91,7 +96,8 @@ class VisualPlantFloor {
 					if (this.workstation_type.get_value()) {
 						return {
 							filters: {
-								workstation_type: this.workstation_type.get_value() || "",
+								workstation_type:
+									this.workstation_type.get_value() || "",
 							},
 						};
 					}

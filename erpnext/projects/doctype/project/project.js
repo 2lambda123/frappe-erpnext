@@ -7,13 +7,28 @@ frappe.ui.form.on("Project", {
 				open_form(frm, "Timesheet", "Timesheet Detail", "time_logs");
 			},
 			"Purchase Order": () => {
-				open_form(frm, "Purchase Order", "Purchase Order Item", "items");
+				open_form(
+					frm,
+					"Purchase Order",
+					"Purchase Order Item",
+					"items",
+				);
 			},
 			"Purchase Receipt": () => {
-				open_form(frm, "Purchase Receipt", "Purchase Receipt Item", "items");
+				open_form(
+					frm,
+					"Purchase Receipt",
+					"Purchase Receipt Item",
+					"items",
+				);
 			},
 			"Purchase Invoice": () => {
-				open_form(frm, "Purchase Invoice", "Purchase Invoice Item", "items");
+				open_form(
+					frm,
+					"Purchase Invoice",
+					"Purchase Invoice Item",
+					"items",
+				);
 			},
 		};
 	},
@@ -69,7 +84,9 @@ frappe.ui.form.on("Project", {
 		if (frm.doc.__islocal) {
 			frm.web_link && frm.web_link.remove();
 		} else {
-			frm.add_web_link("/projects?project=" + encodeURIComponent(frm.doc.name));
+			frm.add_web_link(
+				"/projects?project=" + encodeURIComponent(frm.doc.name),
+			);
 
 			frm.trigger("show_dashboard");
 		}
@@ -83,7 +100,7 @@ frappe.ui.form.on("Project", {
 				() => {
 					frm.events.create_duplicate(frm);
 				},
-				__("Actions")
+				__("Actions"),
 			);
 
 			frm.add_custom_button(
@@ -91,7 +108,7 @@ frappe.ui.form.on("Project", {
 				() => {
 					frm.events.update_total_purchase_cost(frm);
 				},
-				__("Actions")
+				__("Actions"),
 			);
 
 			frm.trigger("set_project_status_button");
@@ -105,7 +122,7 @@ frappe.ui.form.on("Project", {
 						};
 						frappe.set_route("List", "Task", "Gantt");
 					},
-					__("View")
+					__("View"),
 				);
 
 				frm.add_custom_button(
@@ -116,13 +133,18 @@ frappe.ui.form.on("Project", {
 								"erpnext.projects.doctype.project.project.create_kanban_board_if_not_exists",
 								{
 									project: frm.doc.name,
-								}
+								},
 							)
 							.then(() => {
-								frappe.set_route("List", "Task", "Kanban", frm.doc.project_name);
+								frappe.set_route(
+									"List",
+									"Task",
+									"Kanban",
+									frm.doc.project_name,
+								);
 							});
 					},
-					__("View")
+					__("View"),
 				);
 			}
 		}
@@ -133,7 +155,9 @@ frappe.ui.form.on("Project", {
 			method: "erpnext.projects.doctype.project.project.recalculate_project_total_purchase_cost",
 			args: { project: frm.doc.name },
 			freeze: true,
-			freeze_message: __("Recalculating Purchase Cost against this Project..."),
+			freeze_message: __(
+				"Recalculating Purchase Cost against this Project...",
+			),
 			callback: function (r) {
 				if (r && !r.exc) {
 					frappe.msgprint(__("Total Purchase Cost has been updated"));
@@ -165,7 +189,7 @@ frappe.ui.form.on("Project", {
 					primary_action_label: __("Set Project Status"),
 				}).show();
 			},
-			__("Actions")
+			__("Actions"),
 		);
 	},
 
@@ -173,13 +197,18 @@ frappe.ui.form.on("Project", {
 		return new Promise((resolve) => {
 			frappe.prompt("Project Name", (data) => {
 				frappe
-					.xcall("erpnext.projects.doctype.project.project.create_duplicate_project", {
-						prev_doc: frm.doc,
-						project_name: data.value,
-					})
+					.xcall(
+						"erpnext.projects.doctype.project.project.create_duplicate_project",
+						{
+							prev_doc: frm.doc,
+							project_name: data.value,
+						},
+					)
 					.then(() => {
 						frappe.set_route("Form", "Project", data.value);
-						frappe.show_alert(__("Duplicate project has been created"));
+						frappe.show_alert(
+							__("Duplicate project has been created"),
+						);
 					});
 				resolve();
 			});
@@ -187,16 +216,22 @@ frappe.ui.form.on("Project", {
 	},
 
 	set_status: function (frm, status) {
-		frappe.confirm(__("Set Project and all Tasks to status {0}?", [status.bold()]), () => {
-			frappe
-				.xcall("erpnext.projects.doctype.project.project.set_project_status", {
-					project: frm.doc.name,
-					status: status,
-				})
-				.then(() => {
-					frm.reload_doc();
-				});
-		});
+		frappe.confirm(
+			__("Set Project and all Tasks to status {0}?", [status.bold()]),
+			() => {
+				frappe
+					.xcall(
+						"erpnext.projects.doctype.project.project.set_project_status",
+						{
+							project: frm.doc.name,
+							status: status,
+						},
+					)
+					.then(() => {
+						frm.reload_doc();
+					});
+			},
+		);
 	},
 });
 

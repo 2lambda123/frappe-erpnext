@@ -19,19 +19,23 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			default: ["Fiscal Year"],
 			reqd: 1,
 			on_change: function () {
-				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
+				let filter_based_on =
+					frappe.query_report.get_filter_value("filter_based_on");
 				frappe.query_report.toggle_filter_display(
 					"from_fiscal_year",
-					filter_based_on === "Date Range"
+					filter_based_on === "Date Range",
 				);
-				frappe.query_report.toggle_filter_display("to_fiscal_year", filter_based_on === "Date Range");
+				frappe.query_report.toggle_filter_display(
+					"to_fiscal_year",
+					filter_based_on === "Date Range",
+				);
 				frappe.query_report.toggle_filter_display(
 					"period_start_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 				frappe.query_report.toggle_filter_display(
 					"period_end_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 
 				frappe.query_report.refresh();
@@ -65,13 +69,15 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 					function (r) {
 						let year_start_date = frappe.model.get_value(
 							"Fiscal Year",
-							frappe.query_report.get_filter_value("from_fiscal_year"),
-							"year_start_date"
+							frappe.query_report.get_filter_value(
+								"from_fiscal_year",
+							),
+							"year_start_date",
 						);
 						frappe.query_report.set_filter_value({
 							period_start_date: year_start_date,
 						});
-					}
+					},
 				);
 			},
 		},
@@ -89,13 +95,15 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 					function (r) {
 						let year_end_date = frappe.model.get_value(
 							"Fiscal Year",
-							frappe.query_report.get_filter_value("to_fiscal_year"),
-							"year_end_date"
+							frappe.query_report.get_filter_value(
+								"to_fiscal_year",
+							),
+							"year_end_date",
 						);
 						frappe.query_report.set_filter_value({
 							period_end_date: year_end_date,
 						});
-					}
+					},
 				);
 			},
 		},
@@ -109,7 +117,11 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			fieldname: "report",
 			label: __("Report"),
 			fieldtype: "Select",
-			options: ["Profit and Loss Statement", "Balance Sheet", "Cash Flow"],
+			options: [
+				"Profit and Loss Statement",
+				"Balance Sheet",
+				"Cash Flow",
+			],
 			default: "Balance Sheet",
 			reqd: 1,
 		},
@@ -143,7 +155,9 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 			value = data.account_name || value;
 
 			column.link_onclick =
-				"erpnext.financial_statements.open_general_ledger(" + JSON.stringify(data) + ")";
+				"erpnext.financial_statements.open_general_ledger(" +
+				JSON.stringify(data) +
+				")";
 			column.is_tree = true;
 		}
 
@@ -162,7 +176,9 @@ frappe.query_reports["Consolidated Financial Statement"] = {
 		return value;
 	},
 	onload: function () {
-		let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today());
+		let fiscal_year = erpnext.utils.get_fiscal_year(
+			frappe.datetime.get_today(),
+		);
 
 		frappe.model.with_doc("Fiscal Year", fiscal_year, function (r) {
 			var fy = frappe.model.get_doc("Fiscal Year", fiscal_year);

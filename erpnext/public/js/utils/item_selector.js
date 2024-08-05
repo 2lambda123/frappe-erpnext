@@ -17,16 +17,19 @@ erpnext.ItemSelector = class ItemSelector {
 	setup() {
 		var me = this;
 		if (!this.grid.add_items_button) {
-			this.grid.add_items_button = this.grid.add_custom_button(__("Add Items"), function () {
-				if (!me.dialog) {
-					me.make_dialog();
-				}
-				me.dialog.show();
-				me.render_items();
-				setTimeout(function () {
-					me.dialog.input.focus();
-				}, 1000);
-			});
+			this.grid.add_items_button = this.grid.add_custom_button(
+				__("Add Items"),
+				function () {
+					if (!me.dialog) {
+						me.make_dialog();
+					}
+					me.dialog.show();
+					me.render_items();
+					setTimeout(function () {
+						me.dialog.input.focus();
+					}, 1000);
+				},
+			);
 		}
 	}
 
@@ -37,7 +40,7 @@ erpnext.ItemSelector = class ItemSelector {
 		var body = $(this.dialog.body);
 		body.html(
 			'<div><p><input type="text" class="form-control"></p>\
-			<br><div class="results"></div></div>'
+			<br><div class="results"></div></div>',
 		);
 
 		this.dialog.input = body.find(".form-control");
@@ -67,7 +70,10 @@ erpnext.ItemSelector = class ItemSelector {
 		$.each(this.frm.doc.items || [], (i, d) => {
 			if (d[this.item_field] === item_code) {
 				frappe.model.set_value(d.doctype, d.name, "qty", d.qty + 1);
-				frappe.show_alert({ message: __("Added {0} ({1})", [item_code, d.qty]), indicator: "green" });
+				frappe.show_alert({
+					message: __("Added {0} ({1})", [item_code, d.qty]),
+					indicator: "green",
+				});
 				added = true;
 				return false;
 			}
@@ -79,11 +85,20 @@ erpnext.ItemSelector = class ItemSelector {
 				() => {
 					d = this.grid.add_new_row();
 				},
-				() => frappe.model.set_value(d.doctype, d.name, this.item_field, item_code),
+				() =>
+					frappe.model.set_value(
+						d.doctype,
+						d.name,
+						this.item_field,
+						item_code,
+					),
 				() => frappe.timeout(0.1),
 				() => {
 					frappe.model.set_value(d.doctype, d.name, "qty", 1);
-					frappe.show_alert({ message: __("Added {0} ({1})", [item_code, 1]), indicator: "green" });
+					frappe.show_alert({
+						message: __("Added {0} ({1})", [item_code, 1]),
+						indicator: "green",
+					});
 				},
 			]);
 		}
@@ -109,7 +124,9 @@ erpnext.ItemSelector = class ItemSelector {
 					d.color = frappe.get_palette(d.item_name);
 				}
 			});
-			me.dialog.results.html(frappe.render_template("item_selector", { data: results }));
+			me.dialog.results.html(
+				frappe.render_template("item_selector", { data: results }),
+			);
 		});
 	}
 };

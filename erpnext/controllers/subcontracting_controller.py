@@ -712,9 +712,9 @@ class SubcontractingController(StockController):
 						self.__add_supplied_item(row, transfer_item.get("item_details"), qty)
 
 				if self.qty_to_be_received:
-					self.qty_to_be_received[
-						(row.item_code, row.get(self.subcontract_data.order_field))
-					] -= row.qty
+					self.qty_to_be_received[(row.item_code, row.get(self.subcontract_data.order_field))] -= (
+						row.qty
+					)
 
 	def __set_rate_for_serial_and_batch_bundle(self):
 		if self.doctype != "Subcontracting Receipt":

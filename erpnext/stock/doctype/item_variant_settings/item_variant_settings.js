@@ -22,12 +22,19 @@ frappe.ui.form.on("Item Variant Settings", {
 			"attributes",
 		];
 
-		const exclude_field_types = ["HTML", "Section Break", "Column Break", "Button", "Read Only"];
+		const exclude_field_types = [
+			"HTML",
+			"Section Break",
+			"Column Break",
+			"Button",
+			"Read Only",
+		];
 
 		frappe.model.with_doctype("Item", () => {
 			const field_label_map = {};
 			frappe.get_meta("Item").fields.forEach((d) => {
-				field_label_map[d.fieldname] = __(d.label, null, d.parent) + ` (${d.fieldname})`;
+				field_label_map[d.fieldname] =
+					__(d.label, null, d.parent) + ` (${d.fieldname})`;
 
 				if (
 					!in_list(exclude_field_types, d.fieldtype) &&
@@ -48,7 +55,11 @@ frappe.ui.form.on("Item Variant Settings", {
 				});
 			}
 
-			frm.fields_dict.fields.grid.update_docfield_property("field_name", "options", allow_fields);
+			frm.fields_dict.fields.grid.update_docfield_property(
+				"field_name",
+				"options",
+				allow_fields,
+			);
 		});
 	},
 });

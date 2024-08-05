@@ -23,10 +23,12 @@ frappe.ui.form.ContactAddressQuickEntryForm = class ContactAddressQuickEntryForm
 			mobile_number: "mobile_no",
 		};
 
-		Object.entries(map_field_names).forEach(([fieldname, new_fieldname]) => {
-			this.dialog.doc[new_fieldname] = this.dialog.doc[fieldname];
-			delete this.dialog.doc[fieldname];
-		});
+		Object.entries(map_field_names).forEach(
+			([fieldname, new_fieldname]) => {
+				this.dialog.doc[new_fieldname] = this.dialog.doc[fieldname];
+				delete this.dialog.doc[fieldname];
+			},
+		);
 
 		return super.insert();
 	}

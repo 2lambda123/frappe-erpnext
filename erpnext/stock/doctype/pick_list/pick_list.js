@@ -54,17 +54,21 @@ frappe.ui.form.on("Pick List", {
 			};
 		});
 
-		frm.set_query("serial_and_batch_bundle", "locations", (doc, cdt, cdn) => {
-			let row = locals[cdt][cdn];
-			return {
-				filters: {
-					item_code: row.item_code,
-					voucher_type: doc.doctype,
-					voucher_no: ["in", [doc.name, ""]],
-					is_cancelled: 0,
-				},
-			};
-		});
+		frm.set_query(
+			"serial_and_batch_bundle",
+			"locations",
+			(doc, cdt, cdn) => {
+				let row = locals[cdt][cdn];
+				return {
+					filters: {
+						item_code: row.item_code,
+						voucher_type: doc.doctype,
+						voucher_no: ["in", [doc.name, ""]],
+						is_cancelled: 0,
+					},
+				};
+			},
+		);
 	},
 	set_item_locations: (frm, save) => {
 		if (!(frm.doc.locations && frm.doc.locations.length)) {
@@ -92,30 +96,37 @@ frappe.ui.form.on("Pick List", {
 		frm.trigger("add_get_items_button");
 		if (frm.doc.docstatus === 1) {
 			frappe
-				.xcall("erpnext.stock.doctype.pick_list.pick_list.target_document_exists", {
-					pick_list_name: frm.doc.name,
-					purpose: frm.doc.purpose,
-				})
+				.xcall(
+					"erpnext.stock.doctype.pick_list.pick_list.target_document_exists",
+					{
+						pick_list_name: frm.doc.name,
+						purpose: frm.doc.purpose,
+					},
+				)
 				.then((target_document_exists) => {
-					frm.set_df_property("locations", "allow_on_submit", target_document_exists ? 0 : 1);
+					frm.set_df_property(
+						"locations",
+						"allow_on_submit",
+						target_document_exists ? 0 : 1,
+					);
 
 					if (target_document_exists) return;
 
 					frm.add_custom_button(__("Update Current Stock"), () =>
-						frm.trigger("update_pick_list_stock")
+						frm.trigger("update_pick_list_stock"),
 					);
 
 					if (frm.doc.purpose === "Delivery") {
 						frm.add_custom_button(
 							__("Delivery Note"),
 							() => frm.trigger("create_delivery_note"),
-							__("Create")
+							__("Create"),
 						);
 					} else {
 						frm.add_custom_button(
 							__("Stock Entry"),
 							() => frm.trigger("create_stock_entry"),
-							__("Create")
+							__("Create"),
 						);
 					}
 				});
@@ -125,7 +136,7 @@ frappe.ui.form.on("Pick List", {
 					frm.add_custom_button(
 						__("Reserve"),
 						() => frm.events.create_stock_reservation_entries(frm),
-						__("Stock Reservation")
+						__("Stock Reservation"),
 					);
 				}
 
@@ -135,23 +146,29 @@ frappe.ui.form.on("Pick List", {
 						() => {
 							frappe.confirm(
 								__(
-									"The reserved stock will be released. Are you certain you wish to proceed?"
+									"The reserved stock will be released. Are you certain you wish to proceed?",
 								),
-								() => frm.events.cancel_stock_reservation_entries(frm)
+								() =>
+									frm.events.cancel_stock_reservation_entries(
+										frm,
+									),
 							);
 						},
-						__("Stock Reservation")
+						__("Stock Reservation"),
 					);
 					frm.add_custom_button(
 						__("Reserved Stock"),
 						() => frm.events.show_reserved_stock(frm),
-						__("Stock Reservation")
+						__("Stock Reservation"),
 					);
 				}
 			}
 		}
 
-		let sbb_field = frm.get_docfield("locations", "serial_and_batch_bundle");
+		let sbb_field = frm.get_docfield(
+			"locations",
+			"serial_and_batch_bundle",
+		);
 		if (sbb_field) {
 			sbb_field.get_route_options_for_new_doc = (row) => {
 				return {
@@ -164,10 +181,15 @@ frappe.ui.form.on("Pick List", {
 	},
 	work_order: (frm) => {
 		frappe.db
-			.get_value("Work Order", frm.doc.work_order, ["qty", "material_transferred_for_manufacturing"])
+			.get_value("Work Order", frm.doc.work_order, [
+				"qty",
+				"material_transferred_for_manufacturing",
+			])
 			.then((data) => {
 				let qty_data = data.message;
-				let max = qty_data.qty - qty_data.material_transferred_for_manufacturing;
+				let max =
+					qty_data.qty -
+					qty_data.material_transferred_for_manufacturing;
 				frappe.prompt(
 					{
 						fieldtype: "Float",
@@ -179,7 +201,9 @@ frappe.ui.form.on("Pick List", {
 					(data) => {
 						frm.set_value("for_qty", data.qty);
 						if (data.qty > max) {
-							frappe.msgprint(__("Quantity must not be more than {0}", [max]));
+							frappe.msgprint(
+								__("Quantity must not be more than {0}", [max]),
+							);
 							return;
 						}
 						frm.clear_table("locations");
@@ -190,7 +214,7 @@ frappe.ui.form.on("Pick List", {
 						});
 					},
 					__("Select Quantity"),
-					__("Get Items")
+					__("Get Items"),
 				);
 			});
 	},
@@ -213,9 +237,12 @@ frappe.ui.form.on("Pick List", {
 	},
 	create_stock_entry: (frm) => {
 		frappe
-			.xcall("erpnext.stock.doctype.pick_list.pick_list.create_stock_entry", {
-				pick_list: frm.doc,
-			})
+			.xcall(
+				"erpnext.stock.doctype.pick_list.pick_list.create_stock_entry",
+				{
+					pick_list: frm.doc,
+				},
+			)
 			.then((stock_entry) => {
 				frappe.model.sync(stock_entry);
 				frappe.set_route("Form", "Stock Entry", stock_entry.name);
@@ -293,7 +320,9 @@ frappe.ui.form.on("Pick List", {
 	show_reserved_stock(frm) {
 		// Get the latest modified date from the locations table.
 		var to_date = moment(
-			new Date(Math.max(...frm.doc.locations.map((e) => new Date(e.modified))))
+			new Date(
+				Math.max(...frm.doc.locations.map((e) => new Date(e.modified))),
+			),
 		).format("YYYY-MM-DD");
 
 		frappe.route_options = {
@@ -324,57 +353,91 @@ frappe.ui.form.on("Pick List Item", {
 		let row = frappe.get_doc(cdt, cdn);
 		if (row.uom) {
 			get_item_details(row.item_code, row.uom).then((data) => {
-				frappe.model.set_value(cdt, cdn, "conversion_factor", data.conversion_factor);
+				frappe.model.set_value(
+					cdt,
+					cdn,
+					"conversion_factor",
+					data.conversion_factor,
+				);
 			});
 		}
 	},
 
 	qty: (frm, cdt, cdn) => {
 		let row = frappe.get_doc(cdt, cdn);
-		frappe.model.set_value(cdt, cdn, "stock_qty", row.qty * row.conversion_factor);
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"stock_qty",
+			row.qty * row.conversion_factor,
+		);
 	},
 
 	conversion_factor: (frm, cdt, cdn) => {
 		let row = frappe.get_doc(cdt, cdn);
-		frappe.model.set_value(cdt, cdn, "stock_qty", row.qty * row.conversion_factor);
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"stock_qty",
+			row.qty * row.conversion_factor,
+		);
 	},
 
 	pick_serial_and_batch(frm, cdt, cdn) {
 		let item = locals[cdt][cdn];
 		let path = "assets/erpnext/js/utils/serial_no_batch_selector.js";
 
-		frappe.db.get_value("Item", item.item_code, ["has_batch_no", "has_serial_no"]).then((r) => {
-			if (r.message && (r.message.has_batch_no || r.message.has_serial_no)) {
-				item.has_serial_no = r.message.has_serial_no;
-				item.has_batch_no = r.message.has_batch_no;
-				item.type_of_transaction = item.qty > 0 ? "Outward" : "Inward";
+		frappe.db
+			.get_value("Item", item.item_code, [
+				"has_batch_no",
+				"has_serial_no",
+			])
+			.then((r) => {
+				if (
+					r.message &&
+					(r.message.has_batch_no || r.message.has_serial_no)
+				) {
+					item.has_serial_no = r.message.has_serial_no;
+					item.has_batch_no = r.message.has_batch_no;
+					item.type_of_transaction =
+						item.qty > 0 ? "Outward" : "Inward";
 
-				item.title = item.has_serial_no ? __("Select Serial No") : __("Select Batch No");
+					item.title = item.has_serial_no
+						? __("Select Serial No")
+						: __("Select Batch No");
 
-				if (item.has_serial_no && item.has_batch_no) {
-					item.title = __("Select Serial and Batch");
-				}
-
-				new erpnext.SerialBatchPackageSelector(frm, item, (r) => {
-					if (r) {
-						let qty = Math.abs(r.total_qty);
-						frappe.model.set_value(item.doctype, item.name, {
-							serial_and_batch_bundle: r.name,
-							use_serial_batch_fields: 0,
-							qty: qty / flt(item.conversion_factor || 1, precision("conversion_factor", item)),
-						});
+					if (item.has_serial_no && item.has_batch_no) {
+						item.title = __("Select Serial and Batch");
 					}
-				});
-			}
-		});
+
+					new erpnext.SerialBatchPackageSelector(frm, item, (r) => {
+						if (r) {
+							let qty = Math.abs(r.total_qty);
+							frappe.model.set_value(item.doctype, item.name, {
+								serial_and_batch_bundle: r.name,
+								use_serial_batch_fields: 0,
+								qty:
+									qty /
+									flt(
+										item.conversion_factor || 1,
+										precision("conversion_factor", item),
+									),
+							});
+						}
+					});
+				}
+			});
 	},
 });
 
 function get_item_details(item_code, uom = null) {
 	if (item_code) {
-		return frappe.xcall("erpnext.stock.doctype.pick_list.pick_list.get_item_details", {
-			item_code,
-			uom,
-		});
+		return frappe.xcall(
+			"erpnext.stock.doctype.pick_list.pick_list.get_item_details",
+			{
+				item_code,
+				uom,
+			},
+		);
 	}
 }

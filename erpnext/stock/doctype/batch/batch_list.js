@@ -5,7 +5,10 @@ frappe.listview_settings["Batch"] = {
 			return [__("Disabled"), "gray", "disabled,=,1"];
 		} else if (
 			doc.expiry_date &&
-			frappe.datetime.get_diff(doc.expiry_date, frappe.datetime.nowdate()) <= 0
+			frappe.datetime.get_diff(
+				doc.expiry_date,
+				frappe.datetime.nowdate(),
+			) <= 0
 		) {
 			return [
 				__("Expired"),

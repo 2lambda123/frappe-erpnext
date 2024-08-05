@@ -9,6 +9,10 @@ frappe.listview_settings["Pick List"] = {
 			Completed: "green",
 			Cancelled: "red",
 		};
-		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_colors[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 };

@@ -31,7 +31,7 @@ frappe.ui.form.on("Exchange Rate Revaluation", {
 							function () {
 								return frm.events.make_jv(frm);
 							},
-							__("Create")
+							__("Create"),
 						);
 					}
 				},
@@ -42,7 +42,9 @@ frappe.ui.form.on("Exchange Rate Revaluation", {
 	validate_rounding_loss: function (frm) {
 		let allowance = frm.doc.rounding_loss_allowance;
 		if (!(allowance >= 0 && allowance < 1)) {
-			frappe.throw(__("Rounding Loss Allowance should be between 0 and 1"));
+			frappe.throw(
+				__("Rounding Loss Allowance should be between 0 and 1"),
+			);
 		}
 	},
 
@@ -80,7 +82,10 @@ frappe.ui.form.on("Exchange Rate Revaluation", {
 			total_gain_loss += flt(d.gain_loss, precision("gain_loss", d));
 		});
 
-		frm.set_value("total_gain_loss", flt(total_gain_loss, precision("total_gain_loss")));
+		frm.set_value(
+			"total_gain_loss",
+			flt(total_gain_loss, precision("total_gain_loss")),
+		);
 		frm.refresh_fields();
 	},
 
@@ -95,7 +100,10 @@ frappe.ui.form.on("Exchange Rate Revaluation", {
 			callback: function (r) {
 				if (r.message) {
 					let response = r.message;
-					if (response["revaluation_jv"] || response["zero_balance_jv"]) {
+					if (
+						response["revaluation_jv"] ||
+						response["zero_balance_jv"]
+					) {
 						frappe.msgprint(__("Journals have been created"));
 					}
 				}
@@ -109,9 +117,11 @@ frappe.ui.form.on("Exchange Rate Revaluation Account", {
 		var row = frappe.get_doc(cdt, cdn);
 		row.new_balance_in_base_currency = flt(
 			row.new_exchange_rate * flt(row.balance_in_account_currency),
-			precision("new_balance_in_base_currency", row)
+			precision("new_balance_in_base_currency", row),
 		);
-		row.gain_loss = row.new_balance_in_base_currency - flt(row.balance_in_base_currency);
+		row.gain_loss =
+			row.new_balance_in_base_currency -
+			flt(row.balance_in_base_currency);
 		refresh_field("accounts");
 		frm.events.get_total_gain_loss(frm);
 	},
@@ -138,7 +148,9 @@ frappe.ui.form.on("Exchange Rate Revaluation Account", {
 var get_account_details = function (frm, cdt, cdn) {
 	var row = frappe.get_doc(cdt, cdn);
 	if (!frm.doc.company || !frm.doc.posting_date) {
-		frappe.throw(__("Please select Company and Posting Date to getting entries"));
+		frappe.throw(
+			__("Please select Company and Posting Date to getting entries"),
+		);
 	}
 	frappe.call({
 		method: "erpnext.accounts.doctype.exchange_rate_revaluation.exchange_rate_revaluation.get_account_details",

@@ -38,17 +38,32 @@ erpnext.setup.slides_settings = [
 				options: "",
 				fieldtype: "Select",
 			},
-			{ fieldname: "view_coa", label: __("View Chart of Accounts"), fieldtype: "Button" },
-			{ fieldname: "fy_start_date", label: __("Financial Year Begins On"), fieldtype: "Date", reqd: 1 },
+			{
+				fieldname: "view_coa",
+				label: __("View Chart of Accounts"),
+				fieldtype: "Button",
+			},
+			{
+				fieldname: "fy_start_date",
+				label: __("Financial Year Begins On"),
+				fieldtype: "Date",
+				reqd: 1,
+			},
 			// end date should be hidden (auto calculated)
-			{ fieldname: "fy_end_date", label: __("End Date"), fieldtype: "Date", reqd: 1, hidden: 1 },
+			{
+				fieldname: "fy_end_date",
+				label: __("End Date"),
+				fieldtype: "Date",
+				reqd: 1,
+				hidden: 1,
+			},
 			{ fieldtype: "Section Break" },
 			{
 				fieldname: "setup_demo",
 				label: __("Generate Demo Data for Exploration"),
 				fieldtype: "Check",
 				description: __(
-					"If checked, we will create demo data for you to explore the system. This demo data can be erased later."
+					"If checked, we will create demo data for you to explore the system. This demo data can be erased later.",
 				),
 			},
 		],
@@ -80,11 +95,15 @@ erpnext.setup.slides_settings = [
 		validate_fy_dates: function () {
 			// validate fiscal year start and end dates
 			const invalid =
-				this.values.fy_start_date == "Invalid date" || this.values.fy_end_date == "Invalid date";
-			const start_greater_than_end = this.values.fy_start_date > this.values.fy_end_date;
+				this.values.fy_start_date == "Invalid date" ||
+				this.values.fy_end_date == "Invalid date";
+			const start_greater_than_end =
+				this.values.fy_start_date > this.values.fy_end_date;
 
 			if (invalid || start_greater_than_end) {
-				frappe.msgprint(__("Please enter valid Financial Year Start and End Dates"));
+				frappe.msgprint(
+					__("Please enter valid Financial Year Start and End Dates"),
+				);
 				return false;
 			}
 
@@ -108,8 +127,12 @@ erpnext.setup.slides_settings = [
 					next_year = current_year;
 					current_year -= 1;
 				}
-				slide.get_field("fy_start_date").set_value(current_year + "-" + fy[0]);
-				slide.get_field("fy_end_date").set_value(next_year + "-" + fy[1]);
+				slide
+					.get_field("fy_start_date")
+					.set_value(current_year + "-" + fy[0]);
+				slide
+					.get_field("fy_end_date")
+					.set_value(next_year + "-" + fy[1]);
 			}
 		},
 
@@ -122,7 +145,10 @@ erpnext.setup.slides_settings = [
 					args: { country: country, with_standard: true },
 					callback: function (r) {
 						if (r.message) {
-							slide.get_input("chart_of_accounts").empty().add_options(r.message);
+							slide
+								.get_input("chart_of_accounts")
+								.empty()
+								.add_options(r.message);
 						}
 					},
 				});
@@ -132,13 +158,18 @@ erpnext.setup.slides_settings = [
 		bind_events: function (slide) {
 			let me = this;
 			slide.get_input("fy_start_date").on("change", function () {
-				var start_date = slide.form.fields_dict.fy_start_date.get_value();
-				var year_end_date = frappe.datetime.add_days(frappe.datetime.add_months(start_date, 12), -1);
+				var start_date =
+					slide.form.fields_dict.fy_start_date.get_value();
+				var year_end_date = frappe.datetime.add_days(
+					frappe.datetime.add_months(start_date, 12),
+					-1,
+				);
 				slide.form.fields_dict.fy_end_date.set_value(year_end_date);
 			});
 
 			slide.get_input("view_coa").on("click", function () {
-				let chart_template = slide.form.fields_dict.chart_of_accounts.get_value();
+				let chart_template =
+					slide.form.fields_dict.chart_of_accounts.get_value();
 				if (!chart_template) return;
 
 				me.charts_modal(slide, chart_template);
@@ -147,11 +178,16 @@ erpnext.setup.slides_settings = [
 			slide
 				.get_input("company_name")
 				.on("input", function () {
-					let parts = slide.get_input("company_name").val().split(" ");
+					let parts = slide
+						.get_input("company_name")
+						.val()
+						.split(" ");
 					let abbr = $.map(parts, function (p) {
 						return p ? p.substr(0, 1) : null;
 					}).join("");
-					slide.get_field("company_abbr").set_value(abbr.slice(0, 10).toUpperCase());
+					slide
+						.get_field("company_abbr")
+						.set_value(abbr.slice(0, 10).toUpperCase());
 				})
 				.val(frappe.boot.sysdefaults.company_name || "")
 				.trigger("change");
@@ -161,7 +197,11 @@ erpnext.setup.slides_settings = [
 				.on("change", function () {
 					let abbr = slide.get_input("company_abbr").val();
 					if (abbr.length > 10) {
-						frappe.msgprint(__("Company Abbreviation cannot have more than 5 characters"));
+						frappe.msgprint(
+							__(
+								"Company Abbreviation cannot have more than 5 characters",
+							),
+						);
 						abbr = abbr.slice(0, 10);
 					}
 					slide.get_field("company_abbr").set_value(abbr);
@@ -192,10 +232,15 @@ erpnext.setup.slides_settings = [
 						click: function () {
 							// collapse all nodes
 							coa_tree
-								.get_all_nodes(coa_tree.root_node.data.value, coa_tree.root_node.is_root)
+								.get_all_nodes(
+									coa_tree.root_node.data.value,
+									coa_tree.root_node.is_root,
+								)
 								.then((data_list) => {
 									data_list.map((d) => {
-										coa_tree.toggle_node(coa_tree.nodes[d.parent]);
+										coa_tree.toggle_node(
+											coa_tree.nodes[d.parent],
+										);
 									});
 								});
 						},

@@ -11,7 +11,9 @@ frappe.ui.form.on("Subcontracting Order", {
 		frm.get_field("items").grid.only_sortable();
 		frm.trigger("set_queries");
 
-		frm.set_indicator_formatter("item_code", (doc) => (doc.qty <= doc.received_qty ? "green" : "orange"));
+		frm.set_indicator_formatter("item_code", (doc) =>
+			doc.qty <= doc.received_qty ? "green" : "orange",
+		);
 
 		frm.set_query("supplier_warehouse", () => {
 			return {
@@ -128,20 +130,28 @@ frappe.ui.form.on("Subcontracting Order", {
 	},
 
 	refresh: function (frm) {
-		frappe.dynamic_link = { doc: frm.doc, fieldname: "supplier", doctype: "Supplier" };
+		frappe.dynamic_link = {
+			doc: frm.doc,
+			fieldname: "supplier",
+			doctype: "Supplier",
+		};
 
 		if (frm.doc.docstatus == 1 && frm.has_perm("submit")) {
 			if (frm.doc.status == "Closed") {
 				frm.add_custom_button(
 					__("Re-open"),
 					() => frm.events.update_subcontracting_order_status(frm),
-					__("Status")
+					__("Status"),
 				);
 			} else if (flt(frm.doc.per_received, 2) < 100) {
 				frm.add_custom_button(
 					__("Close"),
-					() => frm.events.update_subcontracting_order_status(frm, "Closed"),
-					__("Status")
+					() =>
+						frm.events.update_subcontracting_order_status(
+							frm,
+							"Closed",
+						),
+					__("Status"),
 				);
 			}
 		}
@@ -169,7 +179,10 @@ frappe.ui.form.on("Subcontracting Order", {
 
 		if (frm.doc.status != "Closed" && frm.doc.supplied_items) {
 			frm.doc.supplied_items.forEach((d) => {
-				if (d.total_supplied_qty > 0 && d.total_supplied_qty != d.consumed_qty) {
+				if (
+					d.total_supplied_qty > 0 &&
+					d.total_supplied_qty != d.consumed_qty
+				) {
 					sco_rm_details.push(d.name);
 				}
 			});
@@ -191,12 +204,16 @@ frappe.ui.form.on("Subcontracting Order", {
 						callback: function (r) {
 							if (r && r.message) {
 								const doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", doc[0].doctype, doc[0].name);
+								frappe.set_route(
+									"Form",
+									doc[0].doctype,
+									doc[0].name,
+								);
 							}
 						},
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 	},
@@ -229,13 +246,13 @@ erpnext.buying.SubcontractingOrderController = class SubcontractingOrderControll
 					cur_frm.add_custom_button(
 						__("Subcontracting Receipt"),
 						this.make_subcontracting_receipt,
-						__("Create")
+						__("Create"),
 					);
 					if (me.has_unsupplied_items()) {
 						cur_frm.add_custom_button(
 							__("Material to Supplier"),
 							this.make_stock_entry,
-							__("Transfer")
+							__("Transfer"),
 						);
 					}
 				}
@@ -252,22 +269,37 @@ erpnext.buying.SubcontractingOrderController = class SubcontractingOrderControll
 	}
 
 	set_warehouse(doc) {
-		this.set_warehouse_in_children(doc.items, "warehouse", doc.set_warehouse);
+		this.set_warehouse_in_children(
+			doc.items,
+			"warehouse",
+			doc.set_warehouse,
+		);
 	}
 
 	set_reserve_warehouse(doc) {
-		this.set_warehouse_in_children(doc.supplied_items, "reserve_warehouse", doc.set_reserve_warehouse);
+		this.set_warehouse_in_children(
+			doc.supplied_items,
+			"reserve_warehouse",
+			doc.set_reserve_warehouse,
+		);
 	}
 
 	set_warehouse_in_children(child_table, warehouse_field, warehouse) {
 		let transaction_controller = new erpnext.TransactionController();
-		transaction_controller.autofill_warehouse(child_table, warehouse_field, warehouse);
+		transaction_controller.autofill_warehouse(
+			child_table,
+			warehouse_field,
+			warehouse,
+		);
 	}
 
 	has_unsupplied_items() {
-		let over_transfer_allowance = this.frm.doc.__onload.over_transfer_allowance;
+		let over_transfer_allowance =
+			this.frm.doc.__onload.over_transfer_allowance;
 		return this.frm.doc["supplied_items"].some((item) => {
-			let required_qty = item.required_qty + (item.required_qty * over_transfer_allowance) / 100;
+			let required_qty =
+				item.required_qty +
+				(item.required_qty * over_transfer_allowance) / 100;
 			return required_qty > item.supplied_qty - item.returned_qty;
 		});
 	}
@@ -295,4 +327,7 @@ erpnext.buying.SubcontractingOrderController = class SubcontractingOrderControll
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.buying.SubcontractingOrderController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.buying.SubcontractingOrderController({ frm: cur_frm }),
+);

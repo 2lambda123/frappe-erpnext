@@ -32,10 +32,13 @@ erpnext.utils.CRMActivities = class CRMActivities {
 			},
 			callback: (r) => {
 				if (!r.exc) {
-					var activities_html = frappe.render_template("crm_activities", {
-						tasks: r.message.tasks,
-						events: r.message.events,
-					});
+					var activities_html = frappe.render_template(
+						"crm_activities",
+						{
+							tasks: r.message.tasks,
+							events: r.message.events,
+						},
+					);
 
 					$(activities_html).appendTo(me.open_activities_wrapper);
 
@@ -69,9 +72,13 @@ erpnext.utils.CRMActivities = class CRMActivities {
 			let composer = new frappe.views.InteractionComposer(args);
 			composer.dialog.get_field("interaction_type").set_value("ToDo");
 			// hide column having interaction type field
-			$(composer.dialog.get_field("interaction_type").wrapper).closest(".form-column").hide();
+			$(composer.dialog.get_field("interaction_type").wrapper)
+				.closest(".form-column")
+				.hide();
 			// hide summary field
-			$(composer.dialog.get_field("summary").wrapper).closest(".form-section").hide();
+			$(composer.dialog.get_field("summary").wrapper)
+				.closest(".form-section")
+				.hide();
 		};
 		$(".new-task-btn").click(_create_task);
 	}

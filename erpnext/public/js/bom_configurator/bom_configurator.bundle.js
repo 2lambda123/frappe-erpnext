@@ -24,7 +24,9 @@ class BOMConfigurator {
 			...this.tree_methods(),
 		};
 
-		frappe.views.trees["BOM Configurator"] = new frappe.views.TreeView(options);
+		frappe.views.trees["BOM Configurator"] = new frappe.views.TreeView(
+			options,
+		);
 		this.tree_view = frappe.views.trees["BOM Configurator"];
 	}
 
@@ -52,7 +54,8 @@ class BOMConfigurator {
 			expandable: true,
 			title: __("Configure Product Assembly"),
 			breadcrumb: "Manufacturing",
-			get_tree_nodes: "erpnext.manufacturing.doctype.bom_creator.bom_creator.get_children",
+			get_tree_nodes:
+				"erpnext.manufacturing.doctype.bom_creator.bom_creator.get_children",
 			root_label: this.frm.doc.item_code,
 			disable_add_node: true,
 			get_tree_root: false,
@@ -84,7 +87,10 @@ class BOMConfigurator {
 					amount = frm_obj.frm.doc.raw_material_cost;
 				}
 
-				amount = frappe.format(amount, { fieldtype: "Currency", currency: frm_obj.frm.doc.currency });
+				amount = frappe.format(amount, {
+					fieldtype: "Currency",
+					currency: frm_obj.frm.doc.currency,
+				});
 
 				$(`
 					<div class="pill small pull-right bom-qty-pill"
@@ -108,17 +114,24 @@ class BOMConfigurator {
 				this.frm?.doc.docstatus === 0
 					? [
 							{
-								label: __(frappe.utils.icon("edit", "sm") + " BOM"),
+								label: __(
+									frappe.utils.icon("edit", "sm") + " BOM",
+								),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 									view.events.edit_bom(node, view);
 								},
 								btnClass: "hidden-xs",
 							},
 							{
-								label: __(frappe.utils.icon("add", "sm") + " Raw Material"),
+								label: __(
+									frappe.utils.icon("add", "sm") +
+										" Raw Material",
+								),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 									view.events.add_item(node, view);
 								},
 								condition: function (node) {
@@ -127,9 +140,13 @@ class BOMConfigurator {
 								btnClass: "hidden-xs",
 							},
 							{
-								label: __(frappe.utils.icon("add", "sm") + " Sub Assembly"),
+								label: __(
+									frappe.utils.icon("add", "sm") +
+										" Sub Assembly",
+								),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 									view.events.add_sub_assembly(node, view);
 								},
 								condition: function (node) {
@@ -140,15 +157,22 @@ class BOMConfigurator {
 							{
 								label: __("Expand All"),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 
 									if (!node.expanded) {
 										view.tree.load_children(node, true);
-										$(node.parent[0]).find(".tree-children").show();
-										node.$toolbar.find(".expand-all-btn").html("Collapse All");
+										$(node.parent[0])
+											.find(".tree-children")
+											.show();
+										node.$toolbar
+											.find(".expand-all-btn")
+											.html("Collapse All");
 									} else {
 										node.$tree_link.trigger("click");
-										node.$toolbar.find(".expand-all-btn").html("Expand All");
+										node.$toolbar
+											.find(".expand-all-btn")
+											.html("Expand All");
 									}
 								},
 								condition: function (node) {
@@ -157,10 +181,17 @@ class BOMConfigurator {
 								btnClass: "hidden-xs expand-all-btn",
 							},
 							{
-								label: __(frappe.utils.icon("move", "sm") + " Sub Assembly"),
+								label: __(
+									frappe.utils.icon("move", "sm") +
+										" Sub Assembly",
+								),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
-									view.events.convert_to_sub_assembly(node, view);
+									let view =
+										frappe.views.trees["BOM Configurator"];
+									view.events.convert_to_sub_assembly(
+										node,
+										view,
+									);
 								},
 								condition: function (node) {
 									return !node.expandable;
@@ -168,9 +199,12 @@ class BOMConfigurator {
 								btnClass: "hidden-xs",
 							},
 							{
-								label: __(frappe.utils.icon("delete", "sm") + " Item"),
+								label: __(
+									frappe.utils.icon("delete", "sm") + " Item",
+								),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 									view.events.delete_node(node, view);
 								},
 								condition: function (node) {
@@ -178,20 +212,27 @@ class BOMConfigurator {
 								},
 								btnClass: "hidden-xs",
 							},
-					  ]
+						]
 					: [
 							{
 								label: __("Expand All"),
 								click: function (node) {
-									let view = frappe.views.trees["BOM Configurator"];
+									let view =
+										frappe.views.trees["BOM Configurator"];
 
 									if (!node.expanded) {
 										view.tree.load_children(node, true);
-										$(node.parent[0]).find(".tree-children").show();
-										node.$toolbar.find(".expand-all-btn").html("Collapse All");
+										$(node.parent[0])
+											.find(".tree-children")
+											.show();
+										node.$toolbar
+											.find(".expand-all-btn")
+											.html("Collapse All");
 									} else {
 										node.$tree_link.trigger("click");
-										node.$toolbar.find(".expand-all-btn").html("Expand All");
+										node.$toolbar
+											.find(".expand-all-btn")
+											.html("Expand All");
 									}
 								},
 								condition: function (node) {
@@ -199,15 +240,27 @@ class BOMConfigurator {
 								},
 								btnClass: "hidden-xs expand-all-btn",
 							},
-					  ],
+						],
 		};
 	}
 
 	add_item(node, view) {
 		frappe.prompt(
 			[
-				{ label: __("Item"), fieldname: "item_code", fieldtype: "Link", options: "Item", reqd: 1 },
-				{ label: __("Qty"), fieldname: "qty", default: 1.0, fieldtype: "Float", reqd: 1 },
+				{
+					label: __("Item"),
+					fieldname: "item_code",
+					fieldtype: "Link",
+					options: "Item",
+					reqd: 1,
+				},
+				{
+					label: __("Qty"),
+					fieldname: "qty",
+					default: 1.0,
+					fieldtype: "Float",
+					reqd: 1,
+				},
 			],
 			(data) => {
 				if (!node.data.parent_id) {
@@ -229,12 +282,14 @@ class BOMConfigurator {
 				});
 			},
 			__("Add Item"),
-			__("Add")
+			__("Add"),
 		);
 	}
 
 	set_query_for_workstation(dialog) {
-		let workstation = dialog.fields.filter((field) => field.fieldname === "workstation");
+		let workstation = dialog.fields.filter(
+			(field) => field.fieldname === "workstation",
+		);
 		if (workstation.length) {
 			workstation[0].get_query = function () {
 				let workstation_type = dialog.get_value("workstation_type");
@@ -242,7 +297,8 @@ class BOMConfigurator {
 				if (workstation_type) {
 					return {
 						filters: {
-							workstation_type: dialog.get_value("workstation_type"),
+							workstation_type:
+								dialog.get_value("workstation_type"),
 						},
 					};
 				}
@@ -252,7 +308,10 @@ class BOMConfigurator {
 
 	add_sub_assembly(node, view) {
 		let dialog = new frappe.ui.Dialog({
-			fields: view.events.get_sub_assembly_modal_fields(view, node.is_root),
+			fields: view.events.get_sub_assembly_modal_fields(
+				view,
+				node.is_root,
+			),
 			title: __("Add Sub Assembly"),
 		});
 		view.events.set_query_for_workstation(dialog);
@@ -261,8 +320,14 @@ class BOMConfigurator {
 		dialog.set_primary_action(__("Add"), () => {
 			let bom_item = dialog.get_values();
 
-			if (dialog.operation && !dialog.workstation_type && !dialog.workstation) {
-				frappe.throw(__("Either Workstation or Workstation Type is mandatory"));
+			if (
+				dialog.operation &&
+				!dialog.workstation_type &&
+				!dialog.workstation
+			) {
+				frappe.throw(
+					__("Either Workstation or Workstation Type is mandatory"),
+				);
 			}
 
 			if (!node.data?.parent_id) {
@@ -289,7 +354,12 @@ class BOMConfigurator {
 		});
 	}
 
-	get_sub_assembly_modal_fields(view, is_root = false, read_only = false, show_operations_fields = false) {
+	get_sub_assembly_modal_fields(
+		view,
+		is_root = false,
+		read_only = false,
+		show_operations_fields = false,
+	) {
 		let fields = [
 			{
 				label: __("Sub Assembly Item"),
@@ -310,7 +380,10 @@ class BOMConfigurator {
 			},
 		];
 
-		if (this.frm.doc.track_operations && (is_root || show_operations_fields)) {
+		if (
+			this.frm.doc.track_operations &&
+			(is_root || show_operations_fields)
+		) {
 			fields.push(
 				...[
 					{ fieldtype: "Section Break" },
@@ -345,13 +418,17 @@ class BOMConfigurator {
 						fieldtype: "Link",
 						options: "Workstation",
 					},
-				]
+				],
 			);
 
 			if (this.frm.doc.track_semi_finished_goods) {
 				fields.push(
 					...[
-						{ label: __("Default Warehouse"), fieldtype: "Section Break", collapsible: 1 },
+						{
+							label: __("Default Warehouse"),
+							fieldtype: "Section Break",
+							collapsible: 1,
+						},
 						{
 							label: __("Skip Material Transfer"),
 							fieldname: "skip_material_transfer",
@@ -368,7 +445,8 @@ class BOMConfigurator {
 							fieldname: "source_warehouse",
 							fieldtype: "Link",
 							options: "Warehouse",
-							depends_on: "eval:!doc.backflush_from_wip_warehouse",
+							depends_on:
+								"eval:!doc.backflush_from_wip_warehouse",
 							get_query() {
 								return {
 									filters: {
@@ -406,7 +484,7 @@ class BOMConfigurator {
 								};
 							},
 						},
-					]
+					],
 				);
 			}
 		}
@@ -443,7 +521,7 @@ class BOMConfigurator {
 						},
 					],
 				},
-			]
+			],
 		);
 
 		return fields;
@@ -451,7 +529,12 @@ class BOMConfigurator {
 
 	convert_to_sub_assembly(node, view) {
 		let dialog = new frappe.ui.Dialog({
-			fields: view.events.get_sub_assembly_modal_fields(view, node.is_root, true, true),
+			fields: view.events.get_sub_assembly_modal_fields(
+				view,
+				node.is_root,
+				true,
+				true,
+			),
 			title: __("Add Sub Assembly"),
 		});
 
@@ -464,8 +547,14 @@ class BOMConfigurator {
 		dialog.set_primary_action(__("Add"), () => {
 			let bom_item = dialog.get_values();
 
-			if (dialog.operation && !dialog.workstation_type && !dialog.workstation) {
-				frappe.throw(__("Either Workstation or Workstation Type is mandatory"));
+			if (
+				dialog.operation &&
+				!dialog.workstation_type &&
+				!dialog.workstation
+			) {
+				frappe.throw(
+					__("Either Workstation or Workstation Type is mandatory"),
+				);
 			}
 
 			frappe.call({
@@ -492,10 +581,16 @@ class BOMConfigurator {
 	}
 
 	set_default_qty(dialog) {
-		dialog.fields_dict.items.grid.fields_map.item_code.onchange = function (event) {
+		dialog.fields_dict.items.grid.fields_map.item_code.onchange = function (
+			event,
+		) {
 			if (event) {
-				let name = $(event.currentTarget).closest(".grid-row").attr("data-name");
-				let item_row = dialog.fields_dict.items.grid.grid_rows_by_docname[name].doc;
+				let name = $(event.currentTarget)
+					.closest(".grid-row")
+					.attr("data-name");
+				let item_row =
+					dialog.fields_dict.items.grid.grid_rows_by_docname[name]
+						.doc;
 				item_row.qty = 1;
 				dialog.fields_dict.items.grid.refresh();
 			}
@@ -522,7 +617,15 @@ class BOMConfigurator {
 	edit_bom(node, view) {
 		let me = this;
 		let qty = node.data.qty || this.frm.doc.qty;
-		let fields = [{ label: __("Qty"), fieldname: "qty", default: qty, fieldtype: "Float", reqd: 1 }];
+		let fields = [
+			{
+				label: __("Qty"),
+				fieldname: "qty",
+				default: qty,
+				fieldtype: "Float",
+				reqd: 1,
+			},
+		];
 
 		if (node.expandable && this.frm.doc.track_operations) {
 			let data = node.data.operation ? node.data : this.frm.doc;
@@ -567,12 +670,16 @@ class BOMConfigurator {
 						default: data.workstation,
 						get_query() {
 							let dialog = me.frm.edit_bom_dialog;
-							let workstation_type = dialog.get_value("workstation_type");
+							let workstation_type =
+								dialog.get_value("workstation_type");
 
 							if (workstation_type) {
 								return {
 									filters: {
-										workstation_type: dialog.get_value("workstation_type"),
+										workstation_type:
+											dialog.get_value(
+												"workstation_type",
+											),
 									},
 								};
 							}
@@ -614,7 +721,8 @@ class BOMConfigurator {
 						fieldtype: "Link",
 						options: "Warehouse",
 						default: data.wip_warehouse,
-						depends_on: "eval:!doc.skip_material_transfer || doc.backflush_from_wip_warehouse",
+						depends_on:
+							"eval:!doc.skip_material_transfer || doc.backflush_from_wip_warehouse",
 						get_query() {
 							return {
 								filters: {
@@ -669,7 +777,7 @@ class BOMConfigurator {
 				});
 			},
 			__("Edit BOM"),
-			__("Update")
+			__("Update"),
 		);
 	}
 
@@ -690,7 +798,9 @@ class BOMConfigurator {
 		frappe.views.trees["BOM Configurator"].tree.load_children(node);
 
 		while (node) {
-			item_row = response.message.items.filter((item) => item.name === node.data.name);
+			item_row = response.message.items.filter(
+				(item) => item.name === node.data.name,
+			);
 
 			if (item_row?.length) {
 				node.data.amount = item_row[0].amount;

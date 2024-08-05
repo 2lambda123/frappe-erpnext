@@ -4,7 +4,7 @@ frappe.ui.form.on("Accounts Settings", {
 		frm.set_df_property(
 			"frozen_accounts_modifier",
 			"label",
-			"Role Allowed to Close Books & Make Changes to Closed Periods"
+			"Role Allowed to Close Books & Make Changes to Closed Periods",
 		);
 		frm.set_df_property("credit_controller", "label", "Credit Manager");
 	},

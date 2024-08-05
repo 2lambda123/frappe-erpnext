@@ -2,9 +2,17 @@ frappe.listview_settings["Asset"] = {
 	add_fields: ["status"],
 	get_indicator: function (doc) {
 		if (doc.status === "Fully Depreciated") {
-			return [__("Fully Depreciated"), "green", "status,=,Fully Depreciated"];
+			return [
+				__("Fully Depreciated"),
+				"green",
+				"status,=,Fully Depreciated",
+			];
 		} else if (doc.status === "Partially Depreciated") {
-			return [__("Partially Depreciated"), "grey", "status,=,Partially Depreciated"];
+			return [
+				__("Partially Depreciated"),
+				"grey",
+				"status,=,Partially Depreciated",
+			];
 		} else if (doc.status === "Sold") {
 			return [__("Sold"), "green", "status,=,Sold"];
 		} else if (["Capitalized", "Decapitalized"].includes(doc.status)) {

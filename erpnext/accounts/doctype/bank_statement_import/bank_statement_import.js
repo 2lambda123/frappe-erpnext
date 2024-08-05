@@ -17,9 +17,11 @@ frappe.ui.form.on("Bank Statement Import", {
 			frm.import_in_progress = false;
 			if (data_import !== frm.doc.name) return;
 			frappe.model.clear_doc("Bank Statement Import", frm.doc.name);
-			frappe.model.with_doc("Bank Statement Import", frm.doc.name).then(() => {
-				frm.refresh();
-			});
+			frappe.model
+				.with_doc("Bank Statement Import", frm.doc.name)
+				.then(() => {
+					frm.refresh();
+				});
 		});
 		frappe.realtime.on("data_import_progress", (data) => {
 			frm.import_in_progress = true;
@@ -46,9 +48,17 @@ frappe.ui.form.on("Bank Statement Import", {
 						: __("Updating {0} of {1}, {2}", message_args);
 			}
 			if (data.skipping) {
-				message = __("Skipping {0} of {1}, {2}", [data.current, data.total, eta_message]);
+				message = __("Skipping {0} of {1}, {2}", [
+					data.current,
+					data.total,
+					eta_message,
+				]);
 			}
-			frm.dashboard.show_progress(__("Import Progress"), percent, message);
+			frm.dashboard.show_progress(
+				__("Import Progress"),
+				percent,
+				message,
+			);
 			frm.page.set_indicator(__("In Progress"), "orange");
 
 			// hide progress when complete
@@ -90,12 +100,15 @@ frappe.ui.form.on("Bank Statement Import", {
 		frm.trigger("show_report_error_button");
 
 		if (frm.doc.status === "Partial Success") {
-			frm.add_custom_button(__("Export Errored Rows"), () => frm.trigger("export_errored_rows"));
+			frm.add_custom_button(__("Export Errored Rows"), () =>
+				frm.trigger("export_errored_rows"),
+			);
 		}
 
 		if (frm.doc.status.includes("Success")) {
-			frm.add_custom_button(__("Go to {0} List", [__(frm.doc.reference_doctype)]), () =>
-				frappe.set_route("List", frm.doc.reference_doctype)
+			frm.add_custom_button(
+				__("Go to {0} List", [__(frm.doc.reference_doctype)]),
+				() => frappe.set_route("List", frm.doc.reference_doctype),
 			);
 		}
 	},
@@ -112,8 +125,13 @@ frappe.ui.form.on("Bank Statement Import", {
 		frm.disable_save();
 		if (frm.doc.status !== "Success") {
 			if (!frm.is_new() && frm.has_import_file()) {
-				let label = frm.doc.status === "Pending" ? __("Start Import") : __("Retry");
-				frm.page.set_primary_action(label, () => frm.events.start_import(frm));
+				let label =
+					frm.doc.status === "Pending"
+						? __("Start Import")
+						: __("Retry");
+				frm.page.set_primary_action(label, () =>
+					frm.events.start_import(frm),
+				);
 			} else {
 				frm.page.set_primary_action(__("Save"), () => frm.save());
 			}
@@ -152,13 +170,25 @@ frappe.ui.form.on("Bank Statement Import", {
 					if (frm.doc.import_type === "Insert New Records") {
 						message =
 							successful_records > 1
-								? __("Successfully imported {0} records.", message_args)
-								: __("Successfully imported {0} record.", message_args);
+								? __(
+										"Successfully imported {0} records.",
+										message_args,
+									)
+								: __(
+										"Successfully imported {0} record.",
+										message_args,
+									);
 					} else {
 						message =
 							successful_records > 1
-								? __("Successfully updated {0} records.", message_args)
-								: __("Successfully updated {0} record.", message_args);
+								? __(
+										"Successfully updated {0} records.",
+										message_args,
+									)
+								: __(
+										"Successfully updated {0} record.",
+										message_args,
+									);
 					}
 				} else {
 					let message_args = [successful_records, total_records];
@@ -167,23 +197,23 @@ frappe.ui.form.on("Bank Statement Import", {
 							successful_records > 1
 								? __(
 										"Successfully imported {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.",
-										message_args
-								  )
+										message_args,
+									)
 								: __(
 										"Successfully imported {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.",
-										message_args
-								  );
+										message_args,
+									);
 					} else {
 						message =
 							successful_records > 1
 								? __(
 										"Successfully updated {0} records out of {1}. Click on Export Errored Rows, fix the errors and import again.",
-										message_args
-								  )
+										message_args,
+									)
 								: __(
 										"Successfully updated {0} record out of {1}. Click on Export Errored Rows, fix the errors and import again.",
-										message_args
-								  );
+										message_args,
+									);
 					}
 				}
 
@@ -229,7 +259,8 @@ frappe.ui.form.on("Bank Statement Import", {
 	},
 
 	download_template() {
-		let method = "/api/method/frappe.core.doctype.data_import.data_import.download_template";
+		let method =
+			"/api/method/frappe.core.doctype.data_import.data_import.download_template";
 
 		open_url_post(method, {
 			doctype: "Bank Transaction",
@@ -313,7 +344,10 @@ frappe.ui.form.on("Bank Statement Import", {
 	show_import_preview(frm, preview_data) {
 		let import_log = preview_data.import_log;
 
-		if (frm.import_preview && frm.import_preview.doctype === frm.doc.reference_doctype) {
+		if (
+			frm.import_preview &&
+			frm.import_preview.doctype === frm.doc.reference_doctype
+		) {
 			frm.import_preview.preview_data = preview_data;
 			frm.import_preview.import_log = import_log;
 			frm.import_preview.refresh();
@@ -329,10 +363,19 @@ frappe.ui.form.on("Bank Statement Import", {
 				frm,
 				events: {
 					remap_column(changed_map) {
-						let template_options = JSON.parse(frm.doc.template_options || "{}");
-						template_options.column_to_field_map = template_options.column_to_field_map || {};
-						Object.assign(template_options.column_to_field_map, changed_map);
-						frm.set_value("template_options", JSON.stringify(template_options));
+						let template_options = JSON.parse(
+							frm.doc.template_options || "{}",
+						);
+						template_options.column_to_field_map =
+							template_options.column_to_field_map || {};
+						Object.assign(
+							template_options.column_to_field_map,
+							changed_map,
+						);
+						frm.set_value(
+							"template_options",
+							JSON.stringify(template_options),
+						);
 						frm.save().then(() => frm.trigger("import_file"));
 					},
 				},
@@ -346,7 +389,7 @@ frappe.ui.form.on("Bank Statement Import", {
 			{
 				data_import_name: frm.doc.name,
 			},
-			true
+			true,
 		);
 	},
 
@@ -355,7 +398,7 @@ frappe.ui.form.on("Bank Statement Import", {
 			"/api/method/erpnext.accounts.doctype.bank_statement_import.bank_statement_import.download_import_log",
 			{
 				data_import_name: frm.doc.name,
-			}
+			},
 		);
 	},
 
@@ -375,7 +418,8 @@ frappe.ui.form.on("Bank Statement Import", {
 		let other_warnings = [];
 		for (let warning of warnings) {
 			if (warning.row) {
-				warnings_by_row[warning.row] = warnings_by_row[warning.row] || [];
+				warnings_by_row[warning.row] =
+					warnings_by_row[warning.row] || [];
 				warnings_by_row[warning.row].push(warning);
 			} else {
 				other_warnings.push(warning);
@@ -390,7 +434,9 @@ frappe.ui.form.on("Bank Statement Import", {
 						if (w.field) {
 							let label =
 								w.field.label +
-								(w.field.parent !== frm.doc.reference_doctype ? ` (${w.field.parent})` : "");
+								(w.field.parent !== frm.doc.reference_doctype
+									? ` (${w.field.parent})`
+									: "");
 							return `<li>${label}: ${w.message}</li>`;
 						}
 						return `<li>${w.message}</li>`;
@@ -409,9 +455,10 @@ frappe.ui.form.on("Bank Statement Import", {
 			.map((warning) => {
 				let header = "";
 				if (warning.col) {
-					let column_number = `<span class="text-uppercase">${__("Column {0}", [
-						warning.col,
-					])}</span>`;
+					let column_number = `<span class="text-uppercase">${__(
+						"Column {0}",
+						[warning.col],
+					)}</span>`;
 					let column_header = columns[warning.col].header_title;
 					header = `${column_number} (${column_header})`;
 				}
@@ -456,7 +503,7 @@ frappe.ui.form.on("Bank Statement Import", {
 									`<span class="underline">${frappe.utils.get_form_link(
 										frm.doc.reference_doctype,
 										log.docname,
-										true
+										true,
 									)}<span>`,
 								]);
 							} else {
@@ -464,15 +511,19 @@ frappe.ui.form.on("Bank Statement Import", {
 									`<span class="underline">${frappe.utils.get_form_link(
 										frm.doc.reference_doctype,
 										log.docname,
-										true
+										true,
 									)}<span>`,
 								]);
 							}
 						} else {
 							let messages = JSON.parse(log.messages || "[]")
 								.map((m) => {
-									let title = m.title ? `<strong>${m.title}</strong>` : "";
-									let message = m.message ? `<div>${m.message}</div>` : "";
+									let title = m.title
+										? `<strong>${m.title}</strong>`
+										: "";
+									let message = m.message
+										? `<div>${m.message}</div>`
+										: "";
 									return title + message;
 								})
 								.join("");
@@ -547,7 +598,9 @@ frappe.ui.form.on("Bank Statement Import", {
 					frm.trigger("render_import_log");
 				} else {
 					frm.toggle_display("import_log_section", false);
-					frm.add_custom_button(__("Export Import Log"), () => frm.trigger("export_import_log"));
+					frm.add_custom_button(__("Export Import Log"), () =>
+						frm.trigger("export_import_log"),
+					);
 				}
 			},
 		});

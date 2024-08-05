@@ -105,7 +105,11 @@ frappe.query_reports["Production Planning Report"] = {
 			value = "";
 		}
 
-		if (column.fieldname == "raw_material_name" && data && data.required_qty > data.allotted_qty) {
+		if (
+			column.fieldname == "raw_material_name" &&
+			data &&
+			data.required_qty > data.allotted_qty
+		) {
 			value = `<div style="color:red">${value}</div>`;
 		}
 

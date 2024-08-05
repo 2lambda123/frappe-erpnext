@@ -50,7 +50,9 @@ frappe.ready(function () {
 			},
 			success: function (data) {
 				if (typeof data.message == "undefined") {
-					$(".project-" + item).html("No " + item_status + " " + item);
+					$(".project-" + item).html(
+						"No " + item_status + " " + item,
+					);
 					$(".more-" + item).toggle(false);
 				}
 				$(".project-" + item).html(data.message);
@@ -68,9 +70,9 @@ frappe.ready(function () {
 
 	var more_items = function (item, item_status) {
 		if (item_status) {
-			item_status = $(".project-" + item + "-section .btn-group .bold").hasClass(
-				"btn-completed-" + item
-			)
+			item_status = $(
+				".project-" + item + "-section .btn-group .bold",
+			).hasClass("btn-completed-" + item)
 				? "completed"
 				: "open";
 		}

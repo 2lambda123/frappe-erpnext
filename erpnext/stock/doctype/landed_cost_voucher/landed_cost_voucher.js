@@ -4,14 +4,14 @@
 frappe.provide("erpnext.stock");
 
 erpnext.landed_cost_taxes_and_charges.setup_triggers("Landed Cost Voucher");
-erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.StockController {
+erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends (
+	erpnext.stock.StockController
+) {
 	setup() {
 		var me = this;
-		this.frm.fields_dict.purchase_receipts.grid.get_field("receipt_document").get_query = function (
-			doc,
-			cdt,
-			cdn
-		) {
+		this.frm.fields_dict.purchase_receipts.grid.get_field(
+			"receipt_document",
+		).get_query = function (doc, cdt, cdn) {
 			var d = locals[cdt][cdn];
 
 			var filters = [
@@ -23,7 +23,8 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 				filters.push(["Purchase Invoice", "update_stock", "=", "1"]);
 			}
 
-			if (!me.frm.doc.company) frappe.msgprint(__("Please enter company first"));
+			if (!me.frm.doc.company)
+				frappe.msgprint(__("Please enter company first"));
 			return {
 				filters: filters,
 			};
@@ -31,7 +32,11 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 
 		this.frm.add_fetch("receipt_document", "supplier", "supplier");
 		this.frm.add_fetch("receipt_document", "posting_date", "posting_date");
-		this.frm.add_fetch("receipt_document", "base_grand_total", "grand_total");
+		this.frm.add_fetch(
+			"receipt_document",
+			"base_grand_total",
+			"grand_total",
+		);
 	}
 
 	refresh() {
@@ -65,8 +70,14 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 		set_field_options("landed_cost_help", help_content);
 
 		if (this.frm.doc.company) {
-			let company_currency = frappe.get_doc(":Company", this.frm.doc.company).default_currency;
-			this.frm.set_currency_labels(["total_taxes_and_charges"], company_currency);
+			let company_currency = frappe.get_doc(
+				":Company",
+				this.frm.doc.company,
+			).default_currency;
+			this.frm.set_currency_labels(
+				["total_taxes_and_charges"],
+				company_currency,
+			);
 		}
 	}
 
@@ -103,7 +114,8 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 
 		if (this.frm.doc.taxes.length) {
 			var total_item_cost = 0.0;
-			var based_on = this.frm.doc.distribute_charges_based_on.toLowerCase();
+			var based_on =
+				this.frm.doc.distribute_charges_based_on.toLowerCase();
 
 			if (based_on != "distribute manually") {
 				$.each(this.frm.doc.items || [], function (i, d) {
@@ -113,17 +125,20 @@ erpnext.stock.LandedCostVoucher = class LandedCostVoucher extends erpnext.stock.
 				var total_charges = 0.0;
 				$.each(this.frm.doc.items || [], function (i, item) {
 					item.applicable_charges =
-						(flt(item[based_on]) * flt(me.frm.doc.total_taxes_and_charges)) /
+						(flt(item[based_on]) *
+							flt(me.frm.doc.total_taxes_and_charges)) /
 						flt(total_item_cost);
 					item.applicable_charges = flt(
 						item.applicable_charges,
-						precision("applicable_charges", item)
+						precision("applicable_charges", item),
 					);
 					total_charges += item.applicable_charges;
 				});
 
 				if (total_charges != this.frm.doc.total_taxes_and_charges) {
-					var diff = this.frm.doc.total_taxes_and_charges - flt(total_charges);
+					var diff =
+						this.frm.doc.total_taxes_and_charges -
+						flt(total_charges);
 					this.frm.doc.items.slice(-1)[0].applicable_charges += diff;
 				}
 				refresh_field("items");

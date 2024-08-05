@@ -16,7 +16,10 @@ frappe.query_reports["UAE VAT 201"] = {
 			label: __("From Date"),
 			fieldtype: "Date",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -3),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-3,
+			),
 		},
 		{
 			fieldname: "to_date",

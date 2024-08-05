@@ -75,10 +75,15 @@ frappe.ui.form.on("Asset Movement", {
 		}
 		if (fieldnames_to_be_altered) {
 			Object.keys(fieldnames_to_be_altered).forEach((fieldname) => {
-				let property_to_be_altered = fieldnames_to_be_altered[fieldname];
+				let property_to_be_altered =
+					fieldnames_to_be_altered[fieldname];
 				Object.keys(property_to_be_altered).forEach((property) => {
 					let value = property_to_be_altered[property];
-					frm.fields_dict["assets"].grid.update_docfield_property(fieldname, property, value);
+					frm.fields_dict["assets"].grid.update_docfield_property(
+						fieldname,
+						property,
+						value,
+					);
 				});
 			});
 			frm.refresh_field("assets");
@@ -95,9 +100,19 @@ frappe.ui.form.on("Asset Movement Item", {
 				.get_doc("Asset", asset_name)
 				.then((asset_doc) => {
 					if (asset_doc.location)
-						frappe.model.set_value(cdt, cdn, "source_location", asset_doc.location);
+						frappe.model.set_value(
+							cdt,
+							cdn,
+							"source_location",
+							asset_doc.location,
+						);
 					if (asset_doc.custodian)
-						frappe.model.set_value(cdt, cdn, "from_employee", asset_doc.custodian);
+						frappe.model.set_value(
+							cdt,
+							cdn,
+							"from_employee",
+							asset_doc.custodian,
+						);
 				})
 				.catch((err) => {
 					console.log(err); // eslint-disable-line

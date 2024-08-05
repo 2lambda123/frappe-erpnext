@@ -27,13 +27,19 @@ frappe.query_reports["Timesheet Billing Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.month_start(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.month_start(),
+				-1,
+			),
 		},
 		{
 			fieldname: "to_date",
 			label: __("To Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_days(frappe.datetime.month_start(), -1),
+			default: frappe.datetime.add_days(
+				frappe.datetime.month_start(),
+				-1,
+			),
 		},
 		{
 			// NOTE: `update_group_by_options` expects this filter to be the fifth in the list
@@ -56,7 +62,10 @@ frappe.query_reports["Timesheet Billing Summary"] = {
 };
 
 function unset_group_by(report, fieldname) {
-	if (report.get_filter_value(fieldname) && report.get_filter_value("group_by") == fieldname) {
+	if (
+		report.get_filter_value(fieldname) &&
+		report.get_filter_value("group_by") == fieldname
+	) {
 		report.set_filter_value("group_by", "");
 	}
 }

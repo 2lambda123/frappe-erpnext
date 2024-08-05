@@ -19,7 +19,8 @@ frappe.treeview_settings["Department"] = {
 			action: function () {
 				frappe.new_doc("Department", true);
 			},
-			condition: 'frappe.boot.user.can_create.indexOf("Department") !== -1',
+			condition:
+				'frappe.boot.user.can_create.indexOf("Department") !== -1',
 		},
 	],
 	onload: function (treeview) {

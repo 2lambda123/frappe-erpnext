@@ -44,7 +44,7 @@ function build_1099_print(query_report) {
 	let w = window.open(
 		"/api/method/erpnext.regional.report.irs_1099.irs_1099.irs_1099_print?" +
 			"&filters=" +
-			encodeURIComponent(filters)
+			encodeURIComponent(filters),
 	);
 	// w.print();
 }

@@ -27,24 +27,37 @@ frappe.listview_settings["Purchase Order"] = {
 					"per_received,<,100|per_billed,<,100|status,!=,Closed",
 				];
 			} else {
-				return [__("To Receive"), "orange", "per_received,<,100|per_billed,=,100|status,!=,Closed"];
+				return [
+					__("To Receive"),
+					"orange",
+					"per_received,<,100|per_billed,=,100|status,!=,Closed",
+				];
 			}
 		} else if (
 			flt(doc.per_received, 2) >= 100 &&
 			flt(doc.per_billed, 2) < 100 &&
 			doc.status !== "Closed"
 		) {
-			return [__("To Bill"), "orange", "per_received,=,100|per_billed,<,100|status,!=,Closed"];
+			return [
+				__("To Bill"),
+				"orange",
+				"per_received,=,100|per_billed,<,100|status,!=,Closed",
+			];
 		} else if (
 			flt(doc.per_received, 2) >= 100 &&
 			flt(doc.per_billed, 2) == 100 &&
 			doc.status !== "Closed"
 		) {
-			return [__("Completed"), "green", "per_received,=,100|per_billed,=,100|status,!=,Closed"];
+			return [
+				__("Completed"),
+				"green",
+				"per_received,=,100|per_billed,=,100|status,!=,Closed",
+			];
 		}
 	},
 	onload: function (listview) {
-		var method = "erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders";
+		var method =
+			"erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders";
 
 		listview.page.add_menu_item(__("Close"), function () {
 			listview.call_for_selected_items(method, { status: "Closed" });
@@ -55,15 +68,27 @@ frappe.listview_settings["Purchase Order"] = {
 		});
 
 		listview.page.add_action_item(__("Purchase Invoice"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Purchase Invoice");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Purchase Order",
+				"Purchase Invoice",
+			);
 		});
 
 		listview.page.add_action_item(__("Purchase Receipt"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Purchase Receipt");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Purchase Order",
+				"Purchase Receipt",
+			);
 		});
 
 		listview.page.add_action_item(__("Advance Payment"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Purchase Order", "Payment Entry");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Purchase Order",
+				"Payment Entry",
+			);
 		});
 	},
 };

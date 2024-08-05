@@ -26,7 +26,10 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 					get_query: () => {
 						return {
 							filters: {
-								name: ["not in", [this.form.get_value("name2") || ""]],
+								name: [
+									"not in",
+									[this.form.get_value("name2") || ""],
+								],
 							},
 						};
 					},
@@ -43,7 +46,10 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 					get_query: () => {
 						return {
 							filters: {
-								name: ["not in", [this.form.get_value("name1") || ""]],
+								name: [
+									"not in",
+									[this.form.get_value("name1") || ""],
+								],
 							},
 						};
 					},
@@ -118,9 +124,16 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 			`;
 		};
 
-		let value_changes = change_html(__("Values Changed"), doctype, diff.changed);
+		let value_changes = change_html(
+			__("Values Changed"),
+			doctype,
+			diff.changed,
+		);
 
-		let row_changes_by_fieldname = group_items(diff.row_changed, (change) => change[0]);
+		let row_changes_by_fieldname = group_items(
+			diff.row_changed,
+			(change) => change[0],
+		);
 
 		let table_changes = Object.keys(row_changes_by_fieldname)
 			.map((fieldname) => {
@@ -132,13 +145,18 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 						let [fieldname, , item_code, changes] = change;
 						let df = frappe.meta.get_docfield(doctype, fieldname);
 						let child_doctype = df.options;
-						let values_changed = this.get_changed_values(child_doctype, changes);
+						let values_changed = this.get_changed_values(
+							child_doctype,
+							changes,
+						);
 
 						return values_changed
 							.map((change, i) => {
 								let [fieldname, value1, value2] = change;
 								let th =
-									i === 0 ? `<th rowspan="${values_changed.length}">${item_code}</th>` : "";
+									i === 0
+										? `<th rowspan="${values_changed.length}">${item_code}</th>`
+										: "";
 								return `
 						<tr>
 							${th}
@@ -172,17 +190,23 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 				.map((fieldname) => {
 					let rows = grouped_items[fieldname];
 					let df = frappe.meta.get_docfield(doctype, fieldname);
-					let fields = frappe.meta.get_docfields(df.options).filter((df) => df.in_list_view);
+					let fields = frappe.meta
+						.get_docfields(df.options)
+						.filter((df) => df.in_list_view);
 
 					let html = rows
 						.map((row) => {
 							let [, doc] = row;
-							let cells = fields.map((df) => `<td>${doc[df.fieldname]}</td>`).join("");
+							let cells = fields
+								.map((df) => `<td>${doc[df.fieldname]}</td>`)
+								.join("");
 							return `<tr>${cells}</tr>`;
 						})
 						.join("");
 
-					let header = fields.map((df) => `<th>${df.label}</th>`).join("");
+					let header = fields
+						.map((df) => `<th>${df.label}</th>`)
+						.join("");
 					return `
 					<h4 class="margin-top">${$.format(title, [df.label])}</h4>
 					<table class="table table-bordered">
@@ -195,10 +219,19 @@ erpnext.BOMComparisonTool = class BOMComparisonTool {
 		};
 
 		let added_by_fieldname = group_items(diff.added, (change) => change[0]);
-		let removed_by_fieldname = group_items(diff.removed, (change) => change[0]);
+		let removed_by_fieldname = group_items(
+			diff.removed,
+			(change) => change[0],
+		);
 
-		let added_html = get_added_removed_html(__("Rows Added in {0}"), added_by_fieldname);
-		let removed_html = get_added_removed_html(__("Rows Removed in {0}"), removed_by_fieldname);
+		let added_html = get_added_removed_html(
+			__("Rows Added in {0}"),
+			added_by_fieldname,
+		);
+		let removed_html = get_added_removed_html(
+			__("Rows Removed in {0}"),
+			removed_by_fieldname,
+		);
 
 		let html = `
 			${value_changes}

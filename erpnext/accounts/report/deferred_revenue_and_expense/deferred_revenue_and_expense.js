@@ -19,19 +19,23 @@ function get_filters() {
 			default: ["Fiscal Year"],
 			reqd: 1,
 			on_change: function () {
-				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
+				let filter_based_on =
+					frappe.query_report.get_filter_value("filter_based_on");
 				frappe.query_report.toggle_filter_display(
 					"from_fiscal_year",
-					filter_based_on === "Date Range"
+					filter_based_on === "Date Range",
 				);
-				frappe.query_report.toggle_filter_display("to_fiscal_year", filter_based_on === "Date Range");
+				frappe.query_report.toggle_filter_display(
+					"to_fiscal_year",
+					filter_based_on === "Date Range",
+				);
 				frappe.query_report.toggle_filter_display(
 					"period_start_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 				frappe.query_report.toggle_filter_display(
 					"period_end_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 
 				frappe.query_report.refresh();
@@ -108,7 +112,9 @@ frappe.query_reports["Deferred Revenue and Expense"] = {
 		return default_formatter(value, row, column, data);
 	},
 	onload: function (report) {
-		let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today());
+		let fiscal_year = erpnext.utils.get_fiscal_year(
+			frappe.datetime.get_today(),
+		);
 
 		frappe.model.with_doc("Fiscal Year", fiscal_year, function (r) {
 			var fy = frappe.model.get_doc("Fiscal Year", fiscal_year);

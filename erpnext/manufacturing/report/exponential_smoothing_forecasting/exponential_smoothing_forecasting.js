@@ -22,14 +22,22 @@ frappe.query_reports["Exponential Smoothing Forecasting"] = {
 			fieldname: "to_date",
 			label: __("To Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), 12),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				12,
+			),
 			reqd: 1,
 		},
 		{
 			fieldname: "based_on_document",
 			label: __("Based On Document"),
 			fieldtype: "Select",
-			options: ["Sales Order", "Sales Invoice", "Delivery Note", "Quotation"],
+			options: [
+				"Sales Order",
+				"Sales Invoice",
+				"Delivery Note",
+				"Quotation",
+			],
 			default: "Sales Order",
 			reqd: 1,
 		},
@@ -95,7 +103,10 @@ frappe.query_reports["Exponential Smoothing Forecasting"] = {
 	],
 	formatter: function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
-		if (column.fieldname === "item_code" && value.includes("Total Quantity")) {
+		if (
+			column.fieldname === "item_code" &&
+			value.includes("Total Quantity")
+		) {
 			value = "<strong>" + value + "</strong>";
 		}
 		return value;

@@ -17,7 +17,10 @@ frappe.query_reports["Available Batch Report"] = {
 			fieldtype: "Date",
 			width: "80",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "item_code",
@@ -41,7 +44,8 @@ frappe.query_reports["Available Batch Report"] = {
 			width: "80",
 			options: "Warehouse",
 			get_query: () => {
-				let warehouse_type = frappe.query_report.get_filter_value("warehouse_type");
+				let warehouse_type =
+					frappe.query_report.get_filter_value("warehouse_type");
 				let company = frappe.query_report.get_filter_value("company");
 
 				return {

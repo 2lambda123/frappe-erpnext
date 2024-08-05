@@ -14,9 +14,12 @@ frappe.ui.form.on("Quality Review", {
 				let objectives = data.message.objectives;
 				for (var i in objectives) {
 					frm.add_child("reviews");
-					frm.fields_dict.reviews.get_value()[i].objective = objectives[i].objective;
-					frm.fields_dict.reviews.get_value()[i].target = objectives[i].target;
-					frm.fields_dict.reviews.get_value()[i].uom = objectives[i].uom;
+					frm.fields_dict.reviews.get_value()[i].objective =
+						objectives[i].objective;
+					frm.fields_dict.reviews.get_value()[i].target =
+						objectives[i].target;
+					frm.fields_dict.reviews.get_value()[i].uom =
+						objectives[i].uom;
 				}
 				frm.refresh();
 			},

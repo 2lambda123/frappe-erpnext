@@ -21,7 +21,7 @@ erpnext.PointOfSale.PastOrderList = class {
 					<div class="status-field"></div>
 				</div>
 				<div class="invoices-container"></div>
-			</section>`
+			</section>`,
 		);
 
 		this.$component = this.wrapper.find(".past-order-list");
@@ -96,9 +96,9 @@ erpnext.PointOfSale.PastOrderList = class {
 	}
 
 	get_invoice_html(invoice) {
-		const posting_datetime = moment(invoice.posting_date + " " + invoice.posting_time).format(
-			"Do MMMM, h:mma"
-		);
+		const posting_datetime = moment(
+			invoice.posting_date + " " + invoice.posting_time,
+		).format("Do MMMM, h:mma");
 		return `<div class="invoice-wrapper" data-invoice-name="${escape(invoice.name)}">
 				<div class="invoice-name-date">
 					<div class="invoice-name">${invoice.name}</div>

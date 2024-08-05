@@ -46,7 +46,7 @@ frappe.ui.form.on("Task", {
 				if (r.message.length > 0) {
 					let message = __(
 						"Cannot convert Task to non-group because the following child Tasks exist: {0}.",
-						[r.message.join(", ")]
+						[r.message.join(", ")],
 					);
 					frappe.msgprint(message);
 					frm.reload_doc();
@@ -56,6 +56,7 @@ frappe.ui.form.on("Task", {
 	},
 
 	validate: function (frm) {
-		frm.doc.project && frappe.model.remove_from_locals("Project", frm.doc.project);
+		frm.doc.project &&
+			frappe.model.remove_from_locals("Project", frm.doc.project);
 	},
 });

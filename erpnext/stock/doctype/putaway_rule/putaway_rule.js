@@ -23,8 +23,13 @@ frappe.ui.form.on("Putaway Rule", {
 				},
 				callback: function (r) {
 					if (!r.exc) {
-						let stock_capacity = flt(frm.doc.capacity) * flt(r.message.conversion_factor);
-						frm.set_value("conversion_factor", r.message.conversion_factor);
+						let stock_capacity =
+							flt(frm.doc.capacity) *
+							flt(r.message.conversion_factor);
+						frm.set_value(
+							"conversion_factor",
+							r.message.conversion_factor,
+						);
 						frm.set_value("stock_capacity", stock_capacity);
 					}
 				},
@@ -33,7 +38,8 @@ frappe.ui.form.on("Putaway Rule", {
 	},
 
 	capacity: function (frm) {
-		let stock_capacity = flt(frm.doc.capacity) * flt(frm.doc.conversion_factor);
+		let stock_capacity =
+			flt(frm.doc.capacity) * flt(frm.doc.conversion_factor);
 		frm.set_value("stock_capacity", stock_capacity);
 	},
 

@@ -13,7 +13,9 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 			this.sort_order = "asc";
 		}
 
-		this.content = $(frappe.render_template("item_dashboard")).appendTo(this.parent);
+		this.content = $(frappe.render_template("item_dashboard")).appendTo(
+			this.parent,
+		);
 		this.result = this.content.find(".result");
 
 		this.content.on("click", ".btn-move", function () {
@@ -38,7 +40,7 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 				"name",
 				(r) => {
 					frappe.set_route("Form", "Putaway Rule", r.name);
-				}
+				},
 			);
 		});
 
@@ -46,21 +48,38 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 			let item = unescape(element.attr("data-item"));
 			let warehouse = unescape(element.attr("data-warehouse"));
 			let actual_qty = unescape(element.attr("data-actual_qty"));
-			let disable_quick_entry = Number(unescape(element.attr("data-disable_quick_entry")));
-			let entry_type = action === "Move" ? "Material Transfer" : "Material Receipt";
+			let disable_quick_entry = Number(
+				unescape(element.attr("data-disable_quick_entry")),
+			);
+			let entry_type =
+				action === "Move" ? "Material Transfer" : "Material Receipt";
 
 			if (disable_quick_entry) {
 				open_stock_entry(item, warehouse, entry_type);
 			} else {
 				if (action === "Add") {
 					let rate = unescape($(this).attr("data-rate"));
-					erpnext.stock.move_item(item, null, warehouse, actual_qty, rate, function () {
-						me.refresh();
-					});
+					erpnext.stock.move_item(
+						item,
+						null,
+						warehouse,
+						actual_qty,
+						rate,
+						function () {
+							me.refresh();
+						},
+					);
 				} else {
-					erpnext.stock.move_item(item, warehouse, null, actual_qty, null, function () {
-						me.refresh();
-					});
+					erpnext.stock.move_item(
+						item,
+						warehouse,
+						null,
+						actual_qty,
+						null,
+						function () {
+							me.refresh();
+						},
+					);
 				}
 			}
 		}
@@ -145,7 +164,9 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 		// If not any stock in any warehouses provide a message to end user
 		if (context.data.length > 0) {
 			this.content.find(".result").css("text-align", "unset");
-			$(frappe.render_template(this.template, context)).appendTo(this.result);
+			$(frappe.render_template(this.template, context)).appendTo(
+				this.result,
+			);
 		} else {
 			var message = __("No Stock Available Currently");
 			this.content.find(".result").css("text-align", "center");
@@ -167,12 +188,19 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 				d.reserved_qty_for_sub_contract;
 			d.pending_qty = 0;
 			d.total_reserved =
-				d.reserved_qty + d.reserved_qty_for_production + d.reserved_qty_for_sub_contract;
+				d.reserved_qty +
+				d.reserved_qty_for_production +
+				d.reserved_qty_for_sub_contract;
 			if (d.actual_or_pending > d.actual_qty) {
 				d.pending_qty = d.actual_or_pending - d.actual_qty;
 			}
 
-			max_count = Math.max(d.actual_or_pending, d.actual_qty, d.total_reserved, max_count);
+			max_count = Math.max(
+				d.actual_or_pending,
+				d.actual_qty,
+				d.total_reserved,
+				max_count,
+			);
 		});
 
 		let can_write = 0;
@@ -207,7 +235,14 @@ erpnext.stock.ItemDashboard = class ItemDashboard {
 	}
 };
 
-erpnext.stock.move_item = function (item, source, target, actual_qty, rate, callback) {
+erpnext.stock.move_item = function (
+	item,
+	source,
+	target,
+	actual_qty,
+	rate,
+	callback,
+) {
 	var dialog = new frappe.ui.Dialog({
 		title: target ? __("Add Item") : __("Move Item"),
 		fields: [
@@ -277,13 +312,24 @@ erpnext.stock.move_item = function (item, source, target, actual_qty, rate, call
 	}
 
 	dialog.set_primary_action(__("Create Stock Entry"), function () {
-		if (source && (dialog.get_value("qty") == 0 || dialog.get_value("qty") > actual_qty)) {
-			frappe.msgprint(__("Quantity must be greater than zero, and less or equal to {0}", [actual_qty]));
+		if (
+			source &&
+			(dialog.get_value("qty") == 0 ||
+				dialog.get_value("qty") > actual_qty)
+		) {
+			frappe.msgprint(
+				__(
+					"Quantity must be greater than zero, and less or equal to {0}",
+					[actual_qty],
+				),
+			);
 			return;
 		}
 
 		if (dialog.get_value("source") === dialog.get_value("target")) {
-			frappe.msgprint(__("Source and target warehouse must be different"));
+			frappe.msgprint(
+				__("Source and target warehouse must be different"),
+			);
 			return;
 		}
 
@@ -291,7 +337,9 @@ erpnext.stock.move_item = function (item, source, target, actual_qty, rate, call
 			let doc = frappe.model.get_new_doc("Stock Entry");
 			doc.from_warehouse = dialog.get_value("source");
 			doc.to_warehouse = dialog.get_value("target");
-			doc.stock_entry_type = doc.from_warehouse ? "Material Transfer" : "Material Receipt";
+			doc.stock_entry_type = doc.from_warehouse
+				? "Material Transfer"
+				: "Material Receipt";
 			let row = frappe.model.add_child(doc, "items");
 			row.item_code = dialog.get_value("item_code");
 			row.s_warehouse = dialog.get_value("source");

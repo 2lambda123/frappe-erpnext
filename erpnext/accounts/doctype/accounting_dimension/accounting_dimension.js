@@ -10,7 +10,7 @@ frappe.ui.form.on("Accounting Dimension", {
 				"Project",
 				"Cost Center",
 				"Accounting Dimension Detail",
-				"Company"
+				"Company",
 			);
 
 			return {
@@ -20,21 +20,28 @@ frappe.ui.form.on("Accounting Dimension", {
 			};
 		});
 
-		frm.set_query("offsetting_account", "dimension_defaults", function (doc, cdt, cdn) {
-			let d = locals[cdt][cdn];
-			return {
-				filters: {
-					company: d.company,
-					root_type: ["in", ["Asset", "Liability"]],
-					is_group: 0,
-				},
-			};
-		});
+		frm.set_query(
+			"offsetting_account",
+			"dimension_defaults",
+			function (doc, cdt, cdn) {
+				let d = locals[cdt][cdn];
+				return {
+					filters: {
+						company: d.company,
+						root_type: ["in", ["Asset", "Liability"]],
+						is_group: 0,
+					},
+				};
+			},
+		);
 
 		if (!frm.is_new()) {
-			frm.add_custom_button(__("Show {0}", [frm.doc.document_type]), function () {
-				frappe.set_route("List", frm.doc.document_type);
-			});
+			frm.add_custom_button(
+				__("Show {0}", [frm.doc.document_type]),
+				function () {
+					frappe.set_route("List", frm.doc.document_type);
+				},
+			);
 
 			let button = frm.doc.disabled ? "Enable" : "Disable";
 
@@ -48,9 +55,14 @@ frappe.ui.form.on("Accounting Dimension", {
 					},
 					freeze: true,
 					callback: function (r) {
-						let message = frm.doc.disabled ? "Dimension Disabled" : "Dimension Enabled";
+						let message = frm.doc.disabled
+							? "Dimension Disabled"
+							: "Dimension Enabled";
 						frm.save();
-						frappe.show_alert({ message: __(message), indicator: "green" });
+						frappe.show_alert({
+							message: __(message),
+							indicator: "green",
+						});
 					},
 				});
 			});
@@ -73,10 +85,10 @@ frappe.ui.form.on("Accounting Dimension", {
 					frm.set_df_property(
 						"document_type",
 						"description",
-						"Document type is already set as dimension"
+						"Document type is already set as dimension",
 					);
 				}
-			}
+			},
 		);
 	},
 });

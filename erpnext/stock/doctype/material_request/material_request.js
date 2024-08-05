@@ -82,13 +82,24 @@ frappe.ui.form.on("Material Request", {
 
 	refresh: function (frm) {
 		frm.events.make_custom_buttons(frm);
-		frm.toggle_reqd("customer", frm.doc.material_request_type == "Customer Provided");
+		frm.toggle_reqd(
+			"customer",
+			frm.doc.material_request_type == "Customer Provided",
+		);
 	},
 
 	set_from_warehouse: function (frm) {
-		if (frm.doc.material_request_type == "Material Transfer" && frm.doc.set_from_warehouse) {
+		if (
+			frm.doc.material_request_type == "Material Transfer" &&
+			frm.doc.set_from_warehouse
+		) {
 			frm.doc.items.forEach((d) => {
-				frappe.model.set_value(d.doctype, d.name, "from_warehouse", frm.doc.set_from_warehouse);
+				frappe.model.set_value(
+					d.doctype,
+					d.name,
+					"from_warehouse",
+					frm.doc.set_from_warehouse,
+				);
 			});
 		}
 	},
@@ -98,7 +109,7 @@ frappe.ui.form.on("Material Request", {
 			frm.add_custom_button(
 				__("Bill of Materials"),
 				() => frm.events.get_items_from_bom(frm),
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		}
 
@@ -106,7 +117,9 @@ frappe.ui.form.on("Material Request", {
 			let precision = frappe.defaults.get_default("float_precision");
 
 			if (flt(frm.doc.per_received, precision) < 100) {
-				frm.add_custom_button(__("Stop"), () => frm.events.update_status(frm, "Stopped"));
+				frm.add_custom_button(__("Stop"), () =>
+					frm.events.update_status(frm, "Stopped"),
+				);
 			}
 
 			if (flt(frm.doc.per_ordered, precision) < 100) {
@@ -114,7 +127,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Pick List"),
 						() => frm.events.create_pick_list(frm),
-						__("Create")
+						__("Create"),
 					);
 				};
 
@@ -123,13 +136,13 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Material Transfer"),
 						() => frm.events.make_stock_entry(frm),
-						__("Create")
+						__("Create"),
 					);
 
 					frm.add_custom_button(
 						__("Material Transfer (In Transit)"),
 						() => frm.events.make_in_transit_stock_entry(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -137,7 +150,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Issue Material"),
 						() => frm.events.make_stock_entry(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -145,7 +158,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Material Receipt"),
 						() => frm.events.make_stock_entry(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -153,7 +166,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Purchase Order"),
 						() => frm.events.make_purchase_order(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -161,7 +174,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Request for Quotation"),
 						() => frm.events.make_request_for_quotation(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -169,7 +182,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Supplier Quotation"),
 						() => frm.events.make_supplier_quotation(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -177,7 +190,7 @@ frappe.ui.form.on("Material Request", {
 					frm.add_custom_button(
 						__("Work Order"),
 						() => frm.events.raise_work_orders(frm),
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -189,12 +202,14 @@ frappe.ui.form.on("Material Request", {
 			frm.add_custom_button(
 				__("Sales Order"),
 				() => frm.events.get_items_from_sales_order(frm),
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		}
 
 		if (frm.doc.docstatus == 1 && frm.doc.status == "Stopped") {
-			frm.add_custom_button(__("Re-open"), () => frm.events.update_status(frm, "Submitted"));
+			frm.add_custom_button(__("Re-open"), () =>
+				frm.events.update_status(frm, "Submitted"),
+			);
 		}
 	},
 
@@ -241,7 +256,8 @@ frappe.ui.form.on("Material Request", {
 					from_warehouse: item.from_warehouse,
 					warehouse: item.warehouse,
 					doctype: frm.doc.doctype,
-					buying_price_list: frappe.defaults.get_default("buying_price_list"),
+					buying_price_list:
+						frappe.defaults.get_default("buying_price_list"),
 					currency: frappe.defaults.get_default("Currency"),
 					name: frm.doc.name,
 					qty: item.qty || 1,
@@ -281,7 +297,12 @@ frappe.ui.form.on("Material Request", {
 					if (d.price_list_rate != r.message.price_list_rate) {
 						d.rate = 0.0;
 						d.price_list_rate = r.message.price_list_rate;
-						frappe.model.set_value(d.doctype, d.name, "rate", d.price_list_rate);
+						frappe.model.set_value(
+							d.doctype,
+							d.name,
+							"rate",
+							d.price_list_rate,
+						);
 					}
 
 					refresh_field("items");
@@ -311,7 +332,13 @@ frappe.ui.form.on("Material Request", {
 					options: "Warehouse",
 					reqd: 1,
 				},
-				{ fieldname: "qty", fieldtype: "Float", label: __("Quantity"), reqd: 1, default: 1 },
+				{
+					fieldname: "qty",
+					fieldtype: "Float",
+					label: __("Quantity"),
+					reqd: 1,
+					default: 1,
+				},
 				{
 					fieldname: "fetch_exploded",
 					fieldtype: "Check",
@@ -323,17 +350,24 @@ frappe.ui.form.on("Material Request", {
 			primary_action(values) {
 				if (!values) return;
 				values["company"] = frm.doc.company;
-				if (!frm.doc.company) frappe.throw(__("Company field is required"));
+				if (!frm.doc.company)
+					frappe.throw(__("Company field is required"));
 				frappe.call({
 					method: "erpnext.manufacturing.doctype.bom.bom.get_bom_items",
 					args: values,
 					callback: function (r) {
 						if (!r.message) {
-							frappe.throw(__("BOM does not contain any stock item"));
+							frappe.throw(
+								__("BOM does not contain any stock item"),
+							);
 						} else {
 							erpnext.utils.remove_empty_first_row(frm, "items");
 							$.each(r.message, function (i, item) {
-								var d = frappe.model.add_child(cur_frm.doc, "Material Request Item", "items");
+								var d = frappe.model.add_child(
+									cur_frm.doc,
+									"Material Request Item",
+									"items",
+								);
 								d.item_code = item.item_code;
 								d.item_name = item.item_name;
 								d.description = item.description;
@@ -363,7 +397,7 @@ frappe.ui.form.on("Material Request", {
 				fieldtype: "Link",
 				options: "Supplier",
 				description: __(
-					"Select a Supplier from the Default Suppliers of the items below. On selection, a Purchase Order will be made against items belonging to the selected Supplier only."
+					"Select a Supplier from the Default Suppliers of the items below. On selection, a Purchase Order will be made against items belonging to the selected Supplier only.",
 				),
 				get_query: () => {
 					return {
@@ -381,7 +415,7 @@ frappe.ui.form.on("Material Request", {
 				});
 			},
 			__("Enter Supplier"),
-			__("Create")
+			__("Create"),
 		);
 	},
 
@@ -437,13 +471,17 @@ frappe.ui.form.on("Material Request", {
 					callback: function (r) {
 						if (r.message) {
 							let doc = frappe.model.sync(r.message);
-							frappe.set_route("Form", doc[0].doctype, doc[0].name);
+							frappe.set_route(
+								"Form",
+								doc[0].doctype,
+								doc[0].name,
+							);
 						}
 					},
 				});
 			},
 			__("In Transit Transfer"),
-			__("Create Stock Entry")
+			__("Create Stock Entry"),
 		);
 	},
 
@@ -469,9 +507,15 @@ frappe.ui.form.on("Material Request", {
 		});
 	},
 	material_request_type: function (frm) {
-		frm.toggle_reqd("customer", frm.doc.material_request_type == "Customer Provided");
+		frm.toggle_reqd(
+			"customer",
+			frm.doc.material_request_type == "Customer Provided",
+		);
 
-		if (frm.doc.material_request_type !== "Material Transfer" && frm.doc.set_from_warehouse) {
+		if (
+			frm.doc.material_request_type !== "Material Transfer" &&
+			frm.doc.set_from_warehouse
+		) {
 			frm.set_value("set_from_warehouse", "");
 		}
 	},
@@ -481,7 +525,11 @@ frappe.ui.form.on("Material Request Item", {
 	qty: function (frm, doctype, name) {
 		const item = locals[doctype][name];
 		if (flt(item.qty) < flt(item.min_order_qty)) {
-			frappe.msgprint(__("Warning: Material Requested Qty is less than Minimum Order Qty"));
+			frappe.msgprint(
+				__(
+					"Warning: Material Requested Qty is less than Minimum Order Qty",
+				),
+			);
 		}
 		frm.events.get_item_data(frm, item, false);
 	},
@@ -515,7 +563,13 @@ frappe.ui.form.on("Material Request Item", {
 		var row = locals[cdt][cdn];
 		if (row.schedule_date) {
 			if (!frm.doc.schedule_date) {
-				erpnext.utils.copy_value_in_all_rows(frm.doc, cdt, cdn, "items", "schedule_date");
+				erpnext.utils.copy_value_in_all_rows(
+					frm.doc,
+					cdt,
+					cdn,
+					"items",
+					"schedule_date",
+				);
 			} else {
 				set_schedule_date(frm);
 			}
@@ -581,7 +635,9 @@ erpnext.buying.MaterialRequestController = class MaterialRequestController exten
 			row.schedule_date = doc.schedule_date;
 			refresh_field("schedule_date", cdn, "items");
 		} else {
-			this.frm.script_manager.copy_from_first_row("items", row, ["schedule_date"]);
+			this.frm.script_manager.copy_from_first_row("items", row, [
+				"schedule_date",
+			]);
 		}
 	}
 
@@ -602,7 +658,10 @@ erpnext.buying.MaterialRequestController = class MaterialRequestController exten
 };
 
 // for backward compatibility: combine new and previous states
-extend_cscript(cur_frm.cscript, new erpnext.buying.MaterialRequestController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.buying.MaterialRequestController({ frm: cur_frm }),
+);
 
 function set_schedule_date(frm) {
 	if (frm.doc.schedule_date) {
@@ -611,7 +670,7 @@ function set_schedule_date(frm) {
 			frm.doc.doctype,
 			frm.doc.name,
 			"items",
-			"schedule_date"
+			"schedule_date",
 		);
 	}
 }

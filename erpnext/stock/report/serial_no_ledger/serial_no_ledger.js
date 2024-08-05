@@ -40,8 +40,10 @@ frappe.query_reports["Serial No Ledger"] = {
 			fieldname: "serial_no",
 			options: "Serial No",
 			get_query: function () {
-				let item_code = frappe.query_report.get_filter_value("item_code");
-				let warehouse = frappe.query_report.get_filter_value("warehouse");
+				let item_code =
+					frappe.query_report.get_filter_value("item_code");
+				let warehouse =
+					frappe.query_report.get_filter_value("warehouse");
 
 				let query_filters = { item_code: item_code };
 				if (warehouse) {

@@ -4,7 +4,11 @@ frappe.listview_settings["Quality Review"] = {
 		if (doc.action == "No Action") {
 			return [__("No Action"), "green", "action,=,No Action"];
 		} else if (doc.action == "Action Initialised") {
-			return [__("Action Initialised"), "red", "action,=,Action Initialised"];
+			return [
+				__("Action Initialised"),
+				"red",
+				"action,=,Action Initialised",
+			];
 		}
 	},
 };

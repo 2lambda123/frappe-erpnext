@@ -4,7 +4,9 @@
 frappe.provide("erpnext");
 cur_frm.email_field = "email_id";
 
-erpnext.LeadController = class LeadController extends frappe.ui.form.Controller {
+erpnext.LeadController = class LeadController extends (
+	frappe.ui.form.Controller
+) {
 	setup() {
 		this.frm.make_methods = {
 			Customer: this.make_customer,
@@ -28,17 +30,33 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 		erpnext.toggle_naming_series();
 
 		if (!this.frm.is_new() && doc.__onload && !doc.__onload.is_customer) {
-			this.frm.add_custom_button(__("Customer"), this.make_customer.bind(this), __("Create"));
-			this.frm.add_custom_button(__("Opportunity"), this.make_opportunity.bind(this), __("Create"));
-			this.frm.add_custom_button(__("Quotation"), this.make_quotation.bind(this), __("Create"));
+			this.frm.add_custom_button(
+				__("Customer"),
+				this.make_customer.bind(this),
+				__("Create"),
+			);
+			this.frm.add_custom_button(
+				__("Opportunity"),
+				this.make_opportunity.bind(this),
+				__("Create"),
+			);
+			this.frm.add_custom_button(
+				__("Quotation"),
+				this.make_quotation.bind(this),
+				__("Create"),
+			);
 			if (!doc.__onload.linked_prospects.length) {
-				this.frm.add_custom_button(__("Prospect"), this.make_prospect.bind(this), __("Create"));
+				this.frm.add_custom_button(
+					__("Prospect"),
+					this.make_prospect.bind(this),
+					__("Create"),
+				);
 				this.frm.add_custom_button(
 					__("Add to Prospect"),
 					() => {
 						this.add_lead_to_prospect(this.frm);
 					},
-					__("Action")
+					__("Action"),
 				);
 			}
 		}
@@ -81,7 +99,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 				});
 			},
 			__("Add Lead to Prospect"),
-			__("Add")
+			__("Add"),
 		);
 	}
 
@@ -109,7 +127,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 				},
 				"name",
 				null,
-				"Prospect"
+				"Prospect",
 			)
 		).message?.name;
 
@@ -129,7 +147,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 					default: frm.doc.company_name,
 					reqd: 1,
 					depends_on: "create_prospect",
-				}
+				},
 			);
 		}
 
@@ -142,7 +160,7 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 					first_name: frm.doc.first_name || frm.doc.lead_name,
 					last_name: frm.doc.last_name,
 				},
-				"name"
+				"name",
 			)
 		).message?.name;
 
@@ -231,8 +249,12 @@ erpnext.LeadController = class LeadController extends frappe.ui.form.Controller 
 
 		const crm_activities = new erpnext.utils.CRMActivities({
 			frm: this.frm,
-			open_activities_wrapper: $(this.frm.fields_dict.open_activities_html.wrapper),
-			all_activities_wrapper: $(this.frm.fields_dict.all_activities_html.wrapper),
+			open_activities_wrapper: $(
+				this.frm.fields_dict.open_activities_html.wrapper,
+			),
+			all_activities_wrapper: $(
+				this.frm.fields_dict.all_activities_html.wrapper,
+			),
 			form_wrapper: $(this.frm.wrapper),
 		});
 		crm_activities.refresh();

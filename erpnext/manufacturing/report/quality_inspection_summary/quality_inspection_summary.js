@@ -7,7 +7,10 @@ frappe.query_reports["Quality Inspection Summary"] = {
 			label: __("From Date"),
 			fieldname: "from_date",
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -12),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-12,
+			),
 			reqd: 1,
 		},
 		{

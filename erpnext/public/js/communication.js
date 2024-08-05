@@ -1,13 +1,17 @@
 frappe.ui.form.on("Communication", {
 	refresh: (frm) => {
 		// setup custom Make button only if Communication is Email
-		if (frm.doc.communication_medium == "Email" && frm.doc.sent_or_received == "Received") {
+		if (
+			frm.doc.communication_medium == "Email" &&
+			frm.doc.sent_or_received == "Received"
+		) {
 			frm.events.setup_custom_buttons(frm);
 		}
 	},
 
 	setup_custom_buttons: (frm) => {
-		let confirm_msg = "Are you sure you want to create {0} from this email?";
+		let confirm_msg =
+			"Are you sure you want to create {0} from this email?";
 		if (frm.doc.reference_doctype !== "Issue") {
 			frm.add_custom_button(
 				__("Issue"),
@@ -16,7 +20,7 @@ frappe.ui.form.on("Communication", {
 						frm.trigger("make_issue_from_communication");
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 
@@ -28,7 +32,7 @@ frappe.ui.form.on("Communication", {
 						frm.trigger("make_lead_from_communication");
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 
 			frm.add_custom_button(
@@ -38,7 +42,7 @@ frappe.ui.form.on("Communication", {
 						frm.trigger("make_opportunity_from_communication");
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 	},
@@ -100,7 +104,11 @@ frappe.ui.form.on("Communication", {
 							frm.reload_doc();
 							frappe.show_alert({
 								message: __("Opportunity {0} created", [
-									'<a href="/app/opportunity/' + r.message + '">' + r.message + "</a>",
+									'<a href="/app/opportunity/' +
+										r.message +
+										'">' +
+										r.message +
+										"</a>",
 								]),
 								indicator: "green",
 							});
@@ -109,7 +117,7 @@ frappe.ui.form.on("Communication", {
 				});
 			},
 			"Create an Opportunity",
-			"Create"
+			"Create",
 		);
 	},
 });

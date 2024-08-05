@@ -9,7 +9,10 @@ frappe.ui.form.on("Website Theme", {
 			theme_scss.includes("frappe/public/scss/website") &&
 			!theme_scss.includes("erpnext/public/scss/website")
 		) {
-			frm.set_value("theme_scss", `${frm.doc.theme_scss}\n@import "erpnext/public/scss/website";`);
+			frm.set_value(
+				"theme_scss",
+				`${frm.doc.theme_scss}\n@import "erpnext/public/scss/website";`,
+			);
 		}
 	},
 });

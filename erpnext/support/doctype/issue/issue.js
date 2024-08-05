@@ -5,15 +5,22 @@ frappe.ui.form.on("Issue", {
 		frappe.db.get_value(
 			"Support Settings",
 			{ name: "Support Settings" },
-			["allow_resetting_service_level_agreement", "track_service_level_agreement"],
+			[
+				"allow_resetting_service_level_agreement",
+				"track_service_level_agreement",
+			],
 			(r) => {
 				if (r && r.track_service_level_agreement == "0") {
 					frm.set_df_property("service_level_section", "hidden", 1);
 				}
 				if (r && r.allow_resetting_service_level_agreement == "0") {
-					frm.set_df_property("reset_service_level_agreement", "hidden", 1);
+					frm.set_df_property(
+						"reset_service_level_agreement",
+						"hidden",
+						1,
+					);
 				}
-			}
+			},
 		);
 
 		// buttons
@@ -31,7 +38,7 @@ frappe.ui.form.on("Issue", {
 						frm: frm,
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		} else {
 			frm.add_custom_button(__("Reopen"), function () {
@@ -74,8 +81,10 @@ frappe.ui.form.on("Issue", {
 					() => {
 						reset_sla.enable_primary_action();
 						frm.refresh();
-						frappe.msgprint(__("Service Level Agreement was reset."));
-					}
+						frappe.msgprint(
+							__("Service Level Agreement was reset."),
+						);
+					},
 				);
 			},
 		});
@@ -91,7 +100,9 @@ frappe.ui.form.on("Issue", {
 				</a>
 			`);
 
-			let communication_box = frm.timeline.wrapper.find('.timeline-item[data-doctype="Communication"]');
+			let communication_box = frm.timeline.wrapper.find(
+				'.timeline-item[data-doctype="Communication"]',
+			);
 			communication_box.find(".actions").prepend(split_issue_btn);
 
 			if (!frm.timeline.wrapper.data("split-issue-event-attached")) {
@@ -105,7 +116,7 @@ frappe.ui.form.on("Issue", {
 								reqd: 1,
 								label: __("Subject"),
 								description: __(
-									"All communications including and above this shall be moved into the new Issue"
+									"All communications including and above this shall be moved into the new Issue",
 								),
 							},
 						],
@@ -121,11 +132,11 @@ frappe.ui.form.on("Issue", {
 								},
 								(r) => {
 									frappe.msgprint(
-										`New issue created: <a href="/app/issue/${r.message}">${r.message}</a>`
+										`New issue created: <a href="/app/issue/${r.message}">${r.message}</a>`,
 									);
 									frm.reload_doc();
 									dialog.hide();
-								}
+								},
 							);
 						},
 					});

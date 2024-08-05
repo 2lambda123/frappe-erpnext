@@ -18,7 +18,9 @@ erpnext.PointOfSale.ItemCart = class {
 	}
 
 	prepare_dom() {
-		this.wrapper.append(`<section class="customer-cart-container"></section>`);
+		this.wrapper.append(
+			`<section class="customer-cart-container"></section>`,
+		);
 
 		this.$component = this.wrapper.find(".customer-cart-container");
 	}
@@ -55,7 +57,7 @@ erpnext.PointOfSale.ItemCart = class {
 					<div class="cart-totals-section"></div>
 					<div class="numpad-section"></div>
 				</div>
-			</div>`
+			</div>`,
 		);
 		this.$cart_container = this.$component.find(".cart-container");
 
@@ -73,7 +75,9 @@ erpnext.PointOfSale.ItemCart = class {
 
 	make_no_items_placeholder() {
 		this.$cart_header.css("display", "none");
-		this.$cart_items_wrapper.html(`<div class="no-item-wrapper">${__("No items in cart")}</div>`);
+		this.$cart_items_wrapper.html(
+			`<div class="no-item-wrapper">${__("No items in cart")}</div>`,
+		);
 	}
 
 	get_discount_icon() {
@@ -106,7 +110,7 @@ erpnext.PointOfSale.ItemCart = class {
 				<div>0.00</div>
 			</div>
 			<div class="checkout-btn">${__("Checkout")}</div>
-			<div class="edit-cart-btn">${__("Edit Cart")}</div>`
+			<div class="edit-cart-btn">${__("Edit Cart")}</div>`,
 		);
 
 		this.$add_discount_elem = this.$component.find(".add-discount-wrapper");
@@ -133,7 +137,10 @@ erpnext.PointOfSale.ItemCart = class {
 				["", "", "", "col-span-2"],
 				["", "", "", "col-span-2 remove-btn"],
 			],
-			fieldnames_map: { Quantity: "qty", Discount: "discount_percentage" },
+			fieldnames_map: {
+				Quantity: "qty",
+				Discount: "discount_percentage",
+			},
 		});
 
 		this.$numpad_section.prepend(
@@ -141,11 +148,11 @@ erpnext.PointOfSale.ItemCart = class {
 			<span class="numpad-item-qty-total"></span>
 				<span class="numpad-net-total"></span>
 				<span class="numpad-grand-total"></span>
-			</div>`
+			</div>`,
 		);
 
 		this.$numpad_section.append(
-			`<div class="numpad-btn checkout-btn" data-button-value="checkout">${__("Checkout")}</div>`
+			`<div class="numpad-btn checkout-btn" data-button-value="checkout">${__("Checkout")}</div>`,
 		);
 	}
 
@@ -171,7 +178,9 @@ erpnext.PointOfSale.ItemCart = class {
 
 			me.toggle_item_highlight(this);
 
-			const payment_section_hidden = !me.$totals_section.find(".edit-cart-btn").is(":visible");
+			const payment_section_hidden = !me.$totals_section
+				.find(".edit-cart-btn")
+				.is(":visible");
 			if (!payment_section_hidden) {
 				// payment section is visible
 				// edit cart first and then open item details section
@@ -189,7 +198,8 @@ erpnext.PointOfSale.ItemCart = class {
 			await me.events.checkout();
 			me.toggle_checkout_btn(false);
 
-			me.allow_discount_change && me.$add_discount_elem.removeClass("d-none");
+			me.allow_discount_change &&
+				me.$add_discount_elem.removeClass("d-none");
 		});
 
 		this.$totals_section.on("click", ".edit-cart-btn", () => {
@@ -198,9 +208,11 @@ erpnext.PointOfSale.ItemCart = class {
 		});
 
 		this.$component.on("click", ".add-discount-wrapper", () => {
-			const can_edit_discount = this.$add_discount_elem.find(".edit-discount-btn").length;
+			const can_edit_discount =
+				this.$add_discount_elem.find(".edit-discount-btn").length;
 
-			if (!this.discount_field || can_edit_discount) this.show_discount_control();
+			if (!this.discount_field || can_edit_discount)
+				this.show_discount_control();
 		});
 
 		frappe.ui.form.on("POS Invoice", "paid_amount", (frm) => {
@@ -223,30 +235,46 @@ erpnext.PointOfSale.ItemCart = class {
 				const fieldname = this.number_pad.fieldnames[btn]
 					? this.number_pad.fieldnames[btn]
 					: typeof btn === "string"
-					? frappe.scrub(btn)
-					: btn;
+						? frappe.scrub(btn)
+						: btn;
 
-				let shortcut_label = shortcut_key.split("+").map(frappe.utils.to_title_case).join("+");
-				shortcut_label = frappe.utils.is_mac() ? shortcut_label.replace("Ctrl", "⌘") : shortcut_label;
+				let shortcut_label = shortcut_key
+					.split("+")
+					.map(frappe.utils.to_title_case)
+					.join("+");
+				shortcut_label = frappe.utils.is_mac()
+					? shortcut_label.replace("Ctrl", "⌘")
+					: shortcut_label;
 				this.$numpad_section
 					.find(`.numpad-btn[data-button-value="${fieldname}"]`)
 					.attr("title", shortcut_label);
 
 				frappe.ui.keys.on(`${shortcut_key}`, () => {
 					const cart_is_visible = this.$component.is(":visible");
-					if (cart_is_visible && this.item_is_selected && this.$numpad_section.is(":visible")) {
-						this.$numpad_section.find(`.numpad-btn[data-button-value="${fieldname}"]`).click();
+					if (
+						cart_is_visible &&
+						this.item_is_selected &&
+						this.$numpad_section.is(":visible")
+					) {
+						this.$numpad_section
+							.find(
+								`.numpad-btn[data-button-value="${fieldname}"]`,
+							)
+							.click();
 					}
 				});
 			}
 		}
 		const ctrl_label = frappe.utils.is_mac() ? "⌘" : "Ctrl";
-		this.$component.find(".checkout-btn").attr("title", `${ctrl_label}+Enter`);
+		this.$component
+			.find(".checkout-btn")
+			.attr("title", `${ctrl_label}+Enter`);
 		frappe.ui.keys.add_shortcut({
 			shortcut: "ctrl+enter",
 			action: () => this.$component.find(".checkout-btn").click(),
 			condition: () =>
-				this.$component.is(":visible") && !this.$totals_section.find(".edit-cart-btn").is(":visible"),
+				this.$component.is(":visible") &&
+				!this.$totals_section.find(".edit-cart-btn").is(":visible"),
 			description: __("Checkout Order / Submit Order / New Order"),
 			ignore_inputs: true,
 			page: cur_page.page.page,
@@ -254,12 +282,16 @@ erpnext.PointOfSale.ItemCart = class {
 		this.$component.find(".edit-cart-btn").attr("title", `${ctrl_label}+E`);
 		frappe.ui.keys.on("ctrl+e", () => {
 			const item_cart_visible = this.$component.is(":visible");
-			const checkout_btn_invisible = !this.$totals_section.find(".checkout-btn").is("visible");
+			const checkout_btn_invisible = !this.$totals_section
+				.find(".checkout-btn")
+				.is("visible");
 			if (item_cart_visible && checkout_btn_invisible) {
 				this.$component.find(".edit-cart-btn").click();
 			}
 		});
-		this.$component.find(".add-discount-wrapper").attr("title", `${ctrl_label}+D`);
+		this.$component
+			.find(".add-discount-wrapper")
+			.attr("title", `${ctrl_label}+D`);
 		frappe.ui.keys.add_shortcut({
 			shortcut: "ctrl+d",
 			action: () => this.$component.find(".add-discount-wrapper").click(),
@@ -270,7 +302,11 @@ erpnext.PointOfSale.ItemCart = class {
 		});
 		frappe.ui.keys.on("escape", () => {
 			const item_cart_visible = this.$component.is(":visible");
-			if (item_cart_visible && this.discount_field && this.discount_field.parent.is(":visible")) {
+			if (
+				item_cart_visible &&
+				this.discount_field &&
+				this.discount_field.parent.is(":visible")
+			) {
 				this.discount_field.set_value(0);
 			}
 		});
@@ -278,15 +314,21 @@ erpnext.PointOfSale.ItemCart = class {
 
 	toggle_item_highlight(item) {
 		const $cart_item = $(item);
-		const item_is_highlighted = $cart_item.attr("style") == "background-color:var(--gray-50);";
+		const item_is_highlighted =
+			$cart_item.attr("style") == "background-color:var(--gray-50);";
 
 		if (!item || item_is_highlighted) {
 			this.item_is_selected = false;
-			this.$cart_container.find(".cart-item-wrapper").css("background-color", "");
+			this.$cart_container
+				.find(".cart-item-wrapper")
+				.css("background-color", "");
 		} else {
 			$cart_item.css("background-color", "var(--control-bg)");
 			this.item_is_selected = true;
-			this.$cart_container.find(".cart-item-wrapper").not(item).css("background-color", "");
+			this.$cart_container
+				.find(".cart-item-wrapper")
+				.not(item)
+				.css("background-color", "");
 		}
 	}
 
@@ -317,16 +359,26 @@ erpnext.PointOfSale.ItemCart = class {
 					if (this.value) {
 						const frm = me.events.get_frm();
 						frappe.dom.freeze();
-						frappe.model.set_value(frm.doc.doctype, frm.doc.name, "customer", this.value);
-						frm.script_manager.trigger("customer", frm.doc.doctype, frm.doc.name).then(() => {
-							frappe.run_serially([
-								() => me.fetch_customer_details(this.value),
-								() => me.events.customer_details_updated(me.customer_info),
-								() => me.update_customer_section(),
-								() => me.update_totals_section(),
-								() => frappe.dom.unfreeze(),
-							]);
-						});
+						frappe.model.set_value(
+							frm.doc.doctype,
+							frm.doc.name,
+							"customer",
+							this.value,
+						);
+						frm.script_manager
+							.trigger("customer", frm.doc.doctype, frm.doc.name)
+							.then(() => {
+								frappe.run_serially([
+									() => me.fetch_customer_details(this.value),
+									() =>
+										me.events.customer_details_updated(
+											me.customer_info,
+										),
+									() => me.update_customer_section(),
+									() => me.update_totals_section(),
+									() => frappe.dom.unfreeze(),
+								]);
+							});
 					}
 				},
 			},
@@ -340,16 +392,28 @@ erpnext.PointOfSale.ItemCart = class {
 		if (customer) {
 			return new Promise((resolve) => {
 				frappe.db
-					.get_value("Customer", customer, ["email_id", "mobile_no", "image", "loyalty_program"])
+					.get_value("Customer", customer, [
+						"email_id",
+						"mobile_no",
+						"image",
+						"loyalty_program",
+					])
 					.then(({ message }) => {
 						const { loyalty_program } = message;
 						// if loyalty program then fetch loyalty points too
 						if (loyalty_program) {
 							frappe.call({
 								method: "erpnext.accounts.doctype.loyalty_program.loyalty_program.get_loyalty_program_details_with_points",
-								args: { customer, loyalty_program, silent: true },
+								args: {
+									customer,
+									loyalty_program,
+									silent: true,
+								},
 								callback: (r) => {
-									const { loyalty_points, conversion_factor } = r.message;
+									const {
+										loyalty_points,
+										conversion_factor,
+									} = r.message;
 									if (!r.exc) {
 										this.customer_info = {
 											...message,
@@ -386,7 +450,9 @@ erpnext.PointOfSale.ItemCart = class {
 			df: {
 				label: __("Discount"),
 				fieldtype: "Data",
-				placeholder: discount ? discount + "%" : __("Enter discount percentage."),
+				placeholder: discount
+					? discount + "%"
+					: __("Enter discount percentage."),
 				input_class: "input-xs",
 				onchange: function () {
 					if (flt(this.value) != 0) {
@@ -394,7 +460,7 @@ erpnext.PointOfSale.ItemCart = class {
 							frm.doc.doctype,
 							frm.doc.name,
 							"additional_discount_percentage",
-							flt(this.value)
+							flt(this.value),
 						);
 						me.hide_discount_control(this.value);
 					} else {
@@ -402,13 +468,15 @@ erpnext.PointOfSale.ItemCart = class {
 							frm.doc.doctype,
 							frm.doc.name,
 							"additional_discount_percentage",
-							0
+							0,
 						);
 						me.$add_discount_elem.css({
 							border: "1px dashed var(--gray-500)",
 							padding: "var(--padding-sm) var(--padding-md)",
 						});
-						me.$add_discount_elem.html(`${me.get_discount_icon()} ${__("Add Discount")}`);
+						me.$add_discount_elem.html(
+							`${me.get_discount_icon()} ${__("Add Discount")}`,
+						);
 						me.discount_field = undefined;
 					}
 				},
@@ -423,7 +491,9 @@ erpnext.PointOfSale.ItemCart = class {
 	hide_discount_control(discount) {
 		if (!discount) {
 			this.$add_discount_elem.css({ padding: "0px", border: "none" });
-			this.$add_discount_elem.html(`<div class="add-discount-field"></div>`);
+			this.$add_discount_elem.html(
+				`<div class="add-discount-field"></div>`,
+			);
 		} else {
 			this.$add_discount_elem.css({
 				border: "1px dashed var(--dark-green-500)",
@@ -432,14 +502,19 @@ erpnext.PointOfSale.ItemCart = class {
 			this.$add_discount_elem.html(
 				`<div class="edit-discount-btn">
 					${this.get_discount_icon()} ${__("Additional")}&nbsp;${String(discount).bold()}% ${__("discount applied")}
-				</div>`
+				</div>`,
 			);
 		}
 	}
 
 	update_customer_section() {
 		const me = this;
-		const { customer, email_id = "", mobile_no = "", image } = this.customer_info || {};
+		const {
+			customer,
+			email_id = "",
+			mobile_no = "",
+			image,
+		} = this.customer_info || {};
 
 		if (customer) {
 			this.$customer_section.html(
@@ -456,7 +531,7 @@ erpnext.PointOfSale.ItemCart = class {
 							</svg>
 						</div>
 					</div>
-				</div>`
+				</div>`,
 			);
 		} else {
 			// reset customer selector
@@ -502,11 +577,15 @@ erpnext.PointOfSale.ItemCart = class {
 		const currency = this.events.get_frm().doc.currency;
 		this.$totals_section
 			.find(".net-total-container")
-			.html(`<div>${__("Net Total")}</div><div>${format_currency(value, currency)}</div>`);
+			.html(
+				`<div>${__("Net Total")}</div><div>${format_currency(value, currency)}</div>`,
+			);
 
 		this.$numpad_section
 			.find(".numpad-net-total")
-			.html(`<div>${__("Net Total")}: <span>${format_currency(value, currency)}</span></div>`);
+			.html(
+				`<div>${__("Net Total")}: <span>${format_currency(value, currency)}</span></div>`,
+			);
 	}
 
 	render_total_item_qty(items) {
@@ -517,22 +596,30 @@ erpnext.PointOfSale.ItemCart = class {
 
 		this.$totals_section
 			.find(".item-qty-total-container")
-			.html(`<div>${__("Total Quantity")}</div><div>${total_item_qty}</div>`);
+			.html(
+				`<div>${__("Total Quantity")}</div><div>${total_item_qty}</div>`,
+			);
 
 		this.$numpad_section
 			.find(".numpad-item-qty-total")
-			.html(`<div>${__("Total Quantity")}: <span>${total_item_qty}</span></div>`);
+			.html(
+				`<div>${__("Total Quantity")}: <span>${total_item_qty}</span></div>`,
+			);
 	}
 
 	render_grand_total(value) {
 		const currency = this.events.get_frm().doc.currency;
 		this.$totals_section
 			.find(".grand-total-container")
-			.html(`<div>${__("Grand Total")}</div><div>${format_currency(value, currency)}</div>`);
+			.html(
+				`<div>${__("Grand Total")}</div><div>${format_currency(value, currency)}</div>`,
+			);
 
 		this.$numpad_section
 			.find(".numpad-grand-total")
-			.html(`<div>${__("Grand Total")}: <span>${format_currency(value, currency)}</span></div>`);
+			.html(
+				`<div>${__("Grand Total")}: <span>${format_currency(value, currency)}</span></div>`,
+			);
 	}
 
 	render_taxes(taxes) {
@@ -545,17 +632,23 @@ erpnext.PointOfSale.ItemCart = class {
 					const description = /[0-9]+/.test(t.description)
 						? t.description
 						: t.rate != 0
-						? `${t.description} @ ${t.rate}%`
-						: t.description;
+							? `${t.description} @ ${t.rate}%`
+							: t.description;
 					return `<div class="tax-row">
 					<div class="tax-label">${description}</div>
 					<div class="tax-value">${format_currency(t.tax_amount_after_discount_amount, currency)}</div>
 				</div>`;
 				})
 				.join("");
-			this.$totals_section.find(".taxes-container").css("display", "flex").html(taxes_html);
+			this.$totals_section
+				.find(".taxes-container")
+				.css("display", "flex")
+				.html(taxes_html);
 		} else {
-			this.$totals_section.find(".taxes-container").css("display", "none").html("");
+			this.$totals_section
+				.find(".taxes-container")
+				.css("display", "none")
+				.html("");
 		}
 	}
 
@@ -579,7 +672,8 @@ erpnext.PointOfSale.ItemCart = class {
 			this.render_cart_item(item_row, $item);
 		}
 
-		const no_of_cart_items = this.$cart_items_wrapper.find(".cart-item-wrapper").length;
+		const no_of_cart_items =
+			this.$cart_items_wrapper.find(".cart-item-wrapper").length;
 		this.highlight_checkout_btn(no_of_cart_items > 0);
 
 		this.update_empty_cart_section(no_of_cart_items);
@@ -592,7 +686,7 @@ erpnext.PointOfSale.ItemCart = class {
 		if (!$item_to_update.length) {
 			this.$cart_items_wrapper.append(
 				`<div class="cart-item-wrapper" data-row-name="${escape(item_data.name)}"></div>
-				<div class="seperator"></div>`
+				<div class="seperator"></div>`,
 			);
 			$item_to_update = this.get_cart_item(item_data);
 		}
@@ -605,13 +699,15 @@ erpnext.PointOfSale.ItemCart = class {
 				</div>
 				${get_description_html()}
 			</div>
-			${get_rate_discount_html()}`
+			${get_rate_discount_html()}`,
 		);
 
 		set_dynamic_rate_header_width();
 
 		function set_dynamic_rate_header_width() {
-			const rate_cols = Array.from(me.$cart_items_wrapper.find(".item-rate-amount"));
+			const rate_cols = Array.from(
+				me.$cart_items_wrapper.find(".item-rate-amount"),
+			);
 			me.$cart_header.find(".rate-amount-header").css("width", "");
 			me.$cart_items_wrapper.find(".item-rate-amount").css("width", "");
 			let max_width = rate_cols.reduce((max_width, elm) => {
@@ -623,11 +719,17 @@ erpnext.PointOfSale.ItemCart = class {
 			if (max_width == 1) max_width = "";
 
 			me.$cart_header.find(".rate-amount-header").css("width", max_width);
-			me.$cart_items_wrapper.find(".item-rate-amount").css("width", max_width);
+			me.$cart_items_wrapper
+				.find(".item-rate-amount")
+				.css("width", max_width);
 		}
 
 		function get_rate_discount_html() {
-			if (item_data.rate && item_data.amount && item_data.rate !== item_data.amount) {
+			if (
+				item_data.rate &&
+				item_data.amount &&
+				item_data.rate !== item_data.amount
+			) {
 				return `
 					<div class="item-qty-rate">
 						<div class="item-qty"><span>${item_data.qty || 0} ${item_data.uom}</span></div>
@@ -659,7 +761,10 @@ erpnext.PointOfSale.ItemCart = class {
 							.replace(/ +/g, " ");
 					}
 				}
-				item_data.description = frappe.ellipsis(item_data.description, 45);
+				item_data.description = frappe.ellipsis(
+					item_data.description,
+					45,
+				);
 				return `<div class="item-desc">${item_data.description}</div>`;
 			}
 			return ``;
@@ -682,7 +787,11 @@ erpnext.PointOfSale.ItemCart = class {
 
 	handle_broken_image($img) {
 		const item_abbr = $($img).attr("alt");
-		$($img).parent().replaceWith(`<div class="item-image item-abbr">${item_abbr}</div>`);
+		$($img)
+			.parent()
+			.replaceWith(
+				`<div class="item-image item-abbr">${item_abbr}</div>`,
+			);
 	}
 
 	update_selector_value_in_cart_item(selector, value, item) {
@@ -715,7 +824,8 @@ erpnext.PointOfSale.ItemCart = class {
 	}
 
 	update_empty_cart_section(no_of_cart_items) {
-		const $no_item_element = this.$cart_items_wrapper.find(".no-item-wrapper");
+		const $no_item_element =
+			this.$cart_items_wrapper.find(".no-item-wrapper");
 
 		// if cart has items and no item is present
 		no_of_cart_items > 0 &&
@@ -723,26 +833,40 @@ erpnext.PointOfSale.ItemCart = class {
 			$no_item_element.remove() &&
 			this.$cart_header.css("display", "flex");
 
-		no_of_cart_items === 0 && !$no_item_element.length && this.make_no_items_placeholder();
+		no_of_cart_items === 0 &&
+			!$no_item_element.length &&
+			this.make_no_items_placeholder();
 	}
 
 	on_numpad_event($btn) {
 		const current_action = $btn.attr("data-button-value");
-		const action_is_field_edit = ["qty", "discount_percentage", "rate"].includes(current_action);
+		const action_is_field_edit = [
+			"qty",
+			"discount_percentage",
+			"rate",
+		].includes(current_action);
 		const action_is_allowed = action_is_field_edit
 			? (current_action == "rate" && this.allow_rate_change) ||
-			  (current_action == "discount_percentage" && this.allow_discount_change) ||
-			  current_action == "qty"
+				(current_action == "discount_percentage" &&
+					this.allow_discount_change) ||
+				current_action == "qty"
 			: true;
 
 		const action_is_pressed_twice = this.prev_action === current_action;
 		const first_click_event = !this.prev_action;
-		const field_to_edit_changed = this.prev_action && this.prev_action != current_action;
+		const field_to_edit_changed =
+			this.prev_action && this.prev_action != current_action;
 
 		if (action_is_field_edit) {
 			if (!action_is_allowed) {
-				const label = current_action == "rate" ? "Rate".bold() : "Discount".bold();
-				const message = __("Editing {0} is not allowed as per POS Profile settings", [label]);
+				const label =
+					current_action == "rate"
+						? "Rate".bold()
+						: "Discount".bold();
+				const message = __(
+					"Editing {0} is not allowed as per POS Profile settings",
+					[label],
+				);
 				frappe.show_alert({
 					indicator: "red",
 					message: message,
@@ -775,7 +899,8 @@ erpnext.PointOfSale.ItemCart = class {
 			this.numpad_value = this.numpad_value || 0;
 		}
 
-		const first_click_event_is_not_field_edit = !action_is_field_edit && first_click_event;
+		const first_click_event_is_not_field_edit =
+			!action_is_field_edit && first_click_event;
 
 		if (first_click_event_is_not_field_edit) {
 			frappe.show_alert({
@@ -786,7 +911,10 @@ erpnext.PointOfSale.ItemCart = class {
 			return;
 		}
 
-		if (flt(this.numpad_value) > 100 && this.prev_action === "discount_percentage") {
+		if (
+			flt(this.numpad_value) > 100 &&
+			this.prev_action === "discount_percentage"
+		) {
 			frappe.show_alert({
 				message: __("Discount cannot be greater than 100%"),
 				indicator: "orange",
@@ -800,8 +928,15 @@ erpnext.PointOfSale.ItemCart = class {
 	}
 
 	highlight_numpad_btn($btn, curr_action) {
-		const curr_action_is_highlighted = $btn.hasClass("highlighted-numpad-btn");
-		const curr_action_is_action = ["qty", "discount_percentage", "rate", "done"].includes(curr_action);
+		const curr_action_is_highlighted = $btn.hasClass(
+			"highlighted-numpad-btn",
+		);
+		const curr_action_is_action = [
+			"qty",
+			"discount_percentage",
+			"rate",
+			"done",
+		].includes(curr_action);
 
 		if (!curr_action_is_highlighted) {
 			$btn.addClass("highlighted-numpad-btn");
@@ -810,7 +945,11 @@ erpnext.PointOfSale.ItemCart = class {
 			// if Qty is pressed twice
 			$btn.removeClass("highlighted-numpad-btn");
 		}
-		if (this.prev_action && this.prev_action !== curr_action && curr_action_is_action) {
+		if (
+			this.prev_action &&
+			this.prev_action !== curr_action &&
+			curr_action_is_action
+		) {
 			// Order: Qty -> Rate then remove Qty highlight
 			const prev_btn = $(`[data-button-value='${this.prev_action}']`);
 			prev_btn.removeClass("highlighted-numpad-btn");
@@ -837,12 +976,16 @@ erpnext.PointOfSale.ItemCart = class {
 	reset_numpad() {
 		this.numpad_value = "";
 		this.prev_action = undefined;
-		this.$numpad_section.find(".highlighted-numpad-btn").removeClass("highlighted-numpad-btn");
+		this.$numpad_section
+			.find(".highlighted-numpad-btn")
+			.removeClass("highlighted-numpad-btn");
 	}
 
 	toggle_numpad_field_edit(fieldname) {
 		if (["qty", "discount_percentage", "rate"].includes(fieldname)) {
-			this.$numpad_section.find(`[data-button-value="${fieldname}"]`).click();
+			this.$numpad_section
+				.find(`[data-button-value="${fieldname}"]`)
+				.click();
 		}
 	}
 
@@ -877,10 +1020,12 @@ erpnext.PointOfSale.ItemCart = class {
 					<div class="loyalty_program-field"></div>
 					<div class="loyalty_points-field"></div>
 				</div>
-				<div class="transactions-label">${__("Recent Transactions")}</div>`
+				<div class="transactions-label">${__("Recent Transactions")}</div>`,
 			);
 			// transactions need to be in diff div from sticky elem for scrolling
-			this.$customer_section.append(`<div class="customer-transactions"></div>`);
+			this.$customer_section.append(
+				`<div class="customer-transactions"></div>`,
+			);
 
 			this.render_customer_fields();
 			this.fetch_customer_transactions();
@@ -896,7 +1041,9 @@ erpnext.PointOfSale.ItemCart = class {
 	}
 
 	render_customer_fields() {
-		const $customer_form = this.$customer_section.find(".customer-fields-container");
+		const $customer_form = this.$customer_section.find(
+			".customer-fields-container",
+		);
 
 		const dfs = [
 			{
@@ -929,19 +1076,26 @@ erpnext.PointOfSale.ItemCart = class {
 
 		const me = this;
 		dfs.forEach((df) => {
-			this[`customer_${df.fieldname}_field`] = frappe.ui.form.make_control({
-				df: { ...df, onchange: handle_customer_field_change },
-				parent: $customer_form.find(`.${df.fieldname}-field`),
-				render_input: true,
-			});
-			this[`customer_${df.fieldname}_field`].set_value(this.customer_info[df.fieldname]);
+			this[`customer_${df.fieldname}_field`] =
+				frappe.ui.form.make_control({
+					df: { ...df, onchange: handle_customer_field_change },
+					parent: $customer_form.find(`.${df.fieldname}-field`),
+					render_input: true,
+				});
+			this[`customer_${df.fieldname}_field`].set_value(
+				this.customer_info[df.fieldname],
+			);
 		});
 
 		function handle_customer_field_change() {
 			const current_value = me.customer_info[this.df.fieldname];
 			const current_customer = me.customer_info.customer;
 
-			if (this.value && current_value != this.value && this.df.fieldname != "loyalty_points") {
+			if (
+				this.value &&
+				current_value != this.value &&
+				this.df.fieldname != "loyalty_points"
+			) {
 				frappe.call({
 					method: "erpnext.selling.page.point_of_sale.point_of_sale.set_customer_info",
 					args: {
@@ -953,7 +1107,9 @@ erpnext.PointOfSale.ItemCart = class {
 						if (!r.exc) {
 							me.customer_info[this.df.fieldname] = this.value;
 							frappe.show_alert({
-								message: __("Customer contact updated successfully."),
+								message: __(
+									"Customer contact updated successfully.",
+								),
 								indicator: "green",
 							});
 							frappe.utils.play_sound("submit");
@@ -967,27 +1123,43 @@ erpnext.PointOfSale.ItemCart = class {
 	fetch_customer_transactions() {
 		frappe.db
 			.get_list("POS Invoice", {
-				filters: { customer: this.customer_info.customer, docstatus: 1 },
-				fields: ["name", "grand_total", "status", "posting_date", "posting_time", "currency"],
+				filters: {
+					customer: this.customer_info.customer,
+					docstatus: 1,
+				},
+				fields: [
+					"name",
+					"grand_total",
+					"status",
+					"posting_date",
+					"posting_time",
+					"currency",
+				],
 				limit: 20,
 			})
 			.then((res) => {
-				const transaction_container = this.$customer_section.find(".customer-transactions");
+				const transaction_container = this.$customer_section.find(
+					".customer-transactions",
+				);
 
 				if (!res.length) {
 					transaction_container.html(
-						`<div class="no-transactions-placeholder">No recent transactions found</div>`
+						`<div class="no-transactions-placeholder">No recent transactions found</div>`,
 					);
 					return;
 				}
 
-				const elapsed_time = moment(res[0].posting_date + " " + res[0].posting_time).fromNow();
-				this.$customer_section.find(".customer-desc").html(`Last transacted ${elapsed_time}`);
+				const elapsed_time = moment(
+					res[0].posting_date + " " + res[0].posting_time,
+				).fromNow();
+				this.$customer_section
+					.find(".customer-desc")
+					.html(`Last transacted ${elapsed_time}`);
 
 				res.forEach((invoice) => {
-					const posting_datetime = moment(invoice.posting_date + " " + invoice.posting_time).format(
-						"Do MMMM, h:mma"
-					);
+					const posting_datetime = moment(
+						invoice.posting_date + " " + invoice.posting_time,
+					).format("Do MMMM, h:mma");
 					let indicator_color = {
 						Paid: "green",
 						Draft: "red",
@@ -1012,7 +1184,7 @@ erpnext.PointOfSale.ItemCart = class {
 							</div>
 						</div>
 					</div>
-					<div class="seperator"></div>`
+					<div class="seperator"></div>`,
 					);
 				});
 			});
@@ -1065,6 +1237,8 @@ erpnext.PointOfSale.ItemCart = class {
 	}
 
 	toggle_component(show) {
-		show ? this.$component.css("display", "flex") : this.$component.css("display", "none");
+		show
+			? this.$component.css("display", "flex")
+			: this.$component.css("display", "none");
 	}
 };

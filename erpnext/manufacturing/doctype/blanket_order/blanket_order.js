@@ -19,7 +19,11 @@ frappe.ui.form.on("Blanket Order", {
 
 	refresh: function (frm) {
 		erpnext.hide_company(frm);
-		if (frm.doc.customer && frm.doc.docstatus === 1 && frm.doc.to_date > frappe.datetime.get_today()) {
+		if (
+			frm.doc.customer &&
+			frm.doc.docstatus === 1 &&
+			frm.doc.to_date > frappe.datetime.get_today()
+		) {
 			frm.add_custom_button(
 				__("Sales Order"),
 				function () {
@@ -31,7 +35,7 @@ frappe.ui.form.on("Blanket Order", {
 						},
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 
 			frm.add_custom_button(
@@ -45,7 +49,7 @@ frappe.ui.form.on("Blanket Order", {
 						},
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 
@@ -61,7 +65,7 @@ frappe.ui.form.on("Blanket Order", {
 						},
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 	},

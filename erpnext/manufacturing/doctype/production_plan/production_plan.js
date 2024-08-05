@@ -91,11 +91,15 @@ frappe.ui.form.on("Production Plan", {
 				frm.add_custom_button(
 					__("Production Plan Summary"),
 					() => {
-						frappe.set_route("query-report", "Production Plan Summary", {
-							production_plan: frm.doc.name,
-						});
+						frappe.set_route(
+							"query-report",
+							"Production Plan Summary",
+							{
+								production_plan: frm.doc.name,
+							},
+						);
 					},
-					__("View")
+					__("View"),
 				);
 
 				if (frm.doc.status === "Closed") {
@@ -104,7 +108,7 @@ frappe.ui.form.on("Production Plan", {
 						function () {
 							frm.events.close_open_production_plan(frm, false);
 						},
-						__("Status")
+						__("Status"),
 					);
 				} else {
 					frm.add_custom_button(
@@ -112,7 +116,7 @@ frappe.ui.form.on("Production Plan", {
 						function () {
 							frm.events.close_open_production_plan(frm, true);
 						},
-						__("Status")
+						__("Status"),
 					);
 				}
 
@@ -122,7 +126,7 @@ frappe.ui.form.on("Production Plan", {
 						() => {
 							frm.trigger("make_work_order");
 						},
-						__("Create")
+						__("Create"),
 					);
 				}
 
@@ -136,7 +140,7 @@ frappe.ui.form.on("Production Plan", {
 						() => {
 							frm.trigger("make_material_request");
 						},
-						__("Create")
+						__("Create"),
 					);
 				}
 			}
@@ -224,7 +228,7 @@ frappe.ui.form.on("Production Plan", {
 			},
 			function () {
 				frm.events.create_material_request(frm, 0);
-			}
+			},
 		);
 	},
 
@@ -337,7 +341,9 @@ frappe.ui.form.on("Production Plan", {
 		if (frm.doc.ignore_existing_ordered_qty) {
 			frm.events.get_items_for_material_requests(frm);
 		} else {
-			const title = __("Transfer Materials For Warehouse {0}", [frm.doc.for_warehouse]);
+			const title = __("Transfer Materials For Warehouse {0}", [
+				frm.doc.for_warehouse,
+			]);
 			var dialog = new frappe.ui.Dialog({
 				title: title,
 				fields: [
@@ -436,7 +442,7 @@ frappe.ui.form.on("Production Plan", {
 				});
 			},
 			__("Select Warehouses to get Stock for Materials Planning"),
-			__("Get Stock")
+			__("Get Stock"),
 		);
 	},
 
@@ -457,13 +463,18 @@ frappe.ui.form.on("Production Plan", {
 
 		if (item_wise_qty) {
 			for (var key in item_wise_qty) {
-				title += __("Item {0}: {1} qty produced. ", [key, item_wise_qty[key]]);
+				title += __("Item {0}: {1} qty produced. ", [
+					key,
+					item_wise_qty[key],
+				]);
 			}
 		}
 
 		bars.push({
 			title: title,
-			width: (frm.doc.total_produced_qty / frm.doc.total_planned_qty) * 100 + "%",
+			width:
+				(frm.doc.total_produced_qty / frm.doc.total_planned_qty) * 100 +
+				"%",
 			progress_class: "progress-bar-success",
 		});
 		if (bars[0].width == "0%") {
@@ -521,7 +532,10 @@ frappe.ui.form.on("Material Request Plan Item", {
 	material_request_type(frm, cdt, cdn) {
 		let row = locals[cdt][cdn];
 
-		if (row.from_warehouse && row.material_request_type !== "Material Transfer") {
+		if (
+			row.from_warehouse &&
+			row.material_request_type !== "Material Transfer"
+		) {
 			frappe.model.set_value(cdt, cdn, "from_warehouse", "");
 		}
 	},
@@ -547,10 +561,26 @@ frappe.ui.form.on("Production Plan Sales Order", {
 						method: "erpnext.manufacturing.doctype.production_plan.production_plan.get_so_details",
 						args: { sales_order },
 						callback(r) {
-							const { transaction_date, customer, grand_total } = r.message;
-							frappe.model.set_value(cdt, cdn, "sales_order_date", transaction_date);
-							frappe.model.set_value(cdt, cdn, "customer", customer);
-							frappe.model.set_value(cdt, cdn, "grand_total", grand_total);
+							const { transaction_date, customer, grand_total } =
+								r.message;
+							frappe.model.set_value(
+								cdt,
+								cdn,
+								"sales_order_date",
+								transaction_date,
+							);
+							frappe.model.set_value(
+								cdt,
+								cdn,
+								"customer",
+								customer,
+							);
+							frappe.model.set_value(
+								cdt,
+								cdn,
+								"grand_total",
+								grand_total,
+							);
 						},
 					});
 				},
@@ -561,7 +591,13 @@ frappe.ui.form.on("Production Plan Sales Order", {
 
 frappe.ui.form.on("Production Plan Sub Assembly Item", {
 	fg_warehouse(frm, cdt, cdn) {
-		erpnext.utils.copy_value_in_all_rows(frm.doc, cdt, cdn, "sub_assembly_items", "fg_warehouse");
+		erpnext.utils.copy_value_in_all_rows(
+			frm.doc,
+			cdt,
+			cdn,
+			"sub_assembly_items",
+			"fg_warehouse",
+		);
 	},
 });
 
@@ -570,38 +606,42 @@ frappe.tour["Production Plan"] = [
 		fieldname: "get_items_from",
 		title: "Get Items From",
 		description: __(
-			"Select whether to get items from a Sales Order or a Material Request. For now select <b>Sales Order</b>.\n A Production Plan can also be created manually where you can select the Items to manufacture."
+			"Select whether to get items from a Sales Order or a Material Request. For now select <b>Sales Order</b>.\n A Production Plan can also be created manually where you can select the Items to manufacture.",
 		),
 	},
 	{
 		fieldname: "get_sales_orders",
 		title: "Get Sales Orders",
-		description: __("Click on Get Sales Orders to fetch sales orders based on the above filters."),
+		description: __(
+			"Click on Get Sales Orders to fetch sales orders based on the above filters.",
+		),
 	},
 	{
 		fieldname: "get_items",
 		title: "Get Finished Goods for Manufacture",
 		description: __(
-			"Click on 'Get Finished Goods for Manufacture' to fetch the items from the above Sales Orders. Items only for which a BOM is present will be fetched."
+			"Click on 'Get Finished Goods for Manufacture' to fetch the items from the above Sales Orders. Items only for which a BOM is present will be fetched.",
 		),
 	},
 	{
 		fieldname: "po_items",
 		title: "Finished Goods",
 		description: __(
-			"On expanding a row in the Items to Manufacture table, you'll see an option to 'Include Exploded Items'. Ticking this includes raw materials of the sub-assembly items in the production process."
+			"On expanding a row in the Items to Manufacture table, you'll see an option to 'Include Exploded Items'. Ticking this includes raw materials of the sub-assembly items in the production process.",
 		),
 	},
 	{
 		fieldname: "include_non_stock_items",
 		title: "Include Non Stock Items",
 		description: __(
-			"To include non-stock items in the material request planning. i.e. Items for which 'Maintain Stock' checkbox is unticked."
+			"To include non-stock items in the material request planning. i.e. Items for which 'Maintain Stock' checkbox is unticked.",
 		),
 	},
 	{
 		fieldname: "include_subcontracted_items",
 		title: "Include Subcontracted Items",
-		description: __("To add subcontracted Item's raw materials if include exploded items is disabled."),
+		description: __(
+			"To add subcontracted Item's raw materials if include exploded items is disabled.",
+		),
 	},
 ];

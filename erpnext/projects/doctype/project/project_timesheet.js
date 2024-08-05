@@ -31,32 +31,41 @@ QUnit.test("test project", function (assert) {
 			() => {
 				if (title === "Documentation") {
 					assert.ok(
-						cur_frm.get_field("total_billable_amount").get_value() == 20,
-						"Billable amount for Documentation task is correctly calculated"
+						cur_frm
+							.get_field("total_billable_amount")
+							.get_value() == 20,
+						"Billable amount for Documentation task is correctly calculated",
 					);
 					assert.ok(
-						cur_frm.get_field("total_costing_amount").get_value() == 16,
-						"Costing amount for Documentation task is correctly calculated"
+						cur_frm.get_field("total_costing_amount").get_value() ==
+							16,
+						"Costing amount for Documentation task is correctly calculated",
 					);
 				}
 				if (title === "Implementation") {
 					assert.ok(
-						cur_frm.get_field("total_billable_amount").get_value() == 40,
-						"Billable amount for Implementation task is correctly calculated"
+						cur_frm
+							.get_field("total_billable_amount")
+							.get_value() == 40,
+						"Billable amount for Implementation task is correctly calculated",
 					);
 					assert.ok(
-						cur_frm.get_field("total_costing_amount").get_value() == 32,
-						"Costing amount for Implementation task is correctly calculated"
+						cur_frm.get_field("total_costing_amount").get_value() ==
+							32,
+						"Costing amount for Implementation task is correctly calculated",
 					);
 				}
 				if (title === "Testing") {
 					assert.ok(
-						cur_frm.get_field("total_billable_amount").get_value() == 60,
-						"Billable amount for Testing task correctly calculated"
+						cur_frm
+							.get_field("total_billable_amount")
+							.get_value() == 60,
+						"Billable amount for Testing task correctly calculated",
 					);
 					assert.ok(
-						cur_frm.get_field("total_costing_amount").get_value() == 50,
-						"Costing amount for Testing task is correctly calculated"
+						cur_frm.get_field("total_costing_amount").get_value() ==
+							50,
+						"Costing amount for Testing task is correctly calculated",
 					);
 				}
 			},
@@ -76,28 +85,58 @@ QUnit.test("test project", function (assert) {
 							{ title: "Documentation" },
 							{ start_date: "2017-07-24" },
 							{ end_date: "2017-07-31" },
-							{ description: "To make a proper documentation defining requirements etc" },
+							{
+								description:
+									"To make a proper documentation defining requirements etc",
+							},
 						],
 						[
 							{ title: "Implementation" },
 							{ start_date: "2017-08-01" },
 							{ end_date: "2017-08-01" },
-							{ description: "Writing algorithms and to code the functionalities" },
+							{
+								description:
+									"Writing algorithms and to code the functionalities",
+							},
 						],
 						[
 							{ title: "Testing" },
 							{ start_date: "2017-08-01" },
 							{ end_date: "2017-08-15" },
-							{ description: "To make the test cases and test the functionalities" },
+							{
+								description:
+									"To make the test cases and test the functionalities",
+							},
 						],
 					],
 				},
 			]);
 		},
 		// Creating Timesheet with different tasks
-		() => timesheet(task_title[0], "2017-07-24 13:00:00", "2017-07-24 13:00:00", 10, 8),
-		() => timesheet(task_title[1], "2017-07-25 13:00:00", "2017-07-25 15:00:00", 20, 16),
-		() => timesheet(task_title[2], "2017-07-26 13:00:00", "2017-07-26 15:00:00", 30, 25),
+		() =>
+			timesheet(
+				task_title[0],
+				"2017-07-24 13:00:00",
+				"2017-07-24 13:00:00",
+				10,
+				8,
+			),
+		() =>
+			timesheet(
+				task_title[1],
+				"2017-07-25 13:00:00",
+				"2017-07-25 15:00:00",
+				20,
+				16,
+			),
+		() =>
+			timesheet(
+				task_title[2],
+				"2017-07-26 13:00:00",
+				"2017-07-26 15:00:00",
+				30,
+				25,
+			),
 		() => done(),
 	]);
 });

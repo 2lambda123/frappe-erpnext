@@ -37,12 +37,15 @@ frappe.ui.form.on("Batch", {
 					// Calculate expiry date based on shelf_life_in_days
 					frm.set_value(
 						"expiry_date",
-						frappe.datetime.add_days(frm.doc.manufacturing_date, r.shelf_life_in_days)
+						frappe.datetime.add_days(
+							frm.doc.manufacturing_date,
+							r.shelf_life_in_days,
+						),
 					);
 				} else if (r.has_expiry_date) {
 					frm.toggle_reqd("expiry_date", r.has_expiry_date);
 				}
-			}
+			},
 		);
 	},
 	make_dashboard: (frm) => {
@@ -54,13 +57,20 @@ frappe.ui.form.on("Batch", {
 
 			frappe.call({
 				method: "erpnext.stock.doctype.batch.batch.get_batch_qty",
-				args: { batch_no: frm.doc.name, item_code: frm.doc.item, for_stock_levels: for_stock_levels },
+				args: {
+					batch_no: frm.doc.name,
+					item_code: frm.doc.item,
+					for_stock_levels: for_stock_levels,
+				},
 				callback: (r) => {
 					if (!r.message) {
 						return;
 					}
 
-					const section = frm.dashboard.add_section("", __("Stock Levels"));
+					const section = frm.dashboard.add_section(
+						"",
+						__("Stock Levels"),
+					);
 
 					// sort by qty
 					r.message.sort(function (a, b) {
@@ -110,10 +120,12 @@ frappe.ui.form.on("Batch", {
 										item_code: frm.doc.item,
 										batch_no: frm.doc.name,
 										qty: $btn.attr("data-qty"),
-										from_warehouse: $btn.attr("data-warehouse"),
+										from_warehouse:
+											$btn.attr("data-warehouse"),
 										to_warehouse: data.to_warehouse,
 										source_document: frm.doc.reference_name,
-										reference_doctype: frm.doc.reference_doctype,
+										reference_doctype:
+											frm.doc.reference_doctype,
 									},
 									callback: (r) => {
 										frappe.show_alert(
@@ -123,14 +135,14 @@ frappe.ui.form.on("Batch", {
 													'">' +
 													r.message.name +
 													"</a>",
-											])
+											]),
 										);
 										frm.refresh();
 									},
 								});
 							},
 							__("Select Target Warehouse"),
-							__("Move")
+							__("Move"),
 						);
 					});
 
@@ -154,17 +166,21 @@ frappe.ui.form.on("Batch", {
 							],
 							(data) => {
 								frappe
-									.xcall("erpnext.stock.doctype.batch.batch.split_batch", {
-										item_code: frm.doc.item,
-										batch_no: frm.doc.name,
-										qty: data.qty,
-										warehouse: $btn.attr("data-warehouse"),
-										new_batch_id: data.new_batch_id,
-									})
+									.xcall(
+										"erpnext.stock.doctype.batch.batch.split_batch",
+										{
+											item_code: frm.doc.item,
+											batch_no: frm.doc.name,
+											qty: data.qty,
+											warehouse:
+												$btn.attr("data-warehouse"),
+											new_batch_id: data.new_batch_id,
+										},
+									)
 									.then(() => frm.reload_doc());
 							},
 							__("Split Batch"),
-							__("Split")
+							__("Split"),
 						);
 					});
 
@@ -176,13 +192,21 @@ frappe.ui.form.on("Batch", {
 });
 
 frappe.ui.form.on("Batch", "manufacturing_date", function (frm) {
-	frappe.db.get_value("Item", { name: frm.doc.item }, ["shelf_life_in_days", "has_expiry_date"], (r) => {
-		if (r.has_expiry_date && r.shelf_life_in_days) {
-			// Calculate expiry date based on shelf_life_in_days
-			frm.set_value(
-				"expiry_date",
-				frappe.datetime.add_days(frm.doc.manufacturing_date, r.shelf_life_in_days)
-			);
-		}
-	});
+	frappe.db.get_value(
+		"Item",
+		{ name: frm.doc.item },
+		["shelf_life_in_days", "has_expiry_date"],
+		(r) => {
+			if (r.has_expiry_date && r.shelf_life_in_days) {
+				// Calculate expiry date based on shelf_life_in_days
+				frm.set_value(
+					"expiry_date",
+					frappe.datetime.add_days(
+						frm.doc.manufacturing_date,
+						r.shelf_life_in_days,
+					),
+				);
+			}
+		},
+	);
 });

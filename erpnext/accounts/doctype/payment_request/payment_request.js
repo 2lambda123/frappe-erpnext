@@ -1,5 +1,13 @@
-cur_frm.add_fetch("payment_gateway_account", "payment_account", "payment_account");
-cur_frm.add_fetch("payment_gateway_account", "payment_gateway", "payment_gateway");
+cur_frm.add_fetch(
+	"payment_gateway_account",
+	"payment_account",
+	"payment_account",
+);
+cur_frm.add_fetch(
+	"payment_gateway_account",
+	"payment_gateway",
+	"payment_gateway",
+);
 cur_frm.add_fetch("payment_gateway_account", "message", "message");
 
 frappe.ui.form.on("Payment Request", {
@@ -52,7 +60,8 @@ frappe.ui.form.on("Payment Request", "refresh", function (frm) {
 	}
 
 	if (
-		(!frm.doc.payment_gateway_account || frm.doc.payment_request_type == "Outward") &&
+		(!frm.doc.payment_gateway_account ||
+			frm.doc.payment_request_type == "Outward") &&
 		frm.doc.status == "Initiated"
 	) {
 		frm.add_custom_button(__("Create Payment Entry"), function () {
@@ -63,7 +72,11 @@ frappe.ui.form.on("Payment Request", "refresh", function (frm) {
 				callback: function (r) {
 					if (!r.exc) {
 						var doc = frappe.model.sync(r.message);
-						frappe.set_route("Form", r.message.doctype, r.message.name);
+						frappe.set_route(
+							"Form",
+							r.message.doctype,
+							r.message.name,
+						);
 					}
 				},
 			});
@@ -75,10 +88,17 @@ frappe.ui.form.on("Payment Request", "is_a_subscription", function (frm) {
 	frm.toggle_reqd("payment_gateway_account", frm.doc.is_a_subscription);
 	frm.toggle_reqd("subscription_plans", frm.doc.is_a_subscription);
 
-	if (frm.doc.is_a_subscription && frm.doc.reference_doctype && frm.doc.reference_name) {
+	if (
+		frm.doc.is_a_subscription &&
+		frm.doc.reference_doctype &&
+		frm.doc.reference_name
+	) {
 		frappe.call({
 			method: "erpnext.accounts.doctype.payment_request.payment_request.get_subscription_details",
-			args: { reference_doctype: frm.doc.reference_doctype, reference_name: frm.doc.reference_name },
+			args: {
+				reference_doctype: frm.doc.reference_doctype,
+				reference_name: frm.doc.reference_name,
+			},
 			freeze: true,
 			callback: function (data) {
 				if (!data.exc) {
@@ -86,7 +106,7 @@ frappe.ui.form.on("Payment Request", "is_a_subscription", function (frm) {
 						var d = frappe.model.add_child(
 							frm.doc,
 							"Subscription Plan Detail",
-							"subscription_plans"
+							"subscription_plans",
 						);
 						d.qty = v.qty;
 						d.plan = v.plan;

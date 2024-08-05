@@ -6,8 +6,11 @@ erpnext.SMSManager = function SMSManager(doc) {
 	this.setup = function () {
 		var default_msg = {
 			Lead: "",
-			Opportunity: "Your enquiry has been logged into the system. Ref No: " + doc.name,
-			Quotation: "Quotation " + doc.name + " has been sent via email. Thanks!",
+			Opportunity:
+				"Your enquiry has been logged into the system. Ref No: " +
+				doc.name,
+			Quotation:
+				"Quotation " + doc.name + " has been sent via email. Thanks!",
 			"Sales Order":
 				"Sales Order " +
 				doc.name +
@@ -23,21 +26,50 @@ erpnext.SMSManager = function SMSManager(doc) {
 				doc.name +
 				" has been sent via email " +
 				(doc.po_no ? " for your PO: " + doc.po_no : ""),
-			"Material Request": "Material Request " + doc.name + " has been raised in the system",
-			"Purchase Order": "Purchase Order " + doc.name + " has been sent via email",
-			"Purchase Receipt": "Items has been received against purchase receipt: " + doc.name,
+			"Material Request":
+				"Material Request " +
+				doc.name +
+				" has been raised in the system",
+			"Purchase Order":
+				"Purchase Order " + doc.name + " has been sent via email",
+			"Purchase Receipt":
+				"Items has been received against purchase receipt: " + doc.name,
 		};
 
-		if (["Sales Order", "Delivery Note", "Sales Invoice"].includes(doc.doctype))
-			this.show(doc.contact_person, "Customer", doc.customer, "", default_msg[doc.doctype]);
+		if (
+			["Sales Order", "Delivery Note", "Sales Invoice"].includes(
+				doc.doctype,
+			)
+		)
+			this.show(
+				doc.contact_person,
+				"Customer",
+				doc.customer,
+				"",
+				default_msg[doc.doctype],
+			);
 		else if (doc.doctype === "Quotation")
-			this.show(doc.contact_person, "Customer", doc.party_name, "", default_msg[doc.doctype]);
+			this.show(
+				doc.contact_person,
+				"Customer",
+				doc.party_name,
+				"",
+				default_msg[doc.doctype],
+			);
 		else if (["Purchase Order", "Purchase Receipt"].includes(doc.doctype))
-			this.show(doc.contact_person, "Supplier", doc.supplier, "", default_msg[doc.doctype]);
-		else if (doc.doctype == "Lead") this.show("", "", "", doc.mobile_no, default_msg[doc.doctype]);
+			this.show(
+				doc.contact_person,
+				"Supplier",
+				doc.supplier,
+				"",
+				default_msg[doc.doctype],
+			);
+		else if (doc.doctype == "Lead")
+			this.show("", "", "", doc.mobile_no, default_msg[doc.doctype]);
 		else if (doc.doctype == "Opportunity")
 			this.show("", "", "", doc.contact_no, default_msg[doc.doctype]);
-		else if (doc.doctype == "Material Request") this.show("", "", "", "", default_msg[doc.doctype]);
+		else if (doc.doctype == "Material Request")
+			this.show("", "", "", "", default_msg[doc.doctype]);
 	};
 
 	this.get_contact_number = function (contact, ref_doctype, ref_name) {
@@ -83,8 +115,18 @@ erpnext.SMSManager = function SMSManager(doc) {
 			title: "Send SMS",
 			width: 400,
 			fields: [
-				{ fieldname: "number", fieldtype: "Data", label: "Mobile Number", reqd: 1 },
-				{ fieldname: "message", fieldtype: "Text", label: "Message", reqd: 1 },
+				{
+					fieldname: "number",
+					fieldtype: "Data",
+					label: "Mobile Number",
+					reqd: 1,
+				},
+				{
+					fieldname: "message",
+					fieldtype: "Text",
+					label: "Message",
+					reqd: 1,
+				},
 				{ fieldname: "send", fieldtype: "Button", label: "Send" },
 			],
 		});

@@ -7,7 +7,17 @@ frappe.ui.form.on("Event", {
 		frm.set_query("reference_doctype", "event_participants", function () {
 			return {
 				filters: {
-					name: ["in", ["Contact", "Lead", "Customer", "Supplier", "Employee", "Sales Partner"]],
+					name: [
+						"in",
+						[
+							"Contact",
+							"Lead",
+							"Customer",
+							"Supplier",
+							"Employee",
+							"Sales Partner",
+						],
+					],
 				},
 			};
 		});
@@ -17,7 +27,7 @@ frappe.ui.form.on("Event", {
 			function () {
 				new frappe.desk.eventParticipants(frm, "Lead");
 			},
-			__("Add Participants")
+			__("Add Participants"),
 		);
 
 		frm.add_custom_button(
@@ -25,7 +35,7 @@ frappe.ui.form.on("Event", {
 			function () {
 				new frappe.desk.eventParticipants(frm, "Customer");
 			},
-			__("Add Participants")
+			__("Add Participants"),
 		);
 
 		frm.add_custom_button(
@@ -33,7 +43,7 @@ frappe.ui.form.on("Event", {
 			function () {
 				new frappe.desk.eventParticipants(frm, "Supplier");
 			},
-			__("Add Participants")
+			__("Add Participants"),
 		);
 
 		frm.add_custom_button(
@@ -41,7 +51,7 @@ frappe.ui.form.on("Event", {
 			function () {
 				new frappe.desk.eventParticipants(frm, "Employee");
 			},
-			__("Add Participants")
+			__("Add Participants"),
 		);
 
 		frm.add_custom_button(
@@ -49,7 +59,7 @@ frappe.ui.form.on("Event", {
 			function () {
 				new frappe.desk.eventParticipants(frm, "Sales Partners");
 			},
-			__("Add Participants")
+			__("Add Participants"),
 		);
 	},
 });

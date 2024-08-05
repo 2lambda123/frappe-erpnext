@@ -9,8 +9,15 @@ frappe.ui.form.on("Journal Entry Template", {
 				method: "erpnext.accounts.doctype.journal_entry_template.journal_entry_template.get_naming_series",
 				callback: function (r) {
 					if (r.message) {
-						frm.set_df_property("naming_series", "options", r.message.split("\n"));
-						frm.set_value("naming_series", r.message.split("\n")[0]);
+						frm.set_df_property(
+							"naming_series",
+							"options",
+							r.message.split("\n"),
+						);
+						frm.set_value(
+							"naming_series",
+							r.message.split("\n")[0],
+						);
 						frm.refresh_field("naming_series");
 					}
 				},
@@ -30,7 +37,11 @@ frappe.ui.form.on("Journal Entry Template", {
 				$.extend(filters, {
 					account_currency: [
 						"in",
-						[frappe.get_doc(":Company", frm.doc.company).default_currency, null],
+						[
+							frappe.get_doc(":Company", frm.doc.company)
+								.default_currency,
+							null,
+						],
 					],
 				});
 			}
@@ -41,7 +52,11 @@ frappe.ui.form.on("Journal Entry Template", {
 	voucher_type: function (frm) {
 		var add_accounts = function (doc, r) {
 			$.each(r, function (i, d) {
-				var row = frappe.model.add_child(doc, "Journal Entry Template Account", "accounts");
+				var row = frappe.model.add_child(
+					doc,
+					"Journal Entry Template Account",
+					"accounts",
+				);
 				row.account = d.account;
 			});
 			refresh_field("accounts");
@@ -61,8 +76,8 @@ frappe.ui.form.on("Journal Entry Template", {
 							frm.doc.voucher_type == "Bank Entry"
 								? "Bank"
 								: frm.doc.voucher_type == "Cash Entry"
-								? "Cash"
-								: null,
+									? "Cash"
+									: null,
 						company: frm.doc.company,
 					},
 					callback: function (r) {

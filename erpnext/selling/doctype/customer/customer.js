@@ -26,11 +26,16 @@ frappe.ui.form.on("Customer", {
 					method: "erpnext.selling.doctype.customer.customer.make_opportunity",
 					frm: frm,
 				}),
-			"Pricing Rule": () => erpnext.utils.make_pricing_rule(frm.doc.doctype, frm.doc.name),
+			"Pricing Rule": () =>
+				erpnext.utils.make_pricing_rule(frm.doc.doctype, frm.doc.name),
 		};
 
 		frm.add_fetch("lead_name", "company_name", "customer_name");
-		frm.add_fetch("default_sales_partner", "commission_rate", "default_commission_rate");
+		frm.add_fetch(
+			"default_sales_partner",
+			"commission_rate",
+			"default_commission_rate",
+		);
 		frm.set_query("customer_group", { is_group: 0 });
 		frm.set_query("default_price_list", { selling: 1 });
 		frm.set_query("account", "accounts", function (doc, cdt, cdn) {
@@ -43,7 +48,9 @@ frappe.ui.form.on("Customer", {
 			};
 
 			if (doc.party_account_currency) {
-				$.extend(filters, { account_currency: doc.party_account_currency });
+				$.extend(filters, {
+					account_currency: doc.party_account_currency,
+				});
 			}
 			return {
 				filters: filters,
@@ -138,7 +145,9 @@ frappe.ui.form.on("Customer", {
 	},
 
 	refresh: function (frm) {
-		if (frappe.defaults.get_default("cust_master_name") != "Naming Series") {
+		if (
+			frappe.defaults.get_default("cust_master_name") != "Naming Series"
+		) {
 			frm.toggle_display("naming_series", false);
 		} else {
 			erpnext.toggle_naming_series();
@@ -157,7 +166,7 @@ frappe.ui.form.on("Customer", {
 						party: frm.doc.name,
 					});
 				},
-				__("View")
+				__("View"),
 			);
 
 			frm.add_custom_button(
@@ -169,11 +178,15 @@ frappe.ui.form.on("Customer", {
 						party_name: frm.doc.customer_name,
 					});
 				},
-				__("View")
+				__("View"),
 			);
 
 			for (const doctype in frm.make_methods) {
-				frm.add_custom_button(__(doctype), frm.make_methods[doctype], __("Create"));
+				frm.add_custom_button(
+					__(doctype),
+					frm.make_methods[doctype],
+					__("Create"),
+				);
 			}
 
 			frm.add_custom_button(
@@ -181,16 +194,22 @@ frappe.ui.form.on("Customer", {
 				function () {
 					frm.trigger("get_customer_group_details");
 				},
-				__("Actions")
+				__("Actions"),
 			);
 
-			if (cint(frappe.defaults.get_default("enable_common_party_accounting"))) {
+			if (
+				cint(
+					frappe.defaults.get_default(
+						"enable_common_party_accounting",
+					),
+				)
+			) {
 				frm.add_custom_button(
 					__("Link with Supplier"),
 					function () {
 						frm.trigger("show_party_link_dialog");
 					},
-					__("Actions")
+					__("Actions"),
 				);
 			}
 
@@ -205,7 +224,8 @@ frappe.ui.form.on("Customer", {
 		grid.set_column_disp("incentives", false);
 	},
 	validate: function (frm) {
-		if (frm.doc.lead_name) frappe.model.clear_doc("Lead", frm.doc.lead_name);
+		if (frm.doc.lead_name)
+			frappe.model.clear_doc("Lead", frm.doc.lead_name);
 	},
 	get_customer_group_details: function (frm) {
 		frappe.call({
@@ -247,7 +267,9 @@ frappe.ui.form.on("Customer", {
 					error: function () {
 						dialog.hide();
 						frappe.msgprint({
-							message: __("Linking to Supplier Failed. Please try again."),
+							message: __(
+								"Linking to Supplier Failed. Please try again.",
+							),
 							title: __("Linking Failed"),
 							indicator: "red",
 						});

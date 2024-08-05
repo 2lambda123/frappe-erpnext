@@ -12,7 +12,7 @@ frappe.ui.form.on("Price List", {
 				};
 				frappe.set_route("Report", "Item Price");
 			},
-			"fa fa-money"
+			"fa fa-money",
 		);
 	},
 });

@@ -25,7 +25,11 @@ frappe.listview_settings["POS Invoice"] = {
 			"Overdue and Discounted": "red",
 			Overdue: "red",
 		};
-		return [__(doc.status), status_color[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_color[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 	right_column: "grand_total",
 	onload: function (me) {

@@ -14,17 +14,17 @@ frappe.ui.form.on("Loyalty Program", {
 					<ul>
 						<li>
 							${__(
-								"Loyalty Points will be calculated from the spent done (via the Sales Invoice), based on collection factor mentioned."
+								"Loyalty Points will be calculated from the spent done (via the Sales Invoice), based on collection factor mentioned.",
 							)}
 						</li>
 						<li>
 							${__(
-								"There can be multiple tiered collection factor based on the total spent. But the conversion factor for redemption will always be same for all the tier."
+								"There can be multiple tiered collection factor based on the total spent. But the conversion factor for redemption will always be same for all the tier.",
 							)}
 						</li>
 						<li>
 							${__(
-								"In the case of multi-tier program, Customers will be auto assigned to the concerned tier as per their spent"
+								"In the case of multi-tier program, Customers will be auto assigned to the concerned tier as per their spent",
 							)}
 						</li>
 						<li>
@@ -32,7 +32,7 @@ frappe.ui.form.on("Loyalty Program", {
 						</li>
 						<li>
 							${__(
-								"If Auto Opt In is checked, then the customers will be automatically linked with the concerned Loyalty Program (on save)"
+								"If Auto Opt In is checked, then the customers will be automatically linked with the concerned Loyalty Program (on save)",
 							)}
 						</li>
 						<li>
@@ -60,9 +60,14 @@ frappe.ui.form.on("Loyalty Program", {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.loyalty_program_type === "Single Tier Program" && frm.doc.collection_rules.length > 1) {
+		if (
+			frm.doc.loyalty_program_type === "Single Tier Program" &&
+			frm.doc.collection_rules.length > 1
+		) {
 			frappe.throw(
-				__("Please select the Multiple Tier Program type for more than one collection rules.")
+				__(
+					"Please select the Multiple Tier Program type for more than one collection rules.",
+				),
 			);
 		}
 	},

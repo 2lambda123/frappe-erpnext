@@ -43,9 +43,11 @@ frappe.ui.form.on("Shareholder", {
 		let contact_list = {
 			contacts: [],
 		};
-		$("div[data-fieldname=contact_html] > .address-box").each((index, ele) => {
-			contact_list.contacts.push(ele.innerText.replace(" Edit", ""));
-		});
+		$("div[data-fieldname=contact_html] > .address-box").each(
+			(index, ele) => {
+				contact_list.contacts.push(ele.innerText.replace(" Edit", ""));
+			},
+		);
 		frm.doc.contact_list = JSON.stringify(contact_list);
 	},
 });
