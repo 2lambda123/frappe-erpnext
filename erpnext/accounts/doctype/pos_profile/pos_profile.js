@@ -37,7 +37,12 @@ frappe.ui.form.on("POS Profile", {
 		frm.set_query("taxes_and_charges", function () {
 			return {
 				filters: [
-					["Sales Taxes and Charges Template", "company", "=", frm.doc.company],
+					[
+						"Sales Taxes and Charges Template",
+						"company",
+						"=",
+						frm.doc.company,
+					],
 					["Sales Taxes and Charges Template", "docstatus", "!=", 2],
 				],
 			};
@@ -138,6 +143,9 @@ frappe.ui.form.on("POS Profile", {
 	},
 
 	toggle_display_account_head: function (frm) {
-		frm.toggle_display("expense_account", erpnext.is_perpetual_inventory_enabled(frm.doc.company));
+		frm.toggle_display(
+			"expense_account",
+			erpnext.is_perpetual_inventory_enabled(frm.doc.company),
+		);
 	},
 });

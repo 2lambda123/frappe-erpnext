@@ -7,17 +7,20 @@ frappe.ui.form.on("Stock Reposting Settings", {
 	},
 
 	convert_to_item_based_reposting: function (frm) {
-		frm.add_custom_button(__("Convert to Item Based Reposting"), function () {
-			frm.call({
-				method: "convert_to_item_wh_reposting",
-				frezz: true,
-				doc: frm.doc,
-				callback: function (r) {
-					if (!r.exc) {
-						frm.reload_doc();
-					}
-				},
-			});
-		});
+		frm.add_custom_button(
+			__("Convert to Item Based Reposting"),
+			function () {
+				frm.call({
+					method: "convert_to_item_wh_reposting",
+					frezz: true,
+					doc: frm.doc,
+					callback: function (r) {
+						if (!r.exc) {
+							frm.reload_doc();
+						}
+					},
+				});
+			},
+		);
 	},
 });

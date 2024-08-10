@@ -38,7 +38,9 @@ frappe.ui.form.on("Quality Inspection", {
 
 			if (doc.reference_type !== "Job Card") {
 				doctype =
-					doc.reference_type == "Stock Entry" ? "Stock Entry Detail" : doc.reference_type + " Item";
+					doc.reference_type == "Stock Entry"
+						? "Stock Entry Detail"
+						: doc.reference_type + " Item";
 			}
 
 			if (doc.reference_type && doc.reference_name) {
@@ -47,7 +49,8 @@ frappe.ui.form.on("Quality Inspection", {
 					inspection_type: doc.inspection_type,
 				};
 
-				if (doc.reference_type == doctype) filters["reference_name"] = doc.reference_name;
+				if (doc.reference_type == doctype)
+					filters["reference_name"] = doc.reference_name;
 				else filters["parent"] = doc.reference_name;
 
 				return {

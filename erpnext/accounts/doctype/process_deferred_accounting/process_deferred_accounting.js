@@ -18,7 +18,8 @@ frappe.ui.form.on("Process Deferred Accounting", {
 				return {
 					filters: {
 						company: frm.doc.company,
-						root_type: frm.doc.type === "Income" ? "Liability" : "Asset",
+						root_type:
+							frm.doc.type === "Income" ? "Liability" : "Asset",
 						is_group: 0,
 					},
 				};
@@ -29,13 +30,16 @@ frappe.ui.form.on("Process Deferred Accounting", {
 	validate: function () {
 		return new Promise((resolve) => {
 			return frappe.db
-				.get_single_value("Accounts Settings", "automatically_process_deferred_accounting_entry")
+				.get_single_value(
+					"Accounts Settings",
+					"automatically_process_deferred_accounting_entry",
+				)
 				.then((value) => {
 					if (value) {
 						frappe.throw(
 							__(
-								"Manual entry cannot be created! Disable automatic entry for deferred accounting in accounts settings and try again"
-							)
+								"Manual entry cannot be created! Disable automatic entry for deferred accounting in accounts settings and try again",
+							),
 						);
 					}
 					resolve(value);
@@ -51,7 +55,10 @@ frappe.ui.form.on("Process Deferred Accounting", {
 
 	onload: function (frm) {
 		if (frm.doc.posting_date && frm.doc.docstatus === 0) {
-			frm.set_value("start_date", frappe.datetime.add_months(frm.doc.posting_date, -1));
+			frm.set_value(
+				"start_date",
+				frappe.datetime.add_months(frm.doc.posting_date, -1),
+			);
 			frm.set_value("end_date", frm.doc.posting_date);
 		}
 	},

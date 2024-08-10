@@ -34,13 +34,25 @@ frappe.query_reports["Account Balance"] = {
 			label: __("Account Type"),
 			fieldtype: "Select",
 			options: [
-				{ value: "Accumulated Depreciation", label: __("Accumulated Depreciation") },
-				{ value: "Asset Received But Not Billed", label: __("Asset Received But Not Billed") },
+				{
+					value: "Accumulated Depreciation",
+					label: __("Accumulated Depreciation"),
+				},
+				{
+					value: "Asset Received But Not Billed",
+					label: __("Asset Received But Not Billed"),
+				},
 				{ value: "Bank", label: __("Bank") },
 				{ value: "Cash", label: __("Cash") },
 				{ value: "Chargeable", label: __("Chargeable") },
-				{ value: "Capital Work in Progress", label: __("Capital Work in Progress") },
-				{ value: "Cost of Goods Sold", label: __("Cost of Goods Sold") },
+				{
+					value: "Capital Work in Progress",
+					label: __("Capital Work in Progress"),
+				},
+				{
+					value: "Cost of Goods Sold",
+					label: __("Cost of Goods Sold"),
+				},
 				{ value: "Depreciation", label: __("Depreciation") },
 				{ value: "Equity", label: __("Equity") },
 				{ value: "Expense Account", label: __("Expense Account") },
@@ -48,7 +60,10 @@ frappe.query_reports["Account Balance"] = {
 					value: "Expenses Included In Asset Valuation",
 					label: __("Expenses Included In Asset Valuation"),
 				},
-				{ value: "Expenses Included In Valuation", label: __("Expenses Included In Valuation") },
+				{
+					value: "Expenses Included In Valuation",
+					label: __("Expenses Included In Valuation"),
+				},
 				{ value: "Fixed Asset", label: __("Fixed Asset") },
 				{ value: "Income Account", label: __("Income Account") },
 				{ value: "Payable", label: __("Payable") },
@@ -56,7 +71,10 @@ frappe.query_reports["Account Balance"] = {
 				{ value: "Round Off", label: __("Round Off") },
 				{ value: "Stock", label: __("Stock") },
 				{ value: "Stock Adjustment", label: __("Stock Adjustment") },
-				{ value: "Stock Received But Not Billed", label: __("Stock Received But Not Billed") },
+				{
+					value: "Stock Received But Not Billed",
+					label: __("Stock Received But Not Billed"),
+				},
 				{ value: "Tax", label: __("Tax") },
 				{ value: "Temporary", label: __("Temporary") },
 			],

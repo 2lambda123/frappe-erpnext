@@ -12,10 +12,13 @@ frappe.ui.form.on("Prospect", {
 						frm: frm,
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
-		if (!frm.is_new() && frappe.boot.user.can_create.includes("Opportunity")) {
+		if (
+			!frm.is_new() &&
+			frappe.boot.user.can_create.includes("Opportunity")
+		) {
 			frm.add_custom_button(
 				__("Opportunity"),
 				function () {
@@ -24,7 +27,7 @@ frappe.ui.form.on("Prospect", {
 						frm: frm,
 					});
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 
@@ -48,8 +51,12 @@ frappe.ui.form.on("Prospect", {
 	show_activities(frm) {
 		const crm_activities = new erpnext.utils.CRMActivities({
 			frm: frm,
-			open_activities_wrapper: $(frm.fields_dict.open_activities_html.wrapper),
-			all_activities_wrapper: $(frm.fields_dict.all_activities_html.wrapper),
+			open_activities_wrapper: $(
+				frm.fields_dict.open_activities_html.wrapper,
+			),
+			all_activities_wrapper: $(
+				frm.fields_dict.all_activities_html.wrapper,
+			),
 			form_wrapper: $(frm.wrapper),
 		});
 		crm_activities.refresh();

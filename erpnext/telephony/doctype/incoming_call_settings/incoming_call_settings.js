@@ -34,7 +34,10 @@ function groupby(items, key) {
 function check_timeslot_overlap(ts1, ts2) {
 	/// Timeslot is a an array of length 2 ex: [from_time, to_time]
 	/// time in timeslot is an integer represents number of seconds.
-	if ((ts1[0] < ts2[0] && ts1[1] <= ts2[0]) || (ts1[0] >= ts2[1] && ts1[1] > ts2[1])) {
+	if (
+		(ts1[0] < ts2[0] && ts1[1] <= ts2[0]) ||
+		(ts1[0] >= ts2[1] && ts1[1] > ts2[1])
+	) {
 		return false;
 	}
 	return true;
@@ -55,7 +58,10 @@ function validate_call_schedule_timeslot(schedule) {
 		let to_time_in_secs = time_to_seconds(record.to_time);
 		if (from_time_in_secs >= to_time_in_secs) {
 			errors.push(
-				__("Call Schedule Row {0}: To time slot should always be ahead of From time slot.", [row])
+				__(
+					"Call Schedule Row {0}: To time slot should always be ahead of From time slot.",
+					[row],
+				),
 			);
 		}
 	}
@@ -69,7 +75,10 @@ function is_call_schedule_overlapped(day_schedule) {
 	// Check if any time slots are overlapped in a day schedule.
 	let timeslots = [];
 	day_schedule.forEach((record) => {
-		timeslots.push([time_to_seconds(record.from_time), time_to_seconds(record.to_time)]);
+		timeslots.push([
+			time_to_seconds(record.from_time),
+			time_to_seconds(record.to_time),
+		]);
 	});
 
 	if (timeslots.length < 2) {
@@ -91,7 +100,9 @@ function validate_call_schedule_overlaps(schedule) {
 	let group_by_day = groupby(schedule, "day_of_week");
 	for (const [day, day_schedule] of Object.entries(group_by_day)) {
 		if (is_call_schedule_overlapped(day_schedule)) {
-			frappe.throw(__("Please fix overlapping time slots for {0}", [day]));
+			frappe.throw(
+				__("Please fix overlapping time slots for {0}", [day]),
+			);
 		}
 	}
 }

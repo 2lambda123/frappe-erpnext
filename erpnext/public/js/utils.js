@@ -8,20 +8,28 @@ $.extend(erpnext, {
 	get_currency: function (company) {
 		if (!company && cur_frm) company = cur_frm.doc.company;
 		if (company)
-			return frappe.get_doc(":Company", company)?.default_currency || frappe.boot.sysdefaults.currency;
+			return (
+				frappe.get_doc(":Company", company)?.default_currency ||
+				frappe.boot.sysdefaults.currency
+			);
 		else return frappe.boot.sysdefaults.currency;
 	},
 
 	get_presentation_currency_list: () => {
 		const docs = frappe.boot.docs;
-		let currency_list = docs.filter((d) => d.doctype === ":Currency").map((d) => d.name);
+		let currency_list = docs
+			.filter((d) => d.doctype === ":Currency")
+			.map((d) => d.name);
 		currency_list.unshift("");
 		return currency_list;
 	},
 
 	toggle_naming_series: function () {
 		if (cur_frm && cur_frm.fields_dict.naming_series) {
-			cur_frm.toggle_display("naming_series", cur_frm.doc.__islocal ? true : false);
+			cur_frm.toggle_display(
+				"naming_series",
+				cur_frm.doc.__islocal ? true : false,
+			);
 		}
 	},
 
@@ -32,14 +40,16 @@ $.extend(erpnext, {
 				if (!frm.doc.company) frm.set_value("company", companies[0]);
 				frm.toggle_display("company", false);
 			} else if (erpnext.last_selected_company) {
-				if (!frm.doc.company) frm.set_value("company", erpnext.last_selected_company);
+				if (!frm.doc.company)
+					frm.set_value("company", erpnext.last_selected_company);
 			}
 		}
 	},
 
 	is_perpetual_inventory_enabled: function (company) {
 		if (company) {
-			let company_local = locals[":Company"] && locals[":Company"][company];
+			let company_local =
+				locals[":Company"] && locals[":Company"][company];
 			if (company_local) {
 				return cint(company_local.enable_perpetual_inventory);
 			}
@@ -60,10 +70,15 @@ $.extend(erpnext, {
 			let journal_entry = frappe.model.get_new_doc("Journal Entry");
 
 			args.accounts.forEach((je_account) => {
-				let child_row = frappe.model.add_child(journal_entry, "accounts");
+				let child_row = frappe.model.add_child(
+					journal_entry,
+					"accounts",
+				);
 				child_row.account = je_account.account;
-				child_row.debit_in_account_currency = je_account.debit_in_account_currency;
-				child_row.credit_in_account_currency = je_account.credit_in_account_currency;
+				child_row.debit_in_account_currency =
+					je_account.debit_in_account_currency;
+				child_row.credit_in_account_currency =
+					je_account.credit_in_account_currency;
 				child_row.party_type = "";
 			});
 			frappe.set_route("Form", "Journal Entry", journal_entry.name);
@@ -88,22 +103,27 @@ $.extend(erpnext.utils, {
 					__("Annual Billing: {0}", [
 						format_currency(
 							company_wise_info[0].billing_this_year,
-							company_wise_info[0].currency
+							company_wise_info[0].currency,
 						),
 					]),
-					"blue"
+					"blue",
 				);
 				frm.dashboard.add_indicator(
 					__("Total Unpaid: {0}", [
-						format_currency(company_wise_info[0].total_unpaid, company_wise_info[0].currency),
+						format_currency(
+							company_wise_info[0].total_unpaid,
+							company_wise_info[0].currency,
+						),
 					]),
-					company_wise_info[0].total_unpaid ? "orange" : "green"
+					company_wise_info[0].total_unpaid ? "orange" : "green",
 				);
 
 				if (company_wise_info[0].loyalty_points) {
 					frm.dashboard.add_indicator(
-						__("Loyalty Points: {0}", [company_wise_info[0].loyalty_points]),
-						"blue"
+						__("Loyalty Points: {0}", [
+							company_wise_info[0].loyalty_points,
+						]),
+						"blue",
 					);
 				}
 			}
@@ -124,13 +144,18 @@ $.extend(erpnext.utils, {
 					frappe.route_options = {
 						voucher_no: frm.doc.name,
 						voucher_type: frm.doc.doctype,
-						from_date: frm.doc.posting_date || frm.doc.transaction_date,
-						to_date: frm.doc.posting_date || frm.doc.transaction_date,
+						from_date:
+							frm.doc.posting_date || frm.doc.transaction_date,
+						to_date:
+							frm.doc.posting_date || frm.doc.transaction_date,
 						company: frm.doc.company,
 					};
-					frappe.set_route("query-report", "Serial and Batch Summary");
+					frappe.set_route(
+						"query-report",
+						"Serial and Batch Summary",
+					);
 				},
-				__("View")
+				__("View"),
 			);
 		}
 	},
@@ -157,7 +182,7 @@ $.extend(erpnext.utils, {
 				'">Total Unpaid: ' +
 				format_currency(info.total_unpaid, info.currency) +
 				"</span></div>" +
-				"</div>"
+				"</div>",
 		).appendTo(frm.dashboard.stats_area_row);
 
 		if (info.loyalty_points) {
@@ -165,7 +190,7 @@ $.extend(erpnext.utils, {
 				'<div class="badge-link small" style="margin-bottom:10px"><span class="indicator blue">' +
 					"Loyalty Points: " +
 					info.loyalty_points +
-					"</span></div>"
+					"</span></div>",
 			).appendTo(indicator);
 		}
 
@@ -231,7 +256,9 @@ $.extend(erpnext.utils, {
 			callback: function (r) {
 				let accounting_dimensions = r.message[0];
 				accounting_dimensions.forEach((dimension) => {
-					let found = filters.some((el) => el.fieldname === dimension["fieldname"]);
+					let found = filters.some(
+						(el) => el.fieldname === dimension["fieldname"],
+					);
 
 					if (!found) {
 						filters.splice(index, 0, {
@@ -239,7 +266,10 @@ $.extend(erpnext.utils, {
 							label: __(dimension["label"]),
 							fieldtype: "MultiSelectList",
 							get_data: function (txt) {
-								return frappe.db.get_link_options(dimension["document_type"], txt);
+								return frappe.db.get_link_options(
+									dimension["document_type"],
+									txt,
+								);
 							},
 						});
 					}
@@ -256,7 +286,9 @@ $.extend(erpnext.utils, {
 			callback: function (r) {
 				if (r.message && r.message.length) {
 					r.message.forEach((dimension) => {
-						let existing_filter = filters.filter((el) => el.fieldname === dimension["fieldname"]);
+						let existing_filter = filters.filter(
+							(el) => el.fieldname === dimension["fieldname"],
+						);
 
 						if (!existing_filter.length) {
 							filters.splice(index, 0, {
@@ -264,13 +296,19 @@ $.extend(erpnext.utils, {
 								label: __(dimension["doctype"]),
 								fieldtype: "MultiSelectList",
 								get_data: function (txt) {
-									return frappe.db.get_link_options(dimension["doctype"], txt);
+									return frappe.db.get_link_options(
+										dimension["doctype"],
+										txt,
+									);
 								},
 							});
 						} else {
 							existing_filter[0]["fieldtype"] = "MultiSelectList";
 							existing_filter[0]["get_data"] = function (txt) {
-								return frappe.db.get_link_options(dimension["doctype"], txt);
+								return frappe.db.get_link_options(
+									dimension["doctype"],
+									txt,
+								);
 							};
 						}
 					});
@@ -347,7 +385,9 @@ $.extend(erpnext.utils, {
 		}
 
 		// filter unique values, as there may be multiple user permissions for any value
-		return options.filter((value, index, self) => self.indexOf(value) === index);
+		return options.filter(
+			(value, index, self) => self.indexOf(value) === index,
+		);
 	},
 	get_tree_default: function (option) {
 		// set default for a field based on user permission
@@ -358,7 +398,14 @@ $.extend(erpnext.utils, {
 			return options[0];
 		}
 	},
-	overrides_parent_value_in_all_rows: function (doc, dt, dn, table_fieldname, fieldname, parent_fieldname) {
+	overrides_parent_value_in_all_rows: function (
+		doc,
+		dt,
+		dn,
+		table_fieldname,
+		fieldname,
+		parent_fieldname,
+	) {
 		if (doc[parent_fieldname]) {
 			let cl = doc[table_fieldname] || [];
 			for (let i = 0; i < cl.length; i++) {
@@ -382,42 +429,58 @@ $.extend(erpnext.utils, {
 		if (frappe.boot.versions && !frappe.boot.versions.payments) {
 			const marketplace_link =
 				'<a href="https://frappecloud.com/marketplace/apps/payments">Marketplace</a>';
-			const github_link = '<a href="https://github.com/frappe/payments/">GitHub</a>';
-			const msg = __("payments app is not installed. Please install it from {0} or {1}", [
-				marketplace_link,
-				github_link,
-			]);
+			const github_link =
+				'<a href="https://github.com/frappe/payments/">GitHub</a>';
+			const msg = __(
+				"payments app is not installed. Please install it from {0} or {1}",
+				[marketplace_link, github_link],
+			);
 			frappe.msgprint(msg);
 		}
 	},
 
-	pick_serial_and_batch_bundle(frm, cdt, cdn, type_of_transaction, warehouse_field) {
+	pick_serial_and_batch_bundle(
+		frm,
+		cdt,
+		cdn,
+		type_of_transaction,
+		warehouse_field,
+	) {
 		let item_row = frappe.get_doc(cdt, cdn);
 		item_row.type_of_transaction = type_of_transaction;
 
-		frappe.db.get_value("Item", item_row.item_code, ["has_batch_no", "has_serial_no"]).then((r) => {
-			item_row.has_batch_no = r.message.has_batch_no;
-			item_row.has_serial_no = r.message.has_serial_no;
+		frappe.db
+			.get_value("Item", item_row.item_code, [
+				"has_batch_no",
+				"has_serial_no",
+			])
+			.then((r) => {
+				item_row.has_batch_no = r.message.has_batch_no;
+				item_row.has_serial_no = r.message.has_serial_no;
 
-			new erpnext.SerialBatchPackageSelector(frm, item_row, (r) => {
-				if (r) {
-					let update_values = {
-						serial_and_batch_bundle: r.name,
-						qty: Math.abs(r.total_qty),
-					};
+				new erpnext.SerialBatchPackageSelector(frm, item_row, (r) => {
+					if (r) {
+						let update_values = {
+							serial_and_batch_bundle: r.name,
+							qty: Math.abs(r.total_qty),
+						};
 
-					if (!warehouse_field) {
-						warehouse_field = "warehouse";
+						if (!warehouse_field) {
+							warehouse_field = "warehouse";
+						}
+
+						if (r.warehouse) {
+							update_values[warehouse_field] = r.warehouse;
+						}
+
+						frappe.model.set_value(
+							item_row.doctype,
+							item_row.name,
+							update_values,
+						);
 					}
-
-					if (r.warehouse) {
-						update_values[warehouse_field] = r.warehouse;
-					}
-
-					frappe.model.set_value(item_row.doctype, item_row.name, update_values);
-				}
+				});
 			});
-		});
 	},
 
 	get_fiscal_year: function (date, with_dates = false, boolean = false) {
@@ -489,7 +552,8 @@ erpnext.utils.select_alternate_items = function (opts) {
 						label: __("Alternate Item"),
 						onchange: function () {
 							const item_code = this.get_value();
-							const warehouse = this.grid_row.on_grid_fields_dict.warehouse.get_value();
+							const warehouse =
+								this.grid_row.on_grid_fields_dict.warehouse.get_value();
 							if (item_code && warehouse) {
 								frappe.call({
 									method: "erpnext.stock.utils.get_latest_stock_qty",
@@ -499,7 +563,7 @@ erpnext.utils.select_alternate_items = function (opts) {
 									},
 									callback: (r) => {
 										this.grid_row.on_grid_fields_dict.actual_qty.set_value(
-											r.message || 0
+											r.message || 0,
 										);
 									},
 								});
@@ -523,7 +587,8 @@ erpnext.utils.select_alternate_items = function (opts) {
 						label: __("Warehouse"),
 						onchange: function () {
 							const warehouse = this.get_value();
-							const item_code = this.grid_row.on_grid_fields_dict.item_code.get_value();
+							const item_code =
+								this.grid_row.on_grid_fields_dict.item_code.get_value();
 							if (item_code && warehouse) {
 								frappe.call({
 									method: "erpnext.stock.utils.get_latest_stock_qty",
@@ -533,7 +598,7 @@ erpnext.utils.select_alternate_items = function (opts) {
 									},
 									callback: (r) => {
 										this.grid_row.on_grid_fields_dict.actual_qty.set_value(
-											r.message || 0
+											r.message || 0,
 										);
 									},
 								});
@@ -569,7 +634,12 @@ erpnext.utils.select_alternate_items = function (opts) {
 				}
 				row[item_field] = d.alternate_item;
 				frappe.model.set_value(row.doctype, row.name, "qty", qty);
-				frappe.model.set_value(row.doctype, row.name, opts.original_item_field, d.item_code);
+				frappe.model.set_value(
+					row.doctype,
+					row.name,
+					opts.original_item_field,
+					d.item_code,
+				);
 				frm.trigger(item_field, row.doctype, row.name);
 			});
 
@@ -597,11 +667,16 @@ erpnext.utils.select_alternate_items = function (opts) {
 
 erpnext.utils.update_child_items = function (opts) {
 	const frm = opts.frm;
-	const cannot_add_row = typeof opts.cannot_add_row === "undefined" ? true : opts.cannot_add_row;
-	const child_docname = typeof opts.cannot_add_row === "undefined" ? "items" : opts.child_docname;
+	const cannot_add_row =
+		typeof opts.cannot_add_row === "undefined" ? true : opts.cannot_add_row;
+	const child_docname =
+		typeof opts.cannot_add_row === "undefined"
+			? "items"
+			: opts.child_docname;
 	const child_meta = frappe.get_meta(`${frm.doc.doctype} Item`);
 	const has_reserved_stock = opts.has_reserved_stock ? true : false;
-	const get_precision = (fieldname) => child_meta.fields.find((f) => f.fieldname == fieldname).precision;
+	const get_precision = (fieldname) =>
+		child_meta.fields.find((f) => f.fieldname == fieldname).precision;
 
 	this.data = frm.doc[opts.child_docname].map((d) => {
 		return {
@@ -668,16 +743,23 @@ erpnext.utils.update_child_items = function (opts) {
 					args: { item_code: this.doc.item_code, uom: this.value },
 					callback: (r) => {
 						if (!r.exc) {
-							if (this.doc.conversion_factor == r.message.conversion_factor) return;
+							if (
+								this.doc.conversion_factor ==
+								r.message.conversion_factor
+							)
+								return;
 
 							const docname = this.doc.docname;
-							dialog.fields_dict.trans_items.df.data.some((doc) => {
-								if (doc.docname == docname) {
-									doc.conversion_factor = r.message.conversion_factor;
-									dialog.fields_dict.trans_items.grid.refresh();
-									return true;
-								}
-							});
+							dialog.fields_dict.trans_items.df.data.some(
+								(doc) => {
+									if (doc.docname == docname) {
+										doc.conversion_factor =
+											r.message.conversion_factor;
+										dialog.fields_dict.trans_items.grid.refresh();
+										return true;
+									}
+								},
+							);
 						}
 					},
 				});
@@ -704,13 +786,25 @@ erpnext.utils.update_child_items = function (opts) {
 		},
 	];
 
-	if (frm.doc.doctype == "Sales Order" || frm.doc.doctype == "Purchase Order") {
+	if (
+		frm.doc.doctype == "Sales Order" ||
+		frm.doc.doctype == "Purchase Order"
+	) {
 		fields.splice(2, 0, {
 			fieldtype: "Date",
-			fieldname: frm.doc.doctype == "Sales Order" ? "delivery_date" : "schedule_date",
+			fieldname:
+				frm.doc.doctype == "Sales Order"
+					? "delivery_date"
+					: "schedule_date",
 			in_list_view: 1,
-			label: frm.doc.doctype == "Sales Order" ? __("Delivery Date") : __("Reqd by date"),
-			default: frm.doc.doctype == "Sales Order" ? frm.doc.delivery_date : frm.doc.schedule_date,
+			label:
+				frm.doc.doctype == "Sales Order"
+					? __("Delivery Date")
+					: __("Reqd by date"),
+			default:
+				frm.doc.doctype == "Sales Order"
+					? frm.doc.delivery_date
+					: frm.doc.schedule_date,
 			reqd: 1,
 		});
 		fields.splice(3, 0, {
@@ -755,7 +849,7 @@ erpnext.utils.update_child_items = function (opts) {
 				in_list_view: 0,
 				label: __("Finished Good Item Qty"),
 				precision: get_precision("fg_item_qty"),
-			}
+			},
 		);
 	}
 
@@ -782,16 +876,18 @@ erpnext.utils.update_child_items = function (opts) {
 				this.hide();
 				frappe.confirm(
 					__(
-						"The reserved stock will be released when you update items. Are you certain you wish to proceed?"
+						"The reserved stock will be released when you update items. Are you certain you wish to proceed?",
 					),
-					() => this.update_items()
+					() => this.update_items(),
 				);
 			} else {
 				this.update_items();
 			}
 		},
 		update_items: function () {
-			const trans_items = this.get_values()["trans_items"].filter((item) => !!item.item_code);
+			const trans_items = this.get_values()["trans_items"].filter(
+				(item) => !!item.item_code,
+			);
 			frappe.call({
 				method: "erpnext.controllers.accounts_controller.update_child_qty_rate",
 				freeze: true,
@@ -823,13 +919,17 @@ erpnext.utils.map_current_doc = function (opts) {
 			}
 
 			// find the doctype of the items table
-			var items_doctype = frappe.meta.get_docfield(cur_frm.doctype, "items").options;
+			var items_doctype = frappe.meta.get_docfield(
+				cur_frm.doctype,
+				"items",
+			).options;
 
 			// find the link fieldname from items table for the given
 			// source_doctype
 			var link_fieldname = null;
 			frappe.get_meta(items_doctype).fields.forEach(function (d) {
-				if (d.options === opts.source_doctype) link_fieldname = d.fieldname;
+				if (d.options === opts.source_doctype)
+					link_fieldname = d.fieldname;
 			});
 
 			// search in existing items if the source_name is already set and full qty fetched
@@ -840,7 +940,8 @@ erpnext.utils.map_current_doc = function (opts) {
 				opts.source_name.forEach(function (src) {
 					if (d[link_fieldname] == src) {
 						already_set = true;
-						if (item_qty_map[d.item_code]) item_qty_map[d.item_code] += flt(d.qty);
+						if (item_qty_map[d.item_code])
+							item_qty_map[d.item_code] += flt(d.qty);
 						else item_qty_map[d.item_code] = flt(d.qty);
 					}
 				});
@@ -848,19 +949,31 @@ erpnext.utils.map_current_doc = function (opts) {
 
 			if (already_set) {
 				opts.source_name.forEach(function (src) {
-					frappe.model.with_doc(opts.source_doctype, src, function (r) {
-						var source_doc = frappe.model.get_doc(opts.source_doctype, src);
-						$.each(source_doc.items || [], function (i, row) {
-							if (row.qty > flt(item_qty_map[row.item_code])) {
-								already_set = false;
-								return false;
-							}
-						});
-					});
+					frappe.model.with_doc(
+						opts.source_doctype,
+						src,
+						function (r) {
+							var source_doc = frappe.model.get_doc(
+								opts.source_doctype,
+								src,
+							);
+							$.each(source_doc.items || [], function (i, row) {
+								if (
+									row.qty > flt(item_qty_map[row.item_code])
+								) {
+									already_set = false;
+									return false;
+								}
+							});
+						},
+					);
 
 					if (already_set) {
 						frappe.msgprint(
-							__("You have already selected items from {0} {1}", [opts.source_doctype, src])
+							__("You have already selected items from {0} {1}", [
+								opts.source_doctype,
+								src,
+							]),
 						);
 						return;
 					}
@@ -906,7 +1019,9 @@ erpnext.utils.map_current_doc = function (opts) {
 
 	if (opts.source_doctype) {
 		let data_fields = [];
-		if (["Purchase Receipt", "Delivery Note"].includes(opts.source_doctype)) {
+		if (
+			["Purchase Receipt", "Delivery Note"].includes(opts.source_doctype)
+		) {
 			let target_meta = frappe.get_meta(cur_frm.doc.doctype);
 			if (target_meta.fields.find((f) => f.fieldname === "taxes")) {
 				data_fields.push({
@@ -931,7 +1046,9 @@ erpnext.utils.map_current_doc = function (opts) {
 			action: function (selections, args) {
 				let values = selections;
 				if (values.length === 0) {
-					frappe.msgprint(__("Please select {0}", [opts.source_doctype]));
+					frappe.msgprint(
+						__("Please select {0}", [opts.source_doctype]),
+					);
 					return;
 				}
 
@@ -943,7 +1060,9 @@ erpnext.utils.map_current_doc = function (opts) {
 
 				if (
 					opts.allow_child_item_selection ||
-					["Purchase Receipt", "Delivery Note"].includes(opts.source_doctype)
+					["Purchase Receipt", "Delivery Note"].includes(
+						opts.source_doctype,
+					)
 				) {
 					// args contains filtered child docnames
 					opts.args = args;
@@ -963,7 +1082,13 @@ erpnext.utils.map_current_doc = function (opts) {
 };
 
 frappe.form.link_formatters["Item"] = function (value, doc) {
-	if (doc && value && doc.item_name && doc.item_name !== value && doc.item_code === value) {
+	if (
+		doc &&
+		value &&
+		doc.item_name &&
+		doc.item_name !== value &&
+		doc.item_code === value
+	) {
 		return value + ": " + doc.item_name;
 	} else if (!value && doc.doctype && doc.item_name) {
 		// format blank value in child table
@@ -975,7 +1100,13 @@ frappe.form.link_formatters["Item"] = function (value, doc) {
 };
 
 frappe.form.link_formatters["Employee"] = function (value, doc) {
-	if (doc && value && doc.employee_name && doc.employee_name !== value && doc.employee === value) {
+	if (
+		doc &&
+		value &&
+		doc.employee_name &&
+		doc.employee_name !== value &&
+		doc.employee === value
+	) {
 		return value + ": " + doc.employee_name;
 	} else if (!value && doc.doctype && doc.employee_name) {
 		// format blank value in child table
@@ -987,7 +1118,13 @@ frappe.form.link_formatters["Employee"] = function (value, doc) {
 };
 
 frappe.form.link_formatters["Project"] = function (value, doc) {
-	if (doc && value && doc.project_name && doc.project_name !== value && doc.project === value) {
+	if (
+		doc &&
+		value &&
+		doc.project_name &&
+		doc.project_name !== value &&
+		doc.project === value
+	) {
 		return value + ": " + doc.project_name;
 	} else if (!value && doc.doctype && doc.project_name) {
 		// format blank value in child table
@@ -1012,9 +1149,13 @@ $(document).on("app_ready", function () {
 			],
 			function (i, d) {
 				frappe.ui.form.on(d, "onload", function (frm) {
-					cur_frm.set_df_property("posting_time", "description", frappe.sys_defaults.time_zone);
+					cur_frm.set_df_property(
+						"posting_time",
+						"description",
+						frappe.sys_defaults.time_zone,
+					);
 				});
-			}
+			},
 		);
 	}
 });
@@ -1042,13 +1183,20 @@ $(document).on("app_ready", function () {
 									},
 								};
 							});
-							frm.set_query("service_level_agreement", function () {
-								return {
-									filters: {
-										name: ["in", r.message.service_level_agreements],
-									},
-								};
-							});
+							frm.set_query(
+								"service_level_agreement",
+								function () {
+									return {
+										filters: {
+											name: [
+												"in",
+												r.message
+													.service_level_agreements,
+											],
+										},
+									};
+								},
+							);
 						}
 					},
 				});
@@ -1058,7 +1206,9 @@ $(document).on("app_ready", function () {
 				if (
 					frm.doc.status !== "Closed" &&
 					frm.doc.service_level_agreement &&
-					["First Response Due", "Resolution Due"].includes(frm.doc.agreement_status)
+					["First Response Due", "Resolution Due"].includes(
+						frm.doc.agreement_status,
+					)
 				) {
 					frappe.call({
 						method: "frappe.client.get",
@@ -1077,7 +1227,9 @@ $(document).on("app_ready", function () {
 								let message = {
 									indicator: "orange",
 									msg: __("SLA is on hold since {0}", [
-										moment(frm.doc.on_hold_since).fromNow(true),
+										moment(frm.doc.on_hold_since).fromNow(
+											true,
+										),
 									]),
 								};
 								frm.dashboard.set_headline_alert(
@@ -1089,10 +1241,13 @@ $(document).on("app_ready", function () {
 										message.msg +
 										"</span></span> " +
 										"</div>" +
-										"</div>"
+										"</div>",
 								);
 							} else {
-								set_time_to_resolve_and_response(frm, data.message.apply_sla_for_resolution);
+								set_time_to_resolve_and_response(
+									frm,
+									data.message.apply_sla_for_resolution,
+								);
 							}
 						},
 					});
@@ -1101,8 +1256,14 @@ $(document).on("app_ready", function () {
 
 					let agreement_status =
 						frm.doc.agreement_status == "Fulfilled"
-							? { indicator: "green", msg: "Service Level Agreement has been fulfilled" }
-							: { indicator: "red", msg: "Service Level Agreement Failed" };
+							? {
+									indicator: "green",
+									msg: "Service Level Agreement has been fulfilled",
+								}
+							: {
+									indicator: "red",
+									msg: "Service Level Agreement Failed",
+								};
 
 					frm.dashboard.set_headline_alert(
 						'<div class="row">' +
@@ -1113,7 +1274,7 @@ $(document).on("app_ready", function () {
 							agreement_status.msg +
 							"</span></span> " +
 							"</div>" +
-							"</div>"
+							"</div>",
 					);
 				}
 			},
@@ -1126,9 +1287,15 @@ function set_time_to_resolve_and_response(frm, apply_sla_for_resolution) {
 
 	let time_to_respond;
 	if (!frm.doc.first_responded_on) {
-		time_to_respond = get_time_left(frm.doc.response_by, frm.doc.agreement_status);
+		time_to_respond = get_time_left(
+			frm.doc.response_by,
+			frm.doc.agreement_status,
+		);
 	} else {
-		time_to_respond = get_status(frm.doc.response_by, frm.doc.first_responded_on);
+		time_to_respond = get_status(
+			frm.doc.response_by,
+			frm.doc.first_responded_on,
+		);
 	}
 
 	let alert = `
@@ -1142,9 +1309,15 @@ function set_time_to_resolve_and_response(frm, apply_sla_for_resolution) {
 	if (apply_sla_for_resolution) {
 		let time_to_resolve;
 		if (!frm.doc.resolution_date) {
-			time_to_resolve = get_time_left(frm.doc.resolution_by, frm.doc.agreement_status);
+			time_to_resolve = get_time_left(
+				frm.doc.resolution_by,
+				frm.doc.agreement_status,
+			);
 		} else {
-			time_to_resolve = get_status(frm.doc.resolution_by, frm.doc.resolution_date);
+			time_to_resolve = get_status(
+				frm.doc.resolution_by,
+				frm.doc.resolution_date,
+			);
 		}
 
 		alert += `
@@ -1162,8 +1335,12 @@ function set_time_to_resolve_and_response(frm, apply_sla_for_resolution) {
 
 function get_time_left(timestamp, agreement_status) {
 	const diff = moment(timestamp).diff(frappe.datetime.system_datetime(true));
-	const diff_display = diff >= 44500 ? moment.duration(diff).humanize() : "Failed";
-	let indicator = diff_display == "Failed" && agreement_status != "Fulfilled" ? "red" : "green";
+	const diff_display =
+		diff >= 44500 ? moment.duration(diff).humanize() : "Failed";
+	let indicator =
+		diff_display == "Failed" && agreement_status != "Fulfilled"
+			? "red"
+			: "green";
 	return { diff_display: diff_display, indicator: indicator };
 }
 
@@ -1177,11 +1354,21 @@ function get_status(expected, actual) {
 }
 
 function attach_selector_button(inner_text, append_loction, context, grid_row) {
-	let $btn_div = $("<div>").css({ "margin-bottom": "10px", "margin-top": "10px" }).appendTo(append_loction);
-	let $btn = $(`<button class="btn btn-sm btn-default">${inner_text}</button>`).appendTo($btn_div);
+	let $btn_div = $("<div>")
+		.css({ "margin-bottom": "10px", "margin-top": "10px" })
+		.appendTo(append_loction);
+	let $btn = $(
+		`<button class="btn btn-sm btn-default">${inner_text}</button>`,
+	).appendTo($btn_div);
 
 	$btn.on("click", function () {
-		context.show_serial_batch_selector(grid_row.frm, grid_row.doc, "", "", true);
+		context.show_serial_batch_selector(
+			grid_row.frm,
+			grid_row.doc,
+			"",
+			"",
+			true,
+		);
 	});
 }
 
@@ -1222,7 +1409,10 @@ $.extend(erpnext.stock.utils, {
 			.map((x, y) => x + y)
 			.map((x) => x + start_int - 1);
 		return serial_numbers.map((val) => {
-			return start_str.substring(0, length_difference) + val.toString().padStart(end_str.length, "0");
+			return (
+				start_str.substring(0, length_difference) +
+				val.toString().padStart(end_str.length, "0")
+			);
 		});
 	},
 });

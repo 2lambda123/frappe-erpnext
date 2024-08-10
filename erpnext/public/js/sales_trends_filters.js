@@ -36,7 +36,11 @@ erpnext.sales_trends_filters = {
 			fieldname: "group_by",
 			label: __("Group By"),
 			fieldtype: "Select",
-			options: ["", { value: "Item", label: __("Item") }, { value: "Customer", label: __("Customer") }],
+			options: [
+				"",
+				{ value: "Item", label: __("Item") },
+				{ value: "Customer", label: __("Customer") },
+			],
 			default: "",
 		},
 		{

@@ -14,7 +14,10 @@ frappe.query_reports["Customer Ledger Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 			width: "60px",
 		},
@@ -40,10 +43,21 @@ frappe.query_reports["Customer Ledger Summary"] = {
 			on_change: () => {
 				var party = frappe.query_report.get_filter_value("party");
 				if (party) {
-					frappe.db.get_value("Customer", party, ["tax_id", "customer_name"], function (value) {
-						frappe.query_report.set_filter_value("tax_id", value["tax_id"]);
-						frappe.query_report.set_filter_value("customer_name", value["customer_name"]);
-					});
+					frappe.db.get_value(
+						"Customer",
+						party,
+						["tax_id", "customer_name"],
+						function (value) {
+							frappe.query_report.set_filter_value(
+								"tax_id",
+								value["tax_id"],
+							);
+							frappe.query_report.set_filter_value(
+								"customer_name",
+								value["customer_name"],
+							);
+						},
+					);
 				} else {
 					frappe.query_report.set_filter_value("tax_id", "");
 					frappe.query_report.set_filter_value("customer_name", "");

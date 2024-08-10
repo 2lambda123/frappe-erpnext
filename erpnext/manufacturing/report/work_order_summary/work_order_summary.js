@@ -22,7 +22,10 @@ frappe.query_reports["Work Order Summary"] = {
 			label: __("From Posting Date"),
 			fieldname: "from_date",
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -3),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-3,
+			),
 			reqd: 1,
 		},
 		{
@@ -36,7 +39,14 @@ frappe.query_reports["Work Order Summary"] = {
 			label: __("Status"),
 			fieldname: "status",
 			fieldtype: "Select",
-			options: ["", "Not Started", "In Process", "Completed", "Stopped", "Closed"],
+			options: [
+				"",
+				"Not Started",
+				"In Process",
+				"Completed",
+				"Stopped",
+				"Closed",
+			],
 		},
 		{
 			label: __("Sales Orders"),

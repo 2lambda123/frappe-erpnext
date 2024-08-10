@@ -23,7 +23,14 @@ frappe.query_reports["Delayed Tasks Summary"] = {
 			fieldname: "status",
 			label: __("Status"),
 			fieldtype: "Select",
-			options: ["", "Open", "Working", "Pending Review", "Overdue", "Completed"],
+			options: [
+				"",
+				"Open",
+				"Working",
+				"Pending Review",
+				"Overdue",
+				"Completed",
+			],
 		},
 	],
 	formatter: function (value, row, column, data, default_formatter) {

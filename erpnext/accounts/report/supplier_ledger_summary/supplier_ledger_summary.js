@@ -14,7 +14,10 @@ frappe.query_reports["Supplier Ledger Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 			width: "60px",
 		},
@@ -40,10 +43,21 @@ frappe.query_reports["Supplier Ledger Summary"] = {
 			on_change: () => {
 				var party = frappe.query_report.get_filter_value("party");
 				if (party) {
-					frappe.db.get_value("Supplier", party, ["tax_id", "supplier_name"], function (value) {
-						frappe.query_report.set_filter_value("tax_id", value["tax_id"]);
-						frappe.query_report.set_filter_value("supplier_name", value["supplier_name"]);
-					});
+					frappe.db.get_value(
+						"Supplier",
+						party,
+						["tax_id", "supplier_name"],
+						function (value) {
+							frappe.query_report.set_filter_value(
+								"tax_id",
+								value["tax_id"],
+							);
+							frappe.query_report.set_filter_value(
+								"supplier_name",
+								value["supplier_name"],
+							);
+						},
+					);
 				} else {
 					frappe.query_report.set_filter_value("tax_id", "");
 					frappe.query_report.set_filter_value("supplier_name", "");

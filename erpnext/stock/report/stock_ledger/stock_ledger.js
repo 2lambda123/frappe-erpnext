@@ -15,7 +15,10 @@ frappe.query_reports["Stock Ledger"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 		},
 		{
@@ -60,11 +63,18 @@ frappe.query_reports["Stock Ledger"] = {
 			fieldtype: "Link",
 			options: "Batch",
 			on_change() {
-				const batch_no = frappe.query_report.get_filter_value("batch_no");
+				const batch_no =
+					frappe.query_report.get_filter_value("batch_no");
 				if (batch_no) {
-					frappe.query_report.set_filter_value("segregate_serial_batch_bundle", 1);
+					frappe.query_report.set_filter_value(
+						"segregate_serial_batch_bundle",
+						1,
+					);
 				} else {
-					frappe.query_report.set_filter_value("segregate_serial_batch_bundle", 0);
+					frappe.query_report.set_filter_value(
+						"segregate_serial_batch_bundle",
+						0,
+					);
 				}
 			},
 		},

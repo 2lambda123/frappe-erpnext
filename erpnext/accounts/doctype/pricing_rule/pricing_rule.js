@@ -14,18 +14,29 @@ frappe.ui.form.on("Pricing Rule", {
 		};
 
 		["items", "item_groups", "brands"].forEach((d) => {
-			frm.fields_dict[d].grid.get_field("uom").get_query = function (doc, cdt, cdn) {
+			frm.fields_dict[d].grid.get_field("uom").get_query = function (
+				doc,
+				cdt,
+				cdn,
+			) {
 				var row = locals[cdt][cdn];
 				return {
 					query: "erpnext.accounts.doctype.pricing_rule.pricing_rule.get_item_uoms",
-					filters: { value: row[frappe.scrub(doc.apply_on)], apply_on: doc.apply_on },
+					filters: {
+						value: row[frappe.scrub(doc.apply_on)],
+						apply_on: doc.apply_on,
+					},
 				};
 			};
 		});
 	},
 
 	onload: function (frm) {
-		if (frm.doc.__islocal && !frm.doc.applicable_for && (frm.doc.customer || frm.doc.supplier)) {
+		if (
+			frm.doc.__islocal &&
+			!frm.doc.applicable_for &&
+			(frm.doc.customer || frm.doc.supplier)
+		) {
 			if (frm.doc.customer) {
 				frm.doc.applicable_for = "Customer";
 				frm.doc.selling = 1;
@@ -136,7 +147,9 @@ frappe.ui.form.on("Pricing Rule", {
 		frm.set_df_property(
 			"margin_rate_or_amount",
 			"description",
-			frm.doc.margin_type == "Percentage" ? "In Percentage %" : "In Amount"
+			frm.doc.margin_type == "Percentage"
+				? "In Percentage %"
+				: "In Amount",
 		);
 	},
 

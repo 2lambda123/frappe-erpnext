@@ -23,18 +23,21 @@ erpnext.PointOfSale.NumberPad = class {
 				return (
 					a +
 					row.reduce((a2, number, j) => {
-						const class_to_append = css_classes && css_classes[i] ? css_classes[i][j] : "";
+						const class_to_append =
+							css_classes && css_classes[i]
+								? css_classes[i][j]
+								: "";
 						const fieldname =
 							fieldnames && fieldnames[number]
 								? fieldnames[number]
 								: typeof number === "string"
-								? frappe.scrub(number)
-								: number;
+									? frappe.scrub(number)
+									: number;
 
 						return (
 							a2 +
 							`<div class="numpad-btn ${class_to_append}" data-button-value="${fieldname}">${__(
-								number
+								number,
 							)}</div>`
 						);
 					}, "")
@@ -45,7 +48,7 @@ erpnext.PointOfSale.NumberPad = class {
 		this.wrapper.html(
 			`<div class="numpad-container">
 				${get_keys()}
-			</div>`
+			</div>`,
 		);
 	}
 

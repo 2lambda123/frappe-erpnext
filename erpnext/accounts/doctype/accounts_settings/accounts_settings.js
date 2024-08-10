@@ -8,9 +8,13 @@ frappe.ui.form.on("Accounts Settings", {
 			return;
 		}
 
-		let msg = __("Enabling this will change the way how cancelled transactions are handled.");
+		let msg = __(
+			"Enabling this will change the way how cancelled transactions are handled.",
+		);
 		msg += " ";
-		msg += __("Please enable only if the understand the effects of enabling this.");
+		msg += __(
+			"Please enable only if the understand the effects of enabling this.",
+		);
 		msg += "<br>";
 		msg += "Do you still want to enable immutable ledger?";
 
@@ -19,7 +23,7 @@ frappe.ui.form.on("Accounts Settings", {
 			() => {},
 			() => {
 				frm.set_value("enable_immutable_ledger", 0);
-			}
+			},
 		);
 	},
 });

@@ -5,7 +5,9 @@ frappe.provide("erpnext.accounts");
 erpnext.sales_common.setup_selling_controller();
 
 erpnext.accounts.pos.setup("POS Invoice");
-erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnext.selling.SellingController {
+erpnext.selling.POSInvoiceController = class POSInvoiceController extends (
+	erpnext.selling.SellingController
+) {
 	settings = {};
 
 	setup(doc) {
@@ -14,7 +16,10 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 	}
 
 	company() {
-		erpnext.accounts.dimensions.update_dimension(this.frm, this.frm.doctype);
+		erpnext.accounts.dimensions.update_dimension(
+			this.frm,
+			this.frm.doctype,
+		);
 		this.frm.set_value("set_warehouse", "");
 		this.frm.set_value("taxes_and_charges", "");
 	}
@@ -27,7 +32,11 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 			"Serial and Batch Bundle",
 		];
 
-		if (doc.__islocal && doc.is_pos && frappe.get_route_str() !== "point-of-sale") {
+		if (
+			doc.__islocal &&
+			doc.is_pos &&
+			frappe.get_route_str() !== "point-of-sale"
+		) {
 			this.frm.script_manager.trigger("is_pos");
 			this.frm.refresh_fields();
 		}
@@ -40,7 +49,10 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 			};
 		});
 
-		erpnext.accounts.dimensions.setup_dimension_filters(this.frm, this.frm.doctype);
+		erpnext.accounts.dimensions.setup_dimension_filters(
+			this.frm,
+			this.frm.doctype,
+		);
 	}
 
 	onload_post_render(frm) {
@@ -51,7 +63,11 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 		super.refresh();
 
 		if (doc.docstatus == 1 && !doc.is_return) {
-			this.frm.add_custom_button(__("Return"), this.make_sales_return, __("Create"));
+			this.frm.add_custom_button(
+				__("Return"),
+				this.make_sales_return,
+				__("Create"),
+			);
 			this.frm.page.set_inner_btn_group_as_primary(__("Create"));
 		}
 
@@ -72,7 +88,7 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 						customer_group: ["in", customer_groups],
 					},
 				};
-			}.bind(this)
+			}.bind(this),
 		);
 	}
 
@@ -94,14 +110,18 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 				});
 				if (!r.exc) {
 					if (r.message) {
-						this.frm.pos_print_format = r.message.print_format || "";
-						this.frm.meta.default_print_format = r.message.print_format || "";
+						this.frm.pos_print_format =
+							r.message.print_format || "";
+						this.frm.meta.default_print_format =
+							r.message.print_format || "";
 						this.frm.doc.campaign = r.message.campaign;
-						this.frm.allow_print_before_pay = r.message.allow_print_before_pay;
+						this.frm.allow_print_before_pay =
+							r.message.allow_print_before_pay;
 					}
 					this.frm.script_manager.trigger("update_stock");
 					this.calculate_taxes_and_totals();
-					this.frm.doc.taxes_and_charges && this.frm.script_manager.trigger("taxes_and_charges");
+					this.frm.doc.taxes_and_charges &&
+						this.frm.script_manager.trigger("taxes_and_charges");
 					frappe.model.set_default_values(this.frm.doc);
 					this.set_dynamic_labels();
 				}
@@ -127,7 +147,7 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 			},
 			() => {
 				this.apply_pricing_rule();
-			}
+			},
 		);
 	}
 
@@ -148,7 +168,9 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 	}
 
 	update_customer_groups_settings(customer_groups) {
-		this.settings.customer_groups = customer_groups?.map((group) => group.name);
+		this.settings.customer_groups = customer_groups?.map(
+			(group) => group.name,
+		);
 	}
 
 	amount() {
@@ -175,14 +197,19 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 
 	write_off_outstanding_amount_automatically() {
 		if (cint(this.frm.doc.write_off_outstanding_amount_automatically)) {
-			frappe.model.round_floats_in(this.frm.doc, ["grand_total", "paid_amount"]);
+			frappe.model.round_floats_in(this.frm.doc, [
+				"grand_total",
+				"paid_amount",
+			]);
 			// this will make outstanding amount 0
 			this.frm.set_value(
 				"write_off_amount",
 				flt(
-					this.frm.doc.grand_total - this.frm.doc.paid_amount - this.frm.doc.total_advance,
-					precision("write_off_amount")
-				)
+					this.frm.doc.grand_total -
+						this.frm.doc.paid_amount -
+						this.frm.doc.total_advance,
+					precision("write_off_amount"),
+				),
 			);
 		}
 
@@ -198,7 +225,10 @@ erpnext.selling.POSInvoiceController = class POSInvoiceController extends erpnex
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.selling.POSInvoiceController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.selling.POSInvoiceController({ frm: cur_frm }),
+);
 
 frappe.ui.form.on("POS Invoice", {
 	redeem_loyalty_points: function (frm) {
@@ -236,9 +266,16 @@ frappe.ui.form.on("POS Invoice", {
 				},
 				callback: function (r) {
 					if (r) {
-						frm.set_value("loyalty_redemption_account", r.message.expense_account);
-						frm.set_value("loyalty_redemption_cost_center", r.message.cost_center);
-						frm.redemption_conversion_factor = r.message.conversion_factor;
+						frm.set_value(
+							"loyalty_redemption_account",
+							r.message.expense_account,
+						);
+						frm.set_value(
+							"loyalty_redemption_cost_center",
+							r.message.cost_center,
+						);
+						frm.redemption_conversion_factor =
+							r.message.conversion_factor;
 					}
 				},
 			});
@@ -249,13 +286,21 @@ frappe.ui.form.on("POS Invoice", {
 		if (frm.redemption_conversion_factor) {
 			let loyalty_amount = flt(
 				frm.redemption_conversion_factor * flt(frm.doc.loyalty_points),
-				precision("loyalty_amount")
+				precision("loyalty_amount"),
 			);
 			var remaining_amount =
-				flt(frm.doc.grand_total) - flt(frm.doc.total_advance) - flt(frm.doc.write_off_amount);
+				flt(frm.doc.grand_total) -
+				flt(frm.doc.total_advance) -
+				flt(frm.doc.write_off_amount);
 			if (frm.doc.grand_total && remaining_amount < loyalty_amount) {
-				let redeemable_points = parseInt(remaining_amount / frm.redemption_conversion_factor);
-				frappe.throw(__("You can only redeem max {0} points in this order.", [redeemable_points]));
+				let redeemable_points = parseInt(
+					remaining_amount / frm.redemption_conversion_factor,
+				);
+				frappe.throw(
+					__("You can only redeem max {0} points in this order.", [
+						redeemable_points,
+					]),
+				);
 			}
 			frm.set_value("loyalty_amount", loyalty_amount);
 		}
@@ -281,13 +326,17 @@ frappe.ui.form.on("POS Invoice", {
 					const payment_request_name = message.name;
 					setTimeout(() => {
 						frappe.db
-							.get_value("Payment Request", payment_request_name, ["status", "grand_total"])
+							.get_value(
+								"Payment Request",
+								payment_request_name,
+								["status", "grand_total"],
+							)
 							.then(({ message }) => {
 								if (message.status != "Paid") {
 									frappe.dom.unfreeze();
 									frappe.msgprint({
 										message: __(
-											"Payment Request took too long to respond. Please try requesting for payment again."
+											"Payment Request took too long to respond. Please try requesting for payment again.",
 										),
 										title: __("Request Timeout"),
 									});
@@ -297,9 +346,16 @@ frappe.ui.form.on("POS Invoice", {
 									cur_pos.payment.events.submit_invoice();
 
 									frappe.show_alert({
-										message: __("Payment of {0} received successfully.", [
-											format_currency(message.grand_total, frm.doc.currency, 0),
-										]),
+										message: __(
+											"Payment of {0} received successfully.",
+											[
+												format_currency(
+													message.grand_total,
+													frm.doc.currency,
+													0,
+												),
+											],
+										),
 										indicator: "green",
 									});
 								}

@@ -1,3 +1,4 @@
 frappe.provide("frappe.ui.form");
 
-frappe.ui.form.SupplierQuickEntryForm = frappe.ui.form.ContactAddressQuickEntryForm;
+frappe.ui.form.SupplierQuickEntryForm =
+	frappe.ui.form.ContactAddressQuickEntryForm;

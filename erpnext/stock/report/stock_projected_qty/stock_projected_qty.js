@@ -18,7 +18,8 @@ frappe.query_reports["Stock Projected Qty"] = {
 			get_query: () => {
 				return {
 					filters: {
-						company: frappe.query_report.get_filter_value("company"),
+						company:
+							frappe.query_report.get_filter_value("company"),
 					},
 				};
 			},

@@ -36,7 +36,10 @@ frappe.query_reports["Stock Ledger Invariant Check"] = {
 
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
-		if (DIFFERENCE_FIELD_NAMES.includes(column.fieldname) && Math.abs(data[column.fieldname]) > 0.001) {
+		if (
+			DIFFERENCE_FIELD_NAMES.includes(column.fieldname) &&
+			Math.abs(data[column.fieldname]) > 0.001
+		) {
 			value = '<span style="color:red">' + value + "</span>";
 		}
 		return value;
@@ -60,21 +63,32 @@ frappe.query_reports["Stock Ledger Invariant Check"] = {
 					</p>
 					<p>Are you sure you want to create a Reposting Entry?</p>
 				</div>`;
-			let indexes = frappe.query_report.datatable.rowmanager.getCheckedRows();
+			let indexes =
+				frappe.query_report.datatable.rowmanager.getCheckedRows();
 			let selected_rows = indexes.map((i) => frappe.query_report.data[i]);
 
 			if (!selected_rows.length) {
-				frappe.throw(__("Please select a row to create a Reposting Entry"));
+				frappe.throw(
+					__("Please select a row to create a Reposting Entry"),
+				);
 			} else if (selected_rows.length > 1) {
-				frappe.throw(__("Please select only one row to create a Reposting Entry"));
+				frappe.throw(
+					__(
+						"Please select only one row to create a Reposting Entry",
+					),
+				);
 			} else {
 				frappe.confirm(__(message), () => {
 					frappe.call({
 						method: "erpnext.stock.report.stock_ledger_invariant_check.stock_ledger_invariant_check.create_reposting_entries",
 						args: {
 							rows: selected_rows,
-							item_code: frappe.query_report.get_filter_values().item_code,
-							warehouse: frappe.query_report.get_filter_values().warehouse,
+							item_code:
+								frappe.query_report.get_filter_values()
+									.item_code,
+							warehouse:
+								frappe.query_report.get_filter_values()
+									.warehouse,
 						},
 					});
 				});

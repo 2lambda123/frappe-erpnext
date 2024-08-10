@@ -11,7 +11,10 @@ frappe.ui.form.on("BOM Creator", {
 		frm.dashboard.clear_comment();
 
 		if (!frm.is_new()) {
-			if (!frappe.bom_configurator || frappe.bom_configurator.bom_configurator !== frm.doc.name) {
+			if (
+				!frappe.bom_configurator ||
+				frappe.bom_configurator.bom_configurator !== frm.doc.name
+			) {
 				frm.trigger("build_tree");
 			}
 		} else if (!frm.doc.items?.length) {
@@ -94,7 +97,8 @@ frappe.ui.form.on("BOM Creator", {
 					fieldtype: "Check",
 					fieldname: "track_operations",
 					onchange: (r) => {
-						let track_operations = dialog.get_value("track_operations");
+						let track_operations =
+							dialog.get_value("track_operations");
 						if (r.type === "input" && !track_operations) {
 							dialog.set_value("track_semi_finished_goods", 0);
 						}
@@ -143,12 +147,14 @@ frappe.ui.form.on("BOM Creator", {
 					options: "Workstation",
 					depends_on: "eval:doc.track_semi_finished_goods",
 					get_query() {
-						let workstation_type = dialog.get_value("workstation_type");
+						let workstation_type =
+							dialog.get_value("workstation_type");
 
 						if (workstation_type) {
 							return {
 								filters: {
-									workstation_type: dialog.get_value("workstation_type"),
+									workstation_type:
+										dialog.get_value("workstation_type"),
 								},
 							};
 						}
@@ -166,7 +172,8 @@ frappe.ui.form.on("BOM Creator", {
 			},
 		});
 
-		dialog.fields_dict.item_code.get_query = "erpnext.controllers.queries.item_query";
+		dialog.fields_dict.item_code.get_query =
+			"erpnext.controllers.queries.item_query";
 		dialog.show();
 	},
 
@@ -177,7 +184,9 @@ frappe.ui.form.on("BOM Creator", {
 			}
 
 			if (!values.workstation && !values.workstation_type) {
-				frappe.throw(__("Either Workstation or Workstation Type is mandatory"));
+				frappe.throw(
+					__("Either Workstation or Workstation Type is mandatory"),
+				);
 			}
 		}
 	},
@@ -221,7 +230,12 @@ frappe.ui.form.on("BOM Creator", {
 
 	set_root_item(frm) {
 		if (frm.is_new() && frm.doc.items?.length) {
-			frappe.model.set_value(frm.doc.items[0].doctype, frm.doc.items[0].name, "is_root", 1);
+			frappe.model.set_value(
+				frm.doc.items[0].doctype,
+				frm.doc.items[0].name,
+				"is_root",
+				1,
+			);
 		}
 	},
 
@@ -276,7 +290,9 @@ frappe.ui.form.on("BOM Creator Item", {
 	},
 });
 
-erpnext.bom.BomConfigurator = class BomConfigurator extends erpnext.TransactionController {
+erpnext.bom.BomConfigurator = class BomConfigurator extends (
+	erpnext.TransactionController
+) {
 	conversion_rate(doc) {
 		if (this.frm.doc.currency === this.get_company_currency()) {
 			this.frm.set_value("conversion_rate", 1.0);
@@ -299,11 +315,17 @@ erpnext.bom.BomConfigurator = class BomConfigurator extends erpnext.TransactionC
 		if (frappe.meta.get_docfield(cdt, "stock_qty", cdn)) {
 			var item = frappe.get_doc(cdt, cdn);
 			frappe.model.round_floats_in(item, ["qty", "conversion_factor"]);
-			item.stock_qty = flt(item.qty * item.conversion_factor, precision("stock_qty", item));
+			item.stock_qty = flt(
+				item.qty * item.conversion_factor,
+				precision("stock_qty", item),
+			);
 			refresh_field("stock_qty", item.name, item.parentfield);
 			this.toggle_conversion_factor(item);
 		}
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.bom.BomConfigurator({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.bom.BomConfigurator({ frm: cur_frm }),
+);

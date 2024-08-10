@@ -29,7 +29,7 @@ erpnext.PointOfSale.ItemSelector = class {
 					<div class="item-group-field"></div>
 				</div>
 				<div class="items-container"></div>
-			</section>`
+			</section>`,
 		);
 
 		this.$component = this.wrapper.find(".items-selector");
@@ -38,11 +38,19 @@ erpnext.PointOfSale.ItemSelector = class {
 
 	async load_items_data() {
 		if (!this.item_group) {
-			const res = await frappe.db.get_value("Item Group", { lft: 1, is_group: 1 }, "name");
+			const res = await frappe.db.get_value(
+				"Item Group",
+				{ lft: 1, is_group: 1 },
+				"name",
+			);
 			this.parent_item_group = res.message.name;
 		}
 		if (!this.price_list) {
-			const res = await frappe.db.get_value("POS Profile", this.pos_profile, "selling_price_list");
+			const res = await frappe.db.get_value(
+				"POS Profile",
+				this.pos_profile,
+				"selling_price_list",
+			);
 			this.price_list = res.message.selling_price_list;
 		}
 
@@ -61,7 +69,14 @@ erpnext.PointOfSale.ItemSelector = class {
 		return frappe.call({
 			method: "erpnext.selling.page.point_of_sale.point_of_sale.get_items",
 			freeze: true,
-			args: { start, page_length, price_list, item_group, search_term, pos_profile },
+			args: {
+				start,
+				page_length,
+				price_list,
+				item_group,
+				search_term,
+				pos_profile,
+			},
 		});
 	}
 
@@ -77,13 +92,22 @@ erpnext.PointOfSale.ItemSelector = class {
 	get_item_html(item) {
 		const me = this;
 		// eslint-disable-next-line no-unused-vars
-		const { item_image, serial_no, batch_no, barcode, actual_qty, uom, price_list_rate } = item;
+		const {
+			item_image,
+			serial_no,
+			batch_no,
+			barcode,
+			actual_qty,
+			uom,
+			price_list_rate,
+		} = item;
 		const precision = flt(price_list_rate, 2) % 1 != 0 ? 2 : 0;
 		let indicator_color;
 		let qty_to_display = actual_qty;
 
 		if (item.is_stock_item) {
-			indicator_color = actual_qty > 10 ? "green" : actual_qty <= 0 ? "red" : "orange";
+			indicator_color =
+				actual_qty > 10 ? "green" : actual_qty <= 0 ? "red" : "orange";
 
 			if (Math.round(qty_to_display) > 999) {
 				qty_to_display = Math.round(qty_to_display) / 1000;
@@ -133,7 +157,9 @@ erpnext.PointOfSale.ItemSelector = class {
 
 	handle_broken_image($img) {
 		const item_abbr = $($img).attr("alt");
-		$($img).parent().replaceWith(`<div class="item-display abbr">${item_abbr}</div>`);
+		$($img)
+			.parent()
+			.replaceWith(`<div class="item-display abbr">${item_abbr}</div>`);
 	}
 
 	make_search_bar() {
@@ -146,7 +172,9 @@ erpnext.PointOfSale.ItemSelector = class {
 			df: {
 				label: __("Search"),
 				fieldtype: "Data",
-				placeholder: __("Search by item code, serial number or barcode"),
+				placeholder: __(
+					"Search by item code, serial number or barcode",
+				),
 			},
 			parent: this.$component.find(".search-field"),
 			render_input: true,
@@ -186,7 +214,7 @@ erpnext.PointOfSale.ItemSelector = class {
 				<a class="btn-open no-decoration" title="${__("Clear")}">
 					${frappe.utils.icon("close", "sm")}
 				</a>
-			</span>`
+			</span>`,
 		);
 
 		this.$clear_search_btn = this.search_field.$wrapper.find(".link-btn");
@@ -273,11 +301,15 @@ erpnext.PointOfSale.ItemSelector = class {
 				this.filter_items({ search_term });
 			}, 300);
 
-			this.$clear_search_btn.toggle(Boolean(this.search_field.$input.val()));
+			this.$clear_search_btn.toggle(
+				Boolean(this.search_field.$input.val()),
+			);
 		});
 
 		this.search_field.$input.on("focus", () => {
-			this.$clear_search_btn.toggle(Boolean(this.search_field.$input.val()));
+			this.$clear_search_btn.toggle(
+				Boolean(this.search_field.$input.val()),
+			);
 		});
 	}
 
@@ -305,7 +337,8 @@ erpnext.PointOfSale.ItemSelector = class {
 		// for selecting the last filtered item on search
 		frappe.ui.keys.on("enter", () => {
 			const selector_is_visible = this.$component.is(":visible");
-			if (!selector_is_visible || this.search_field.get_value() === "") return;
+			if (!selector_is_visible || this.search_field.get_value() === "")
+				return;
 
 			if (this.items.length == 1) {
 				this.$items_container.find(".item-wrapper").click();
@@ -334,7 +367,9 @@ erpnext.PointOfSale.ItemSelector = class {
 				const items = this.search_index[search_term];
 				this.items = items;
 				this.render_item_list(items);
-				this.auto_add_item && this.items.length == 1 && this.add_filtered_item_to_cart();
+				this.auto_add_item &&
+					this.items.length == 1 &&
+					this.add_filtered_item_to_cart();
 				return;
 			}
 		}
@@ -347,7 +382,9 @@ erpnext.PointOfSale.ItemSelector = class {
 			}
 			this.items = items;
 			this.render_item_list(items);
-			this.auto_add_item && this.items.length == 1 && this.add_filtered_item_to_cart();
+			this.auto_add_item &&
+				this.items.length == 1 &&
+				this.add_filtered_item_to_cart();
 		});
 	}
 
@@ -366,16 +403,26 @@ erpnext.PointOfSale.ItemSelector = class {
 					.css("grid-template-columns", "repeat(12, minmax(0, 1fr))");
 
 		minimize
-			? this.$component.find(".search-field").css("margin", "var(--margin-sm) 0px")
-			: this.$component.find(".search-field").css("margin", "0px var(--margin-sm)");
+			? this.$component
+					.find(".search-field")
+					.css("margin", "var(--margin-sm) 0px")
+			: this.$component
+					.find(".search-field")
+					.css("margin", "0px var(--margin-sm)");
 
 		minimize
 			? this.$component.css("grid-column", "span 2 / span 2")
 			: this.$component.css("grid-column", "span 6 / span 6");
 
 		minimize
-			? this.$items_container.css("grid-template-columns", "repeat(1, minmax(0, 1fr))")
-			: this.$items_container.css("grid-template-columns", "repeat(4, minmax(0, 1fr))");
+			? this.$items_container.css(
+					"grid-template-columns",
+					"repeat(1, minmax(0, 1fr))",
+				)
+			: this.$items_container.css(
+					"grid-template-columns",
+					"repeat(4, minmax(0, 1fr))",
+				);
 	}
 
 	toggle_component(show) {

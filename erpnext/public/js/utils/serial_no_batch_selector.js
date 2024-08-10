@@ -13,7 +13,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 	}
 
 	make() {
-		let label = this.item?.has_serial_no ? __("Serial Nos") : __("Batch Nos");
+		let label = this.item?.has_serial_no
+			? __("Serial Nos")
+			: __("Batch Nos");
 		let primary_label = this.bundle ? __("Update") : __("Add");
 
 		if (this.item?.has_serial_no && this.item?.batch_no) {
@@ -35,7 +37,8 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 		this.$scan_btn = this.dialog.$wrapper.find(".link-btn");
 		this.$scan_btn.css("display", "inline");
 
-		let qty = this.item.stock_qty || this.item.transfer_qty || this.item.qty;
+		let qty =
+			this.item.stock_qty || this.item.transfer_qty || this.item.qty;
 
 		if (this.item?.is_rejected) {
 			qty = this.item.rejected_qty;
@@ -54,12 +57,28 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 							});
 						});
 					} else {
-						this.dialog.set_value("scan_serial_no", this.item.serial_no);
+						this.dialog.set_value(
+							"scan_serial_no",
+							this.item.serial_no,
+						);
 					}
-					frappe.model.set_value(this.item.doctype, this.item.name, "serial_no", "");
-				} else if (this.item.batch_no && !this.item.serial_and_batch_bundle) {
+					frappe.model.set_value(
+						this.item.doctype,
+						this.item.name,
+						"serial_no",
+						"",
+					);
+				} else if (
+					this.item.batch_no &&
+					!this.item.serial_and_batch_bundle
+				) {
 					this.dialog.set_value("scan_batch_no", this.item.batch_no);
-					frappe.model.set_value(this.item.doctype, this.item.name, "batch_no", "");
+					frappe.model.set_value(
+						this.item.doctype,
+						this.item.name,
+						"batch_no",
+						"",
+					);
 				}
 
 				this.dialog.fields_dict.entries.grid.refresh();
@@ -69,7 +88,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 
 	get_serial_no_filters() {
 		let warehouse =
-			this.item?.type_of_transaction === "Outward" ? this.item.warehouse || this.item.s_warehouse : "";
+			this.item?.type_of_transaction === "Outward"
+				? this.item.warehouse || this.item.s_warehouse
+				: "";
 
 		if (this.frm.doc.doctype === "Stock Entry") {
 			warehouse = this.item.s_warehouse || this.item.t_warehouse;
@@ -108,7 +129,10 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 			},
 		});
 
-		if (this.frm.doc.doctype === "Stock Entry" && this.frm.doc.purpose === "Manufacture") {
+		if (
+			this.frm.doc.doctype === "Stock Entry" &&
+			this.frm.doc.purpose === "Manufacture"
+		) {
 			fields.push({
 				fieldtype: "Column Break",
 			});
@@ -178,7 +202,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 	}
 
 	get_attach_field() {
-		let label = this.item?.has_serial_no ? __("Serial Nos") : __("Batch Nos");
+		let label = this.item?.has_serial_no
+			? __("Serial Nos")
+			: __("Batch Nos");
 		let primary_label = this.bundle ? __("Update") : __("Add");
 
 		if (this.item?.has_serial_no && this.item?.has_batch_no) {
@@ -211,7 +237,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 					label: __("Enter Serial No Range"),
 					fieldname: "serial_no_range",
 					depends_on: "eval:doc.import_using_csv_file === 0",
-					description: __('Enter "ABC-001::100" for serial nos "ABC-001" to "ABC-100".'),
+					description: __(
+						'Enter "ABC-001::100" for serial nos "ABC-001" to "ABC-100".',
+					),
 					onchange: () => {
 						this.set_serial_nos_from_range();
 					},
@@ -272,7 +300,10 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 			return;
 		}
 
-		const serial_nos = erpnext.stock.utils.get_serial_range(serial_no_range, "::");
+		const serial_nos = erpnext.stock.utils.get_serial_range(
+			serial_no_range,
+			"::",
+		);
 
 		if (serial_nos) {
 			this.dialog.set_value("upload_serial_nos", serial_nos.join("\n"));
@@ -312,7 +343,7 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 		}
 
 		const method = `/api/method/erpnext.stock.doctype.serial_and_batch_bundle.serial_and_batch_bundle.download_blank_csv_template?content=${encodeURIComponent(
-			JSON.stringify(csvFileData)
+			JSON.stringify(csvFileData),
 		)}`;
 		const w = window.open(frappe.urllib.get_full_url(method));
 		if (!w) {
@@ -398,7 +429,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 					get_query: () => {
 						let is_inward = false;
 						if (
-							(["Purchase Receipt", "Purchase Invoice"].includes(this.frm.doc.doctype) &&
+							(["Purchase Receipt", "Purchase Invoice"].includes(
+								this.frm.doc.doctype,
+							) &&
 								!this.frm.doc.is_return) ||
 							(this.frm.doc.doctype === "Stock Entry" &&
 								this.frm.doc.purpose === "Material Receipt")
@@ -411,7 +444,9 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 							filters: {
 								item_code: this.item.item_code,
 								warehouse:
-									this.item.s_warehouse || this.item.t_warehouse || this.item.warehouse,
+									this.item.s_warehouse ||
+									this.item.t_warehouse ||
+									this.item.warehouse,
 								is_inward: is_inward,
 							},
 						};
@@ -444,7 +479,10 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 	get_auto_data() {
 		let { qty, based_on } = this.dialog.get_values();
 
-		if (this.item.serial_and_batch_bundle || this.item.rejected_serial_and_batch_bundle) {
+		if (
+			this.item.serial_and_batch_bundle ||
+			this.item.rejected_serial_and_batch_bundle
+		) {
 			if (this.qty && qty === Math.abs(this.qty)) {
 				return;
 			}
@@ -502,14 +540,18 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 		const { scan_serial_no, scan_batch_no } = this.dialog.get_values();
 
 		if (scan_serial_no) {
-			let existing_row = this.dialog.fields_dict.entries.df.data.filter((d) => {
-				if (d.serial_no === scan_serial_no) {
-					return d;
-				}
-			});
+			let existing_row = this.dialog.fields_dict.entries.df.data.filter(
+				(d) => {
+					if (d.serial_no === scan_serial_no) {
+						return d;
+					}
+				},
+			);
 
 			if (existing_row?.length) {
-				frappe.throw(__("Serial No {0} already exists", [scan_serial_no]));
+				frappe.throw(
+					__("Serial No {0} already exists", [scan_serial_no]),
+				);
 			}
 
 			if (!this.item.has_batch_no) {
@@ -531,17 +573,21 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 								batch_no: r.message,
 							});
 
-							this.dialog.fields_dict.scan_serial_no.set_value("");
+							this.dialog.fields_dict.scan_serial_no.set_value(
+								"",
+							);
 						}
 					},
 				});
 			}
 		} else if (scan_batch_no) {
-			let existing_row = this.dialog.fields_dict.entries.df.data.filter((d) => {
-				if (d.batch_no === scan_batch_no) {
-					return d;
-				}
-			});
+			let existing_row = this.dialog.fields_dict.entries.df.data.filter(
+				(d) => {
+					if (d.batch_no === scan_batch_no) {
+						return d;
+					}
+				},
+			);
 
 			if (existing_row?.length) {
 				existing_row[0].qty += 1;
@@ -590,7 +636,12 @@ erpnext.SerialBatchPackageSelector = class SerialNoBatchBundleUpdate {
 	edit_full_form() {
 		let bundle_id = this.item.serial_and_batch_bundle;
 		if (!bundle_id) {
-			let _new = frappe.model.get_new_doc("Serial and Batch Bundle", null, null, true);
+			let _new = frappe.model.get_new_doc(
+				"Serial and Batch Bundle",
+				null,
+				null,
+				true,
+			);
 
 			_new.item_code = this.item.item_code;
 			_new.warehouse = this.get_warehouse();

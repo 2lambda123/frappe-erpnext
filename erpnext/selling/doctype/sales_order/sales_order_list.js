@@ -26,10 +26,18 @@ frappe.listview_settings["Sales Order"] = {
 		} else if (!doc.skip_delivery_note && flt(doc.per_delivered, 2) < 100) {
 			if (frappe.datetime.get_diff(doc.delivery_date) < 0) {
 				// not delivered & overdue
-				return [__("Overdue"), "red", "per_delivered,<,100|delivery_date,<,Today|status,!=,Closed"];
+				return [
+					__("Overdue"),
+					"red",
+					"per_delivered,<,100|delivery_date,<,Today|status,!=,Closed",
+				];
 			} else if (flt(doc.grand_total) === 0) {
 				// not delivered (zeroount order)
-				return [__("To Deliver"), "orange", "per_delivered,<,100|grand_total,=,0|status,!=,Closed"];
+				return [
+					__("To Deliver"),
+					"orange",
+					"per_delivered,<,100|grand_total,=,0|status,!=,Closed",
+				];
 			} else if (flt(doc.per_billed, 2) < 100) {
 				// not delivered & not billed
 				return [
@@ -39,7 +47,11 @@ frappe.listview_settings["Sales Order"] = {
 				];
 			} else {
 				// not billed
-				return [__("To Deliver"), "orange", "per_delivered,<,100|per_billed,=,100|status,!=,Closed"];
+				return [
+					__("To Deliver"),
+					"orange",
+					"per_delivered,<,100|per_billed,=,100|status,!=,Closed",
+				];
 			}
 		} else if (
 			flt(doc.per_delivered, 2) === 100 &&
@@ -47,13 +59,22 @@ frappe.listview_settings["Sales Order"] = {
 			flt(doc.per_billed, 2) < 100
 		) {
 			// to bill
-			return [__("To Bill"), "orange", "per_delivered,=,100|per_billed,<,100|status,!=,Closed"];
+			return [
+				__("To Bill"),
+				"orange",
+				"per_delivered,=,100|per_billed,<,100|status,!=,Closed",
+			];
 		} else if (doc.skip_delivery_note && flt(doc.per_billed, 2) < 100) {
-			return [__("To Bill"), "orange", "per_billed,<,100|status,!=,Closed"];
+			return [
+				__("To Bill"),
+				"orange",
+				"per_billed,<,100|status,!=,Closed",
+			];
 		}
 	},
 	onload: function (listview) {
-		var method = "erpnext.selling.doctype.sales_order.sales_order.close_or_unclose_sales_orders";
+		var method =
+			"erpnext.selling.doctype.sales_order.sales_order.close_or_unclose_sales_orders";
 
 		listview.page.add_menu_item(__("Close"), function () {
 			listview.call_for_selected_items(method, { status: "Closed" });
@@ -64,7 +85,11 @@ frappe.listview_settings["Sales Order"] = {
 		});
 
 		listview.page.add_action_item(__("Sales Invoice"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Sales Invoice");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Sales Order",
+				"Sales Invoice",
+			);
 		});
 
 		listview.page.add_action_item(__("Delivery Note"), () => {
@@ -78,32 +103,46 @@ frappe.listview_settings["Sales Order"] = {
 								{
 									fieldtype: "Date",
 									fieldname: "delivery_date",
-									default: frappe.datetime.add_days(frappe.datetime.nowdate(), 1),
+									default: frappe.datetime.add_days(
+										frappe.datetime.nowdate(),
+										1,
+									),
 								},
 							],
 						});
-						dialog.set_primary_action(__("Select"), function (values) {
-							var until_delivery_date = values.delivery_date;
-							erpnext.bulk_transaction_processing.create(
-								listview,
-								"Sales Order",
-								"Delivery Note",
-								{
-									until_delivery_date,
-								}
-							);
-							dialog.hide();
-						});
+						dialog.set_primary_action(
+							__("Select"),
+							function (values) {
+								var until_delivery_date = values.delivery_date;
+								erpnext.bulk_transaction_processing.create(
+									listview,
+									"Sales Order",
+									"Delivery Note",
+									{
+										until_delivery_date,
+									},
+								);
+								dialog.hide();
+							},
+						);
 						dialog.show();
 					} else {
-						erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Delivery Note");
+						erpnext.bulk_transaction_processing.create(
+							listview,
+							"Sales Order",
+							"Delivery Note",
+						);
 					}
 				},
 			});
 		});
 
 		listview.page.add_action_item(__("Advance Payment"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Sales Order", "Payment Entry");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Sales Order",
+				"Payment Entry",
+			);
 		});
 	},
 };

@@ -411,9 +411,9 @@ class PurchaseOrder(BuyingController):
 						"Item", d.item_code, "last_purchase_rate"
 					)
 					if item_last_purchase_rate:
-						d.base_price_list_rate = (
-							d.base_rate
-						) = d.price_list_rate = d.rate = d.last_purchase_rate = item_last_purchase_rate
+						d.base_price_list_rate = d.base_rate = d.price_list_rate = d.rate = (
+							d.last_purchase_rate
+						) = item_last_purchase_rate
 
 	# Check for Closed status
 	def check_on_hold_or_closed_status(self):

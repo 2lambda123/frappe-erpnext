@@ -15,7 +15,12 @@ frappe.query_reports["Issue Summary"] = {
 			fieldname: "based_on",
 			label: __("Based On"),
 			fieldtype: "Select",
-			options: ["Customer", "Issue Type", "Issue Priority", "Assigned To"],
+			options: [
+				"Customer",
+				"Issue Type",
+				"Issue Priority",
+				"Assigned To",
+			],
 			default: "Customer",
 			reqd: 1,
 		},

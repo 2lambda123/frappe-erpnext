@@ -14,7 +14,11 @@ frappe.ui.form.on("Share Transfer", {
 				};
 			};
 		});
-		if (frm.doc.docstatus == 1 && frm.doc.equity_or_liability_account && frm.doc.asset_account) {
+		if (
+			frm.doc.docstatus == 1 &&
+			frm.doc.equity_or_liability_account &&
+			frm.doc.asset_account
+		) {
 			frm.add_custom_button(__("Create Journal Entry"), function () {
 				erpnext.share_transfer.make_jv(frm);
 			});
@@ -34,8 +38,13 @@ frappe.ui.form.on("Share Transfer", {
 	},
 	company: async function (frm) {
 		if (frm.doc.company) {
-			let currency = (await frappe.db.get_value("Company", frm.doc.company, "default_currency")).message
-				.default_currency;
+			let currency = (
+				await frappe.db.get_value(
+					"Company",
+					frm.doc.company,
+					"default_currency",
+				)
+			).message.default_currency;
 			frm.set_query("equity_or_liability_account", function () {
 				return {
 					filters: {

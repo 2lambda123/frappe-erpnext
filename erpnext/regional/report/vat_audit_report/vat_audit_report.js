@@ -16,7 +16,10 @@ frappe.query_reports["VAT Audit Report"] = {
 			label: __("From Date"),
 			fieldtype: "Date",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -2),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-2,
+			),
 			width: "80",
 		},
 		{

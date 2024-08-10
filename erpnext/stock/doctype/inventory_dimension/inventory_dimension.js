@@ -16,7 +16,7 @@ frappe.ui.form.on("Inventory Dimension", {
 				"Item",
 				"Inventory Dimension",
 				"Accounting Dimension",
-				"Accounting Dimension Filter"
+				"Accounting Dimension Filter",
 			);
 
 			return {
@@ -75,7 +75,11 @@ frappe.ui.form.on("Inventory Dimension", {
 
 	set_parent_fields(frm) {
 		if (frm.doc.apply_to_all_doctypes) {
-			frm.set_df_property("fetch_from_parent", "options", frm.doc.reference_document);
+			frm.set_df_property(
+				"fetch_from_parent",
+				"options",
+				frm.doc.reference_document,
+			);
 		} else if (frm.doc.document_type && frm.doc.istable) {
 			frappe.call({
 				method: "erpnext.stock.doctype.inventory_dimension.inventory_dimension.get_parent_fields",
@@ -85,7 +89,11 @@ frappe.ui.form.on("Inventory Dimension", {
 				},
 				callback: (r) => {
 					if (r.message && r.message.length) {
-						frm.set_df_property("fetch_from_parent", "options", [""].concat(r.message));
+						frm.set_df_property(
+							"fetch_from_parent",
+							"options",
+							[""].concat(r.message),
+						);
 					} else {
 						frm.set_df_property("fetch_from_parent", "hidden", 1);
 					}

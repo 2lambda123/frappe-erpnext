@@ -11,6 +11,10 @@ frappe.listview_settings["POS Closing Entry"] = {
 			Failed: "red",
 			Cancelled: "red",
 		};
-		return [__(doc.status), status_color[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_color[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 };

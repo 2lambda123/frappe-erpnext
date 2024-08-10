@@ -12,6 +12,10 @@ frappe.listview_settings["Stock Reservation Entry"] = {
 			Cancelled: "red",
 		};
 
-		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_colors[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 };

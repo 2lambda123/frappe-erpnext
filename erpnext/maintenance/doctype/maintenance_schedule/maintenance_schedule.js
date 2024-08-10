@@ -31,7 +31,10 @@ frappe.ui.form.on("Maintenance Schedule", {
 	},
 	refresh: function (frm) {
 		setTimeout(() => {
-			frm.toggle_display("generate_schedule", !(frm.is_new() || frm.doc.docstatus));
+			frm.toggle_display(
+				"generate_schedule",
+				!(frm.is_new() || frm.doc.docstatus),
+			);
 			frm.toggle_display("schedule", !frm.is_new());
 		}, 10);
 	},
@@ -39,7 +42,11 @@ frappe.ui.form.on("Maintenance Schedule", {
 		erpnext.utils.get_party_details(frm);
 	},
 	customer_address: function (frm) {
-		erpnext.utils.get_address_display(frm, "customer_address", "address_display");
+		erpnext.utils.get_address_display(
+			frm,
+			"customer_address",
+			"address_display",
+		);
 	},
 	contact_person: function (frm) {
 		erpnext.utils.get_contact_details(frm);
@@ -54,9 +61,15 @@ frappe.ui.form.on("Maintenance Schedule", {
 });
 
 // TODO commonify this code
-erpnext.maintenance.MaintenanceSchedule = class MaintenanceSchedule extends frappe.ui.form.Controller {
+erpnext.maintenance.MaintenanceSchedule = class MaintenanceSchedule extends (
+	frappe.ui.form.Controller
+) {
 	refresh() {
-		frappe.dynamic_link = { doc: this.frm.doc, fieldname: "customer", doctype: "Customer" };
+		frappe.dynamic_link = {
+			doc: this.frm.doc,
+			fieldname: "customer",
+			doctype: "Customer",
+		};
 
 		var me = this;
 
@@ -77,90 +90,108 @@ erpnext.maintenance.MaintenanceSchedule = class MaintenanceSchedule extends frap
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 		} else if (this.frm.doc.docstatus === 1) {
 			let schedules = me.frm.doc.schedules;
-			let flag = schedules.some((schedule) => schedule.completion_status === "Pending");
+			let flag = schedules.some(
+				(schedule) => schedule.completion_status === "Pending",
+			);
 			if (flag) {
 				this.frm.add_custom_button(
 					__("Maintenance Visit"),
 					function () {
 						let options = "";
 
-						me.frm.call("get_pending_data", { data_type: "items" }).then((r) => {
-							options = r.message;
+						me.frm
+							.call("get_pending_data", { data_type: "items" })
+							.then((r) => {
+								options = r.message;
 
-							let schedule_id = "";
-							let d = new frappe.ui.Dialog({
-								title: __("Enter Visit Details"),
-								fields: [
-									{
-										fieldtype: "Select",
-										fieldname: "item_name",
-										label: __("Item Name"),
-										options: options,
-										reqd: 1,
-										onchange: function () {
-											let field = d.get_field("scheduled_date");
-											me.frm
-												.call("get_pending_data", {
-													item_name: this.value,
-													data_type: "date",
-												})
-												.then((r) => {
-													field.df.options = r.message;
-													field.refresh();
-												});
+								let schedule_id = "";
+								let d = new frappe.ui.Dialog({
+									title: __("Enter Visit Details"),
+									fields: [
+										{
+											fieldtype: "Select",
+											fieldname: "item_name",
+											label: __("Item Name"),
+											options: options,
+											reqd: 1,
+											onchange: function () {
+												let field =
+													d.get_field(
+														"scheduled_date",
+													);
+												me.frm
+													.call("get_pending_data", {
+														item_name: this.value,
+														data_type: "date",
+													})
+													.then((r) => {
+														field.df.options =
+															r.message;
+														field.refresh();
+													});
+											},
 										},
+										{
+											label: __("Scheduled Date"),
+											fieldname: "scheduled_date",
+											fieldtype: "Select",
+											options: "",
+											reqd: 1,
+											onchange: function () {
+												let field =
+													d.get_field("item_name");
+												me.frm
+													.call("get_pending_data", {
+														item_name: field.value,
+														s_date: this.value,
+														data_type: "id",
+													})
+													.then((r) => {
+														schedule_id = r.message;
+													});
+											},
+										},
+									],
+									primary_action_label: "Create Visit",
+									primary_action(values) {
+										frappe.call({
+											method: "erpnext.maintenance.doctype.maintenance_schedule.maintenance_schedule.make_maintenance_visit",
+											args: {
+												item_name: values.item_name,
+												s_id: schedule_id,
+												source_name: me.frm.doc.name,
+											},
+											callback: function (r) {
+												if (!r.exc) {
+													frappe.model.sync(
+														r.message,
+													);
+													frappe.set_route(
+														"Form",
+														r.message.doctype,
+														r.message.name,
+													);
+												}
+											},
+										});
+										d.hide();
 									},
-									{
-										label: __("Scheduled Date"),
-										fieldname: "scheduled_date",
-										fieldtype: "Select",
-										options: "",
-										reqd: 1,
-										onchange: function () {
-											let field = d.get_field("item_name");
-											me.frm
-												.call("get_pending_data", {
-													item_name: field.value,
-													s_date: this.value,
-													data_type: "id",
-												})
-												.then((r) => {
-													schedule_id = r.message;
-												});
-										},
-									},
-								],
-								primary_action_label: "Create Visit",
-								primary_action(values) {
-									frappe.call({
-										method: "erpnext.maintenance.doctype.maintenance_schedule.maintenance_schedule.make_maintenance_visit",
-										args: {
-											item_name: values.item_name,
-											s_id: schedule_id,
-											source_name: me.frm.doc.name,
-										},
-										callback: function (r) {
-											if (!r.exc) {
-												frappe.model.sync(r.message);
-												frappe.set_route("Form", r.message.doctype, r.message.name);
-											}
-										},
-									});
-									d.hide();
-								},
+								});
+								d.show();
 							});
-							d.show();
-						});
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 		}
 	}
 };
 
-extend_cscript(cur_frm.cscript, new erpnext.maintenance.MaintenanceSchedule({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.maintenance.MaintenanceSchedule({ frm: cur_frm }),
+);

@@ -15,7 +15,10 @@ frappe.query_reports["Serial and Batch Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "to_date",
@@ -53,7 +56,8 @@ frappe.query_reports["Serial and Batch Summary"] = {
 			get_data: function (txt) {
 				if (!frappe.query_report.filters) return;
 
-				let voucher_type = frappe.query_report.get_filter_value("voucher_type");
+				let voucher_type =
+					frappe.query_report.get_filter_value("voucher_type");
 				if (!voucher_type) return;
 
 				return frappe.db.get_link_options(voucher_type, txt);
@@ -68,9 +72,14 @@ frappe.query_reports["Serial and Batch Summary"] = {
 				return {
 					query: "erpnext.stock.report.serial_and_batch_summary.serial_and_batch_summary.get_serial_nos",
 					filters: {
-						item_code: frappe.query_report.get_filter_value("item_code"),
-						voucher_type: frappe.query_report.get_filter_value("voucher_type"),
-						voucher_no: frappe.query_report.get_filter_value("voucher_no"),
+						item_code:
+							frappe.query_report.get_filter_value("item_code"),
+						voucher_type:
+							frappe.query_report.get_filter_value(
+								"voucher_type",
+							),
+						voucher_no:
+							frappe.query_report.get_filter_value("voucher_no"),
 					},
 				};
 			},
@@ -84,9 +93,14 @@ frappe.query_reports["Serial and Batch Summary"] = {
 				return {
 					query: "erpnext.stock.report.serial_and_batch_summary.serial_and_batch_summary.get_batch_nos",
 					filters: {
-						item_code: frappe.query_report.get_filter_value("item_code"),
-						voucher_type: frappe.query_report.get_filter_value("voucher_type"),
-						voucher_no: frappe.query_report.get_filter_value("voucher_no"),
+						item_code:
+							frappe.query_report.get_filter_value("item_code"),
+						voucher_type:
+							frappe.query_report.get_filter_value(
+								"voucher_type",
+							),
+						voucher_no:
+							frappe.query_report.get_filter_value("voucher_no"),
 					},
 				};
 			},

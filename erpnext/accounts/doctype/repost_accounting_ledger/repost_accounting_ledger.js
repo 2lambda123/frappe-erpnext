@@ -3,22 +3,24 @@
 
 frappe.ui.form.on("Repost Accounting Ledger", {
 	setup: function (frm) {
-		frm.fields_dict["vouchers"].grid.get_field("voucher_type").get_query = function (doc) {
-			return {
-				query: "erpnext.accounts.doctype.repost_accounting_ledger.repost_accounting_ledger.get_repost_allowed_types",
-			};
-		};
-
-		frm.fields_dict["vouchers"].grid.get_field("voucher_no").get_query = function (doc) {
-			if (doc.company) {
+		frm.fields_dict["vouchers"].grid.get_field("voucher_type").get_query =
+			function (doc) {
 				return {
-					filters: {
-						company: doc.company,
-						docstatus: 1,
-					},
+					query: "erpnext.accounts.doctype.repost_accounting_ledger.repost_accounting_ledger.get_repost_allowed_types",
 				};
-			}
-		};
+			};
+
+		frm.fields_dict["vouchers"].grid.get_field("voucher_no").get_query =
+			function (doc) {
+				if (doc.company) {
+					return {
+						filters: {
+							company: doc.company,
+							docstatus: 1,
+						},
+					};
+				}
+			};
 	},
 
 	refresh: function (frm) {

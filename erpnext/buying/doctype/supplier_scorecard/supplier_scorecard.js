@@ -22,7 +22,11 @@ frappe.ui.form.on("Supplier Scorecard", {
 				for (var i = 0; i < r.message.length; i++) {
 					var row = frm.add_child("criteria");
 					row.criteria_name = r.message[i].name;
-					frm.script_manager.trigger("criteria_name", row.doctype, row.name);
+					frm.script_manager.trigger(
+						"criteria_name",
+						row.doctype,
+						row.name,
+					);
 				}
 				refresh_field("criteria");
 			},
@@ -72,14 +76,23 @@ var loadAllStandings = function (frm) {
 		method: "erpnext.buying.doctype.supplier_scorecard_standing.supplier_scorecard_standing.get_standings_list",
 		callback: function (r) {
 			for (var j = 0; j < frm.doc.standings.length; j++) {
-				if (!Object.prototype.hasOwnProperty.call(frm.doc.standings[j], "standing_name")) {
+				if (
+					!Object.prototype.hasOwnProperty.call(
+						frm.doc.standings[j],
+						"standing_name",
+					)
+				) {
 					frm.get_field("standings").grid.grid_rows[j].remove();
 				}
 			}
 			for (var i = 0; i < r.message.length; i++) {
 				var new_row = frm.add_child("standings");
 				new_row.standing_name = r.message[i].name;
-				frm.script_manager.trigger("standing_name", new_row.doctype, new_row.name);
+				frm.script_manager.trigger(
+					"standing_name",
+					new_row.doctype,
+					new_row.name,
+				);
 			}
 			refresh_field("standings");
 		},

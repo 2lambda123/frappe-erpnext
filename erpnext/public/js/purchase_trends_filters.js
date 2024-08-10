@@ -60,7 +60,11 @@ erpnext.purchase_trends_filters = {
 			fieldname: "group_by",
 			label: __("Group By"),
 			fieldtype: "Select",
-			options: ["", { value: "Item", label: __("Item") }, { value: "Supplier", label: __("Supplier") }],
+			options: [
+				"",
+				{ value: "Item", label: __("Item") },
+				{ value: "Supplier", label: __("Supplier") },
+			],
 			default: "",
 		},
 	],

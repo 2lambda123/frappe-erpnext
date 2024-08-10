@@ -20,12 +20,12 @@ erpnext.accounts.ledger_preview = {
 								"Accounting Ledger Preview",
 								"accounting_ledger_preview_html",
 								response.message.gl_columns,
-								response.message.gl_data
+								response.message.gl_data,
 							);
 						},
 					});
 				},
-				__("Preview")
+				__("Preview"),
 			);
 		}
 	},
@@ -49,12 +49,12 @@ erpnext.accounts.ledger_preview = {
 								"Stock Ledger Preview",
 								"stock_ledger_preview_html",
 								response.message.sl_columns,
-								response.message.sl_data
+								response.message.sl_data,
 							);
 						},
 					});
 				},
-				__("Preview")
+				__("Preview"),
 			);
 		}
 	},
@@ -73,7 +73,11 @@ erpnext.accounts.ledger_preview = {
 		});
 
 		setTimeout(function () {
-			me.get_datatable(columns, data, dialog.get_field(fieldname).wrapper);
+			me.get_datatable(
+				columns,
+				data,
+				dialog.get_field(fieldname).wrapper,
+			);
 		}, 200);
 
 		dialog.show();

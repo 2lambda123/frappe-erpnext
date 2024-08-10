@@ -20,7 +20,7 @@ frappe.ui.form.on("Payment Order", {
 				function () {
 					frm.trigger("get_from_payment_request");
 				},
-				__("Get Payments from")
+				__("Get Payments from"),
 			);
 
 			frm.add_custom_button(
@@ -28,14 +28,17 @@ frappe.ui.form.on("Payment Order", {
 				function () {
 					frm.trigger("get_from_payment_entry");
 				},
-				__("Get Payments from")
+				__("Get Payments from"),
 			);
 
 			frm.trigger("remove_button");
 		}
 
 		// payment Entry
-		if (frm.doc.docstatus === 1 && frm.doc.payment_order_type === "Payment Request") {
+		if (
+			frm.doc.docstatus === 1 &&
+			frm.doc.payment_order_type === "Payment Request"
+		) {
 			frm.add_custom_button(__("Create Payment Entries"), function () {
 				frm.trigger("make_payment_records");
 			});
@@ -44,7 +47,10 @@ frappe.ui.form.on("Payment Order", {
 
 	remove_row_if_empty: function (frm) {
 		// remove if first row is empty
-		if (frm.doc.references.length > 0 && !frm.doc.references[0].reference_name) {
+		if (
+			frm.doc.references.length > 0 &&
+			!frm.doc.references[0].reference_name
+		) {
 			frm.doc.references = [];
 		}
 	},

@@ -21,7 +21,12 @@ frappe.ui.form.on("Stock Reservation Entry", {
 	warehouse(frm) {
 		if (frm.doc.warehouse) {
 			frm.doc.sb_entries.forEach((row) => {
-				frappe.model.set_value(row.doctype, row.name, "warehouse", frm.doc.warehouse);
+				frappe.model.set_value(
+					row.doctype,
+					row.name,
+					"warehouse",
+					frm.doc.warehouse,
+				);
 			});
 		}
 	},
@@ -82,31 +87,43 @@ frappe.ui.form.on("Stock Reservation Entry", {
 		frm.fields_dict.sb_entries.grid.update_docfield_property(
 			"serial_no",
 			"read_only",
-			!frm.doc.has_serial_no
+			!frm.doc.has_serial_no,
 		);
 
 		frm.fields_dict.sb_entries.grid.update_docfield_property(
 			"batch_no",
 			"read_only",
-			!frm.doc.has_batch_no
+			!frm.doc.has_batch_no,
 		);
 
 		// Qty will always be 1 for Serial No.
-		frm.fields_dict.sb_entries.grid.update_docfield_property("qty", "read_only", frm.doc.has_serial_no);
+		frm.fields_dict.sb_entries.grid.update_docfield_property(
+			"qty",
+			"read_only",
+			frm.doc.has_serial_no,
+		);
 
 		frm.set_df_property(
 			"sb_entries",
 			"allow_on_submit",
-			frm.doc.from_voucher_type == "Pick List" ? 0 : 1
+			frm.doc.from_voucher_type == "Pick List" ? 0 : 1,
 		);
 	},
 
 	hide_rate_related_fields(frm) {
-		["incoming_rate", "outgoing_rate", "stock_value_difference", "is_outward", "stock_queue"].forEach(
-			(field) => {
-				frm.fields_dict.sb_entries.grid.update_docfield_property(field, "hidden", 1);
-			}
-		);
+		[
+			"incoming_rate",
+			"outgoing_rate",
+			"stock_value_difference",
+			"is_outward",
+			"stock_queue",
+		].forEach((field) => {
+			frm.fields_dict.sb_entries.grid.update_docfield_property(
+				field,
+				"hidden",
+				1,
+			);
+		});
 	},
 
 	hide_primary_action_button(frm) {
@@ -117,7 +134,11 @@ frappe.ui.form.on("Stock Reservation Entry", {
 	},
 
 	make_sb_entries_warehouse_read_only(frm) {
-		frm.fields_dict.sb_entries.grid.update_docfield_property("warehouse", "read_only", 1);
+		frm.fields_dict.sb_entries.grid.update_docfield_property(
+			"warehouse",
+			"read_only",
+			1,
+		);
 	},
 });
 

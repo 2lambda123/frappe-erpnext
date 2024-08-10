@@ -83,7 +83,10 @@ function get_filters() {
 			default: "Cost Center",
 			reqd: 1,
 			on_change: function () {
-				frappe.query_report.set_filter_value("budget_against_filter", []);
+				frappe.query_report.set_filter_value(
+					"budget_against_filter",
+					[],
+				);
 				frappe.query_report.refresh();
 			},
 		},
@@ -94,7 +97,8 @@ function get_filters() {
 			get_data: function (txt) {
 				if (!frappe.query_report.filters) return;
 
-				let budget_against = frappe.query_report.get_filter_value("budget_against");
+				let budget_against =
+					frappe.query_report.get_filter_value("budget_against");
 				if (!budget_against) return;
 
 				return frappe.db.get_link_options(budget_against, txt);

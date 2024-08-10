@@ -23,14 +23,18 @@ frappe.ui.form.on("QuickBooks Migrator", {
 		// Former approach causes the progress bar to dance back and forth.
 		frm.trigger("set_indicator");
 		frappe.realtime.on("quickbooks_progress_update", function (data) {
-			frm.dashboard.show_progress(data.message, (data.count / data.total) * 100, data.message);
+			frm.dashboard.show_progress(
+				data.message,
+				(data.count / data.total) * 100,
+				data.message,
+			);
 			if (data.count == data.total) {
 				window.setTimeout(
 					function (message) {
 						frm.dashboard.hide_progress(message);
 					},
 					1500,
-					data.messsage
+					data.messsage,
 				);
 			}
 		});
@@ -61,7 +65,10 @@ frappe.ui.form.on("QuickBooks Migrator", {
 	},
 	set_indicator: function (frm) {
 		var indicator_map = {
-			"Connecting to QuickBooks": [__("Connecting to QuickBooks"), "orange"],
+			"Connecting to QuickBooks": [
+				__("Connecting to QuickBooks"),
+				"orange",
+			],
 			"Connected to QuickBooks": [__("Connected to QuickBooks"), "green"],
 			"In Progress": [__("In Progress"), "orange"],
 			Complete: [__("Complete"), "green"],

@@ -24,16 +24,19 @@ frappe.ui.form.on("Closing Stock Balance", {
 
 	regenerate_closing_balance(frm) {
 		if (frm.doc.status == "Completed") {
-			frm.add_custom_button(__("Regenerate Closing Stock Balance"), () => {
-				frm.call({
-					method: "regenerate_closing_balance",
-					doc: frm.doc,
-					freeze: true,
-					callback: () => {
-						frm.reload_doc();
-					},
-				});
-			});
+			frm.add_custom_button(
+				__("Regenerate Closing Stock Balance"),
+				() => {
+					frm.call({
+						method: "regenerate_closing_balance",
+						doc: frm.doc,
+						freeze: true,
+						callback: () => {
+							frm.reload_doc();
+						},
+					});
+				},
+			);
 		}
 	},
 });

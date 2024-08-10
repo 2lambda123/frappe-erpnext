@@ -53,7 +53,8 @@ cur_frm.fields_dict.approving_user.get_query = function (doc, cdt, cdn) {
 	return { query: "frappe.core.doctype.user.user.user_query" };
 };
 
-cur_frm.fields_dict["approving_role"].get_query = cur_frm.fields_dict["system_role"].get_query;
+cur_frm.fields_dict["approving_role"].get_query =
+	cur_frm.fields_dict["system_role"].get_query;
 
 // System Role Trigger
 // -----------------------

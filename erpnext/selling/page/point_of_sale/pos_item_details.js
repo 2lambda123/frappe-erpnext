@@ -18,7 +18,9 @@ erpnext.PointOfSale.ItemDetails = class {
 	}
 
 	prepare_dom() {
-		this.wrapper.append(`<section class="item-details-container"></section>`);
+		this.wrapper.append(
+			`<section class="item-details-container"></section>`,
+		);
 
 		this.$component = this.wrapper.find(".item-details-container");
 	}
@@ -43,7 +45,7 @@ erpnext.PointOfSale.ItemDetails = class {
 			</div>
 			<div class="discount-section"></div>
 			<div class="form-container"></div>
-			<div class="serial-batch-container"></div>`
+			<div class="serial-batch-container"></div>`,
 		);
 
 		this.$item_name = this.$component.find(".item-name");
@@ -52,7 +54,9 @@ erpnext.PointOfSale.ItemDetails = class {
 		this.$item_image = this.$component.find(".item-image");
 		this.$form_container = this.$component.find(".form-container");
 		this.$dicount_section = this.$component.find(".discount-section");
-		this.$serial_batch_container = this.$component.find(".serial-batch-container");
+		this.$serial_batch_container = this.$component.find(
+			".serial-batch-container",
+		);
 	}
 
 	compare_with_current_item(item) {
@@ -102,11 +106,18 @@ erpnext.PointOfSale.ItemDetails = class {
 		const serialized = item_row.has_serial_no;
 		const batched = item_row.has_batch_no;
 		const no_bundle_selected =
-			!item_row.serial_and_batch_bundle && !item_row.serial_no && !item_row.batch_no;
+			!item_row.serial_and_batch_bundle &&
+			!item_row.serial_no &&
+			!item_row.batch_no;
 
-		if ((serialized && no_bundle_selected) || (batched && no_bundle_selected)) {
+		if (
+			(serialized && no_bundle_selected) ||
+			(batched && no_bundle_selected)
+		) {
 			frappe.show_alert({
-				message: __("Item is removed since no serial / batch no selected."),
+				message: __(
+					"Item is removed since no serial / batch no selected.",
+				),
 				indicator: "orange",
 			});
 			frappe.utils.play_sound("cancel");
@@ -120,7 +131,8 @@ erpnext.PointOfSale.ItemDetails = class {
 		function get_description_html() {
 			if (description) {
 				description =
-					description.indexOf("...") === -1 && description.length > 140
+					description.indexOf("...") === -1 &&
+					description.length > 140
 						? description.substr(0, 139) + "..."
 						: description;
 				return description;
@@ -137,10 +149,12 @@ erpnext.PointOfSale.ItemDetails = class {
 					onerror="cur_pos.item_details.handle_broken_image(this)"
 					class="h-full" src="${image}"
 					alt="${frappe.get_abbr(item_name)}"
-					style="object-fit: cover;">`
+					style="object-fit: cover;">`,
 			);
 		} else {
-			this.$item_image.html(`<div class="item-abbr">${frappe.get_abbr(item_name)}</div>`);
+			this.$item_image.html(
+				`<div class="item-abbr">${frappe.get_abbr(item_name)}</div>`,
+			);
 		}
 	}
 
@@ -153,7 +167,7 @@ erpnext.PointOfSale.ItemDetails = class {
 		if (item.discount_percentage) {
 			this.$dicount_section.html(
 				`<div class="item-rate">${format_currency(item.price_list_rate, this.currency)}</div>
-				<div class="item-discount">${item.discount_percentage}% off</div>`
+				<div class="item-discount">${item.discount_percentage}% off</div>`,
 			);
 			this.$item_price.html(format_currency(item.rate, this.currency));
 		} else {
@@ -167,18 +181,26 @@ erpnext.PointOfSale.ItemDetails = class {
 
 		fields_to_display.forEach((fieldname, idx) => {
 			this.$form_container.append(
-				`<div class="${fieldname}-control" data-fieldname="${fieldname}"></div>`
+				`<div class="${fieldname}-control" data-fieldname="${fieldname}"></div>`,
 			);
 
-			const field_meta = this.item_meta.fields.find((df) => df.fieldname === fieldname);
-			fieldname === "discount_percentage" ? (field_meta.label = __("Discount (%)")) : "";
+			const field_meta = this.item_meta.fields.find(
+				(df) => df.fieldname === fieldname,
+			);
+			fieldname === "discount_percentage"
+				? (field_meta.label = __("Discount (%)"))
+				: "";
 			const me = this;
 
 			this[`${fieldname}_control`] = frappe.ui.form.make_control({
 				df: {
 					...field_meta,
 					onchange: function () {
-						me.events.form_updated(me.current_item, fieldname, this.value);
+						me.events.form_updated(
+							me.current_item,
+							fieldname,
+							this.value,
+						);
 					},
 				},
 				parent: this.$form_container.find(`.${fieldname}-control`),
@@ -210,11 +232,16 @@ erpnext.PointOfSale.ItemDetails = class {
 
 	make_auto_serial_selection_btn(item) {
 		if (item.has_serial_no || item.has_batch_no) {
-			const label = item.has_serial_no ? __("Select Serial No") : __("Select Batch No");
+			const label = item.has_serial_no
+				? __("Select Serial No")
+				: __("Select Batch No");
 			this.$form_container.append(
-				`<div class="btn btn-sm btn-secondary auto-fetch-btn">${label}</div>`
+				`<div class="btn btn-sm btn-secondary auto-fetch-btn">${label}</div>`,
 			);
-			this.$form_container.find(".serial_no-control").find("textarea").css("height", "6rem");
+			this.$form_container
+				.find(".serial_no-control")
+				.find("textarea")
+				.css("height", "6rem");
 		}
 	}
 
@@ -223,12 +250,19 @@ erpnext.PointOfSale.ItemDetails = class {
 		if (this.rate_control) {
 			this.rate_control.df.onchange = function () {
 				if (this.value || flt(this.value) === 0) {
-					me.events.form_updated(me.current_item, "rate", this.value).then(() => {
-						const item_row = frappe.get_doc(me.doctype, me.name);
-						const doc = me.events.get_frm().doc;
-						me.$item_price.html(format_currency(item_row.rate, doc.currency));
-						me.render_discount_dom(item_row);
-					});
+					me.events
+						.form_updated(me.current_item, "rate", this.value)
+						.then(() => {
+							const item_row = frappe.get_doc(
+								me.doctype,
+								me.name,
+							);
+							const doc = me.events.get_frm().doc;
+							me.$item_price.html(
+								format_currency(item_row.rate, doc.currency),
+							);
+							me.render_discount_dom(item_row);
+						});
 				}
 			};
 			this.rate_control.df.read_only = !this.allow_rate_change;
@@ -244,30 +278,45 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.warehouse_control.df.reqd = 1;
 			this.warehouse_control.df.onchange = function () {
 				if (this.value) {
-					me.events.form_updated(me.current_item, "warehouse", this.value).then(() => {
-						me.item_stock_map = me.events.get_item_stock_map();
-						const available_qty = me.item_stock_map[me.item_row.item_code][this.value][0];
-						const is_stock_item = Boolean(
-							me.item_stock_map[me.item_row.item_code][this.value][1]
-						);
-						if (available_qty === undefined) {
-							me.events.get_available_stock(me.item_row.item_code, this.value).then(() => {
-								// item stock map is updated now reset warehouse
-								me.warehouse_control.set_value(this.value);
-							});
-						} else if (available_qty === 0 && is_stock_item) {
-							me.warehouse_control.set_value("");
-							const bold_item_code = me.item_row.item_code.bold();
-							const bold_warehouse = this.value.bold();
-							frappe.throw(
-								__("Item Code: {0} is not available under warehouse {1}.", [
-									bold_item_code,
-									bold_warehouse,
-								])
+					me.events
+						.form_updated(me.current_item, "warehouse", this.value)
+						.then(() => {
+							me.item_stock_map = me.events.get_item_stock_map();
+							const available_qty =
+								me.item_stock_map[me.item_row.item_code][
+									this.value
+								][0];
+							const is_stock_item = Boolean(
+								me.item_stock_map[me.item_row.item_code][
+									this.value
+								][1],
 							);
-						}
-						me.actual_qty_control.set_value(available_qty);
-					});
+							if (available_qty === undefined) {
+								me.events
+									.get_available_stock(
+										me.item_row.item_code,
+										this.value,
+									)
+									.then(() => {
+										// item stock map is updated now reset warehouse
+										me.warehouse_control.set_value(
+											this.value,
+										);
+									});
+							} else if (available_qty === 0 && is_stock_item) {
+								me.warehouse_control.set_value("");
+								const bold_item_code =
+									me.item_row.item_code.bold();
+								const bold_warehouse = this.value.bold();
+								frappe.throw(
+									__(
+										"Item Code: {0} is not available under warehouse {1}.",
+										[bold_item_code, bold_warehouse],
+									),
+								);
+							}
+							me.actual_qty_control.set_value(available_qty);
+						});
 				}
 			};
 			this.warehouse_control.df.get_query = () => {
@@ -282,7 +331,11 @@ erpnext.PointOfSale.ItemDetails = class {
 			this.serial_no_control.df.reqd = 1;
 			this.serial_no_control.df.onchange = async function () {
 				!me.current_item.batch_no && (await me.auto_update_batch_no());
-				me.events.form_updated(me.current_item, "serial_no", this.value);
+				me.events.form_updated(
+					me.current_item,
+					"serial_no",
+					this.value,
+				);
 			};
 			this.serial_no_control.refresh();
 		}
@@ -307,20 +360,30 @@ erpnext.PointOfSale.ItemDetails = class {
 				me.events.form_updated(me.current_item, "uom", this.value);
 
 				const item_row = frappe.get_doc(me.doctype, me.name);
-				me.conversion_factor_control.df.read_only = item_row.stock_uom == this.value;
+				me.conversion_factor_control.df.read_only =
+					item_row.stock_uom == this.value;
 				me.conversion_factor_control.refresh();
 			};
 		}
 
-		frappe.model.on("POS Invoice Item", "*", (fieldname, value, item_row) => {
-			const field_control = this[`${fieldname}_control`];
-			const item_row_is_being_edited = this.compare_with_current_item(item_row);
+		frappe.model.on(
+			"POS Invoice Item",
+			"*",
+			(fieldname, value, item_row) => {
+				const field_control = this[`${fieldname}_control`];
+				const item_row_is_being_edited =
+					this.compare_with_current_item(item_row);
 
-			if (item_row_is_being_edited && field_control && field_control.get_value() !== value) {
-				field_control.set_value(value);
-				cur_pos.update_cart_html(item_row);
-			}
-		});
+				if (
+					item_row_is_being_edited &&
+					field_control &&
+					field_control.get_value() !== value
+				) {
+					field_control.set_value(value);
+					cur_pos.update_cart_html(item_row);
+				}
+			},
+		);
 	}
 
 	async auto_update_batch_no() {
@@ -332,10 +395,13 @@ erpnext.PointOfSale.ItemDetails = class {
 			if (!selected_serial_nos.length) return;
 
 			// find batch nos of the selected serial no
-			const serials_with_batch_no = await frappe.db.get_list("Serial No", {
-				filters: { name: ["in", selected_serial_nos] },
-				fields: ["batch_no", "name"],
-			});
+			const serials_with_batch_no = await frappe.db.get_list(
+				"Serial No",
+				{
+					filters: { name: ["in", selected_serial_nos] },
+					fields: ["batch_no", "name"],
+				},
+			);
 			const batch_serial_map = serials_with_batch_no.reduce((acc, r) => {
 				if (!acc[r.batch_no]) {
 					acc[r.batch_no] = [];
@@ -348,17 +414,22 @@ erpnext.PointOfSale.ItemDetails = class {
 			const batch_serial_nos = batch_serial_map[batch_no].join(`\n`);
 			// eg. 10 selected serial no. -> 5 belongs to first batch other 5 belongs to second batch
 			const serial_nos_belongs_to_other_batch =
-				selected_serial_nos.length !== batch_serial_map[batch_no].length;
+				selected_serial_nos.length !==
+				batch_serial_map[batch_no].length;
 
 			const current_batch_no = this.batch_no_control.get_value();
-			current_batch_no != batch_no && (await this.batch_no_control.set_value(batch_no));
+			current_batch_no != batch_no &&
+				(await this.batch_no_control.set_value(batch_no));
 
 			if (serial_nos_belongs_to_other_batch) {
 				this.serial_no_control.set_value(batch_serial_nos);
 				this.qty_control.set_value(batch_serial_map[batch_no].length);
 
 				delete batch_serial_map[batch_no];
-				this.events.clone_new_batch_item_in_frm(batch_serial_map, this.current_item);
+				this.events.clone_new_batch_item_in_frm(
+					batch_serial_map,
+					this.current_item,
+				);
 			}
 		}
 	}
@@ -412,6 +483,8 @@ erpnext.PointOfSale.ItemDetails = class {
 	}
 
 	toggle_component(show) {
-		show ? this.$component.css("display", "flex") : this.$component.css("display", "none");
+		show
+			? this.$component.css("display", "flex")
+			: this.$component.css("display", "none");
 	}
 };

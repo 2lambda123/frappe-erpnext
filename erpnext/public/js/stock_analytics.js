@@ -27,7 +27,7 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 							%(value)s</a>",
 							{
 								value: item.name,
-							}
+							},
 						);
 					} else {
 						return item.name;
@@ -60,7 +60,11 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 				fieldname: "brand",
 				default_value: __("Select Brand..."),
 				filter: function (val, item, opts) {
-					return val == opts.default_value || item.brand == val || item._show;
+					return (
+						val == opts.default_value ||
+						item.brand == val ||
+						item._show
+					);
 				},
 				link_formatter: { filter_input: "brand" },
 			},
@@ -71,7 +75,11 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 				fieldname: "warehouse",
 				default_value: __("Select Warehouse..."),
 			},
-			{ fieldtype: "Date", label: __("From Date"), fieldname: "from_date" },
+			{
+				fieldtype: "Date",
+				label: __("From Date"),
+				fieldname: "from_date",
+			},
 			{ fieldtype: "Date", label: __("To Date"), fieldname: "to_date" },
 			{
 				fieldtype: "Select",
@@ -91,7 +99,12 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 		var std_columns = [
 			{ id: "name", name: __("Item"), field: "name", width: 300 },
 			{ id: "brand", name: __("Brand"), field: "brand", width: 100 },
-			{ id: "stock_uom", name: __("UOM"), field: "stock_uom", width: 100 },
+			{
+				id: "stock_uom",
+				name: __("UOM"),
+				field: "stock_uom",
+				width: 100,
+			},
 			{
 				id: "opening",
 				name: __("Opening"),
@@ -109,7 +122,12 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 		var me = this;
 		super.setup_filters();
 
-		this.trigger_refresh_on_change(["value_or_qty", "brand", "warehouse", "range"]);
+		this.trigger_refresh_on_change([
+			"value_or_qty",
+			"brand",
+			"warehouse",
+			"range",
+		]);
 
 		this.show_zero_check();
 	}
@@ -163,11 +181,16 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 			let diff = 0;
 			var sl = data[i];
 			sl.posting_datetime = sl.posting_date + " " + sl.posting_time;
-			var posting_datetime = frappe.datetime.str_to_obj(sl.posting_datetime);
+			var posting_datetime = frappe.datetime.str_to_obj(
+				sl.posting_datetime,
+			);
 
-			if (me.is_default("warehouse") ? true : me.warehouse == sl.warehouse) {
+			if (
+				me.is_default("warehouse") ? true : me.warehouse == sl.warehouse
+			) {
 				var item = me.item_by_name[sl.item_code];
-				if (item.closing_qty_value == undefined) item.closing_qty_value = 0;
+				if (item.closing_qty_value == undefined)
+					item.closing_qty_value = 0;
 
 				if (me.value_or_qty != "Quantity") {
 					var wh = me.get_item_warehouse(sl.warehouse, sl.item_code);
@@ -177,16 +200,26 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 					var is_fifo = valuation_method == "FIFO";
 
 					if (sl.voucher_type == "Stock Reconciliation") {
-						diff = sl.qty_after_transaction * sl.valuation_rate - item.closing_qty_value;
-						wh.fifo_stack = [[sl.qty_after_transaction, sl.valuation_rate, sl.posting_date]];
+						diff =
+							sl.qty_after_transaction * sl.valuation_rate -
+							item.closing_qty_value;
+						wh.fifo_stack = [
+							[
+								sl.qty_after_transaction,
+								sl.valuation_rate,
+								sl.posting_date,
+							],
+						];
 						wh.balance_qty = sl.qty_after_transaction;
-						wh.balance_value = sl.valuation_rate * sl.qty_after_transaction;
+						wh.balance_value =
+							sl.valuation_rate * sl.qty_after_transaction;
 					} else {
 						diff = me.get_value_diff(wh, sl, is_fifo);
 					}
 				} else {
 					if (sl.voucher_type == "Stock Reconciliation") {
-						diff = sl.qty_after_transaction - item.closing_qty_value;
+						diff =
+							sl.qty_after_transaction - item.closing_qty_value;
 					} else {
 						diff = sl.qty;
 					}
@@ -222,7 +255,9 @@ erpnext.StockAnalytics = class StockAnalytics extends erpnext.StockGridReport {
 					var parent_group = me.item_by_name[parent];
 					$.each(me.columns, function (c, col) {
 						if (col.formatter == me.currency_formatter) {
-							parent_group[col.field] = flt(parent_group[col.field]) + flt(item[col.field]);
+							parent_group[col.field] =
+								flt(parent_group[col.field]) +
+								flt(item[col.field]);
 						}
 					});
 					parent = me.parent_map[parent];

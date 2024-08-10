@@ -4,9 +4,13 @@
 frappe.ui.form.on("Workstation", {
 	set_illustration_image(frm) {
 		let status_image_field =
-			frm.doc.status == "Production" ? frm.doc.on_status_image : frm.doc.off_status_image;
+			frm.doc.status == "Production"
+				? frm.doc.on_status_image
+				: frm.doc.off_status_image;
 		if (status_image_field) {
-			frm.sidebar.image_wrapper.find(".sidebar-image").attr("src", status_image_field);
+			frm.sidebar.image_wrapper
+				.find(".sidebar-image")
+				.attr("src", status_image_field);
 		}
 	},
 
@@ -57,26 +61,28 @@ frappe.tour["Workstation"] = [
 		fieldname: "workstation_name",
 		title: "Workstation Name",
 		description: __(
-			"You can set it as a machine name or operation type. For example, stiching machine 12"
+			"You can set it as a machine name or operation type. For example, stiching machine 12",
 		),
 	},
 	{
 		fieldname: "production_capacity",
 		title: "Production Capacity",
 		description: __(
-			"No. of parallel job cards which can be allowed on this workstation. Example: 2 would mean this workstation can process production for two Work Orders at a time."
+			"No. of parallel job cards which can be allowed on this workstation. Example: 2 would mean this workstation can process production for two Work Orders at a time.",
 		),
 	},
 	{
 		fieldname: "holiday_list",
 		title: "Holiday List",
-		description: __("A Holiday List can be added to exclude counting these days for the Workstation."),
+		description: __(
+			"A Holiday List can be added to exclude counting these days for the Workstation.",
+		),
 	},
 	{
 		fieldname: "working_hours",
 		title: "Working Hours",
 		description: __(
-			"Under Working Hours table, you can add start and end times for a Workstation. For example, a Workstation may be active from 9 am to 1 pm, then 2 pm to 5 pm. You can also specify the working hours based on shifts. While scheduling a Work Order, the system will check for the availability of the Workstation based on the working hours specified."
+			"Under Working Hours table, you can add start and end times for a Workstation. For example, a Workstation may be active from 9 am to 1 pm, then 2 pm to 5 pm. You can also specify the working hours based on shifts. While scheduling a Work Order, the system will check for the availability of the Workstation based on the working hours specified.",
 		),
 	},
 ];
@@ -137,9 +143,13 @@ class WorkstationDashboard {
 			this.start_job_qrcode_search = setTimeout(() => {
 				let job_card = this.start_job_qrcode.get_value();
 				if (job_card) {
-					this.validate_job_card(job_card, "Open", (job_card, qty) => {
-						this.start_job(job_card);
-					});
+					this.validate_job_card(
+						job_card,
+						"Open",
+						(job_card, qty) => {
+							this.start_job(job_card);
+						},
+					);
 
 					this.start_job_qrcode.set_value("");
 				}
@@ -162,9 +172,13 @@ class WorkstationDashboard {
 			this.complete_job_qrcode_search = setTimeout(() => {
 				let job_card = this.complete_job_qrcode.get_value();
 				if (job_card) {
-					this.validate_job_card(job_card, "Work In Progress", (job_card, qty) => {
-						this.complete_job(job_card, qty);
-					});
+					this.validate_job_card(
+						job_card,
+						"Work In Progress",
+						(job_card, qty) => {
+							this.complete_job(job_card, qty);
+						},
+					);
 
 					this.complete_job_qrcode.set_value("");
 				}
@@ -190,16 +204,20 @@ class WorkstationDashboard {
 	setup_menu_actions() {
 		let me = this;
 		this.job_cards.forEach((data) => {
-			me.menu_actions = me.$wrapper.find(`.menu-actions[data-job-card='${data.name}']`);
+			me.menu_actions = me.$wrapper.find(
+				`.menu-actions[data-job-card='${data.name}']`,
+			);
 			$(me.menu_actions).find(".btn-start").hide();
 			$(me.menu_actions).find(".btn-resume").hide();
 			$(me.menu_actions).find(".btn-pause").hide();
 			$(me.menu_actions).find(".btn-complete").hide();
 
 			if (
-				data.for_quantity + data.process_loss_qty > data.total_completed_qty &&
+				data.for_quantity + data.process_loss_qty >
+					data.total_completed_qty &&
 				(data.skip_material_transfer ||
-					data.transferred_qty >= data.for_quantity + data.process_loss_qty ||
+					data.transferred_qty >=
+						data.for_quantity + data.process_loss_qty ||
 					!data.finished_good)
 			) {
 				if (!data.time_logs?.length) {
@@ -229,8 +247,13 @@ class WorkstationDashboard {
 					.find(".section-body-job-card")
 					.hasClass("hide")
 			)
-				$(e.currentTarget).html(frappe.utils.icon("es-line-down", "sm", "mb-1"));
-			else $(e.currentTarget).html(frappe.utils.icon("es-line-up", "sm", "mb-1"));
+				$(e.currentTarget).html(
+					frappe.utils.icon("es-line-down", "sm", "mb-1"),
+				);
+			else
+				$(e.currentTarget).html(
+					frappe.utils.icon("es-line-up", "sm", "mb-1"),
+				);
 		});
 	}
 
@@ -238,31 +261,41 @@ class WorkstationDashboard {
 		let me = this;
 
 		this.$wrapper.find(".btn-transfer-materials").on("click", (e) => {
-			let job_card = $(e.currentTarget).closest("ul").attr("data-job-card");
+			let job_card = $(e.currentTarget)
+				.closest("ul")
+				.attr("data-job-card");
 			this.make_material_request(job_card);
 		});
 
 		this.$wrapper.find(".btn-start").on("click", (e) => {
-			let job_card = $(e.currentTarget).closest("ul").attr("data-job-card");
+			let job_card = $(e.currentTarget)
+				.closest("ul")
+				.attr("data-job-card");
 			this.start_job(job_card);
 		});
 
 		this.$wrapper.find(".btn-pause").on("click", (e) => {
-			let job_card = $(e.currentTarget).closest("ul").attr("data-job-card");
+			let job_card = $(e.currentTarget)
+				.closest("ul")
+				.attr("data-job-card");
 			me.update_job_card(job_card, "pause_job", {
 				end_time: frappe.datetime.now_datetime(),
 			});
 		});
 
 		this.$wrapper.find(".btn-resume").on("click", (e) => {
-			let job_card = $(e.currentTarget).closest("ul").attr("data-job-card");
+			let job_card = $(e.currentTarget)
+				.closest("ul")
+				.attr("data-job-card");
 			me.update_job_card(job_card, "resume_job", {
 				start_time: frappe.datetime.now_datetime(),
 			});
 		});
 
 		this.$wrapper.find(".btn-complete").on("click", (e) => {
-			let job_card = $(e.currentTarget).closest("ul").attr("data-job-card");
+			let job_card = $(e.currentTarget)
+				.closest("ul")
+				.attr("data-job-card");
 			let for_quantity = $(e.currentTarget).attr("data-qty");
 			me.complete_job(job_card, for_quantity);
 		});
@@ -307,7 +340,7 @@ class WorkstationDashboard {
 				});
 			},
 			__("Enter Value"),
-			__("Submit")
+			__("Submit"),
 		);
 	}
 
@@ -322,15 +355,20 @@ class WorkstationDashboard {
 				options: "Employee",
 				change() {
 					let employee = this.get_value();
-					let employees = me.employee_dialog.fields_dict.employees.df.data;
+					let employees =
+						me.employee_dialog.fields_dict.employees.df.data;
 
 					if (employee) {
-						let employee_exists = employees.find((d) => d.employee === employee);
+						let employee_exists = employees.find(
+							(d) => d.employee === employee,
+						);
 
 						if (!employee_exists) {
-							me.employee_dialog.fields_dict.employees.df.data.push({
-								employee: employee,
-							});
+							me.employee_dialog.fields_dict.employees.df.data.push(
+								{
+									employee: employee,
+								},
+							);
 
 							me.employee_dialog.fields_dict.employees.grid.refresh();
 						}
@@ -397,18 +435,26 @@ class WorkstationDashboard {
 			},
 			callback: (r) => {
 				if (r.message) {
-					me.prepare_materials_modal(r.message, job_card, (job_card) => {
-						frappe.call({
-							method: "erpnext.manufacturing.doctype.job_card.job_card.make_stock_entry",
-							args: {
-								source_name: job_card,
-							},
-							callback: (r) => {
-								var doc = frappe.model.sync(r.message);
-								frappe.set_route("Form", doc[0].doctype, doc[0].name);
-							},
-						});
-					});
+					me.prepare_materials_modal(
+						r.message,
+						job_card,
+						(job_card) => {
+							frappe.call({
+								method: "erpnext.manufacturing.doctype.job_card.job_card.make_stock_entry",
+								args: {
+									source_name: job_card,
+								},
+								callback: (r) => {
+									var doc = frappe.model.sync(r.message);
+									frappe.set_route(
+										"Form",
+										doc[0].doctype,
+										doc[0].name,
+									);
+								},
+							});
+						},
+					);
 				}
 			},
 		});
@@ -523,7 +569,10 @@ class WorkstationDashboard {
 		this.job_cards.forEach((data) => {
 			if (data.time_logs?.length) {
 				data._current_time = this.get_current_time(data);
-				if (data.time_logs[cint(data.time_logs.length) - 1].to_time || data.is_paused) {
+				if (
+					data.time_logs[cint(data.time_logs.length) - 1].to_time ||
+					data.is_paused
+				) {
 					this.updateStopwatch(data);
 				} else {
 					this.initialiseTimer(data);
@@ -549,11 +598,17 @@ class WorkstationDashboard {
 			$(job_card_selector).find(".job-card-status").text(data.status);
 
 			["blue", "gray", "green", "orange", "yellow"].forEach((color) => {
-				$(job_card_selector).find(".job-card-status").removeClass(color);
+				$(job_card_selector)
+					.find(".job-card-status")
+					.removeClass(color);
 			});
 
-			$(job_card_selector).find(".job-card-status").addClass(data.status_color);
-			$(job_card_selector).find(".job-card-status").css("backgroundColor", color_map[data.status]);
+			$(job_card_selector)
+				.find(".job-card-status")
+				.addClass(data.status_color);
+			$(job_card_selector)
+				.find(".job-card-status")
+				.css("backgroundColor", color_map[data.status]);
 		});
 	}
 
@@ -593,10 +648,16 @@ class WorkstationDashboard {
 				if (d.time_in_mins) {
 					current_time += flt(d.time_in_mins, 2) * 60;
 				} else {
-					current_time += this.get_seconds_diff(d.to_time, d.from_time);
+					current_time += this.get_seconds_diff(
+						d.to_time,
+						d.from_time,
+					);
 				}
 			} else {
-				current_time += this.get_seconds_diff(frappe.datetime.now_datetime(), d.from_time);
+				current_time += this.get_seconds_diff(
+					frappe.datetime.now_datetime(),
+					d.from_time,
+				);
 			}
 		});
 

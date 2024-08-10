@@ -16,7 +16,10 @@ function get_filters() {
 			label: __("Start Date"),
 			fieldtype: "Date",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "period_end_date",
@@ -53,7 +56,8 @@ function get_filters() {
 			get_data: function (txt) {
 				if (!frappe.query_report.filters) return;
 
-				let party_type = frappe.query_report.get_filter_value("party_type");
+				let party_type =
+					frappe.query_report.get_filter_value("party_type");
 				if (!party_type) return;
 
 				return frappe.db.get_link_options(party_type, txt);

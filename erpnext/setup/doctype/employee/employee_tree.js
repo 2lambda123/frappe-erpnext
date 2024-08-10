@@ -4,7 +4,9 @@ frappe.treeview_settings["Employee"] = {
 		{
 			fieldname: "company",
 			fieldtype: "Select",
-			options: ["All Companies"].concat(erpnext.utils.get_tree_options("company")),
+			options: ["All Companies"].concat(
+				erpnext.utils.get_tree_options("company"),
+			),
 			label: __("Company"),
 			default: erpnext.utils.get_tree_default("company"),
 		},

@@ -336,9 +336,9 @@ class calculate_taxes_and_totals:
 			return tax.rate
 
 	def calculate_net_total(self):
-		self.doc.total_qty = (
-			self.doc.total
-		) = self.doc.base_total = self.doc.net_total = self.doc.base_net_total = 0.0
+		self.doc.total_qty = self.doc.total = self.doc.base_total = self.doc.net_total = (
+			self.doc.base_net_total
+		) = 0.0
 
 		for item in self._items:
 			self.doc.total += item.amount

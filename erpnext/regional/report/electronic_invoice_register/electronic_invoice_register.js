@@ -7,7 +7,10 @@ frappe.query_reports["Electronic Invoice Register"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			width: "80",
 		},
 		{
@@ -42,8 +45,8 @@ frappe.query_reports["Electronic Invoice Register"] = {
 				frappe.urllib.get_full_url(
 					"/api/method/erpnext.regional.italy.utils.export_invoices?" +
 						"filters=" +
-						JSON.stringify(reportview.get_filter_values())
-				)
+						JSON.stringify(reportview.get_filter_values()),
+				),
 			);
 			if (!w) {
 				frappe.msgprint(__("Please enable pop-ups"));

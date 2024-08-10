@@ -1,7 +1,9 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-erpnext.StockGridReport = class StockGridReport extends frappe.views.TreeGridReport {
+erpnext.StockGridReport = class StockGridReport extends (
+	frappe.views.TreeGridReport
+) {
 	get_item_warehouse(warehouse, item) {
 		if (!this.item_warehouse[item]) this.item_warehouse[item] = {};
 		if (!this.item_warehouse[item][warehouse])
@@ -37,7 +39,12 @@ erpnext.StockGridReport = class StockGridReport extends frappe.views.TreeGridRep
 				value_diff = rate * add_qty;
 			}
 
-			if (add_qty) wh.fifo_stack.push([add_qty, sl.incoming_rate, sl.posting_date]);
+			if (add_qty)
+				wh.fifo_stack.push([
+					add_qty,
+					sl.incoming_rate,
+					sl.posting_date,
+				]);
 		} else {
 			// called everytime for maintaining fifo stack
 			var fifo_value_diff = this.get_fifo_value_diff(wh, sl);
@@ -49,10 +56,14 @@ erpnext.StockGridReport = class StockGridReport extends frappe.views.TreeGridRep
 				value_diff = fifo_value_diff;
 			} else {
 				// average rate for weighted average
-				let rate = wh.balance_qty.toFixed(2) == 0.0 ? 0 : flt(wh.balance_value) / flt(wh.balance_qty);
+				let rate =
+					wh.balance_qty.toFixed(2) == 0.0
+						? 0
+						: flt(wh.balance_value) / flt(wh.balance_qty);
 
 				// no change in value if negative qty
-				if ((wh.balance_qty + sl.qty).toFixed(2) >= 0.0) value_diff = rate * sl.qty;
+				if ((wh.balance_qty + sl.qty).toFixed(2) >= 0.0)
+					value_diff = rate * sl.qty;
 				else value_diff = -wh.balance_value;
 			}
 		}
@@ -100,7 +111,9 @@ erpnext.StockGridReport = class StockGridReport extends frappe.views.TreeGridRep
 
 		$.each(sl.serial_no.trim().split("\n"), function (i, sr) {
 			if (sr) {
-				value_diff += flt(me.serialized_buying_rates[sr.trim().toLowerCase()]);
+				value_diff += flt(
+					me.serialized_buying_rates[sr.trim().toLowerCase()],
+				);
 			}
 		});
 
@@ -112,7 +125,9 @@ erpnext.StockGridReport = class StockGridReport extends frappe.views.TreeGridRep
 
 		if (frappe.report_dump.data["Serial No"]) {
 			$.each(frappe.report_dump.data["Serial No"], function (i, sn) {
-				serialized_buying_rates[sn.name.toLowerCase()] = flt(sn.incoming_rate);
+				serialized_buying_rates[sn.name.toLowerCase()] = flt(
+					sn.incoming_rate,
+				);
 			});
 		}
 

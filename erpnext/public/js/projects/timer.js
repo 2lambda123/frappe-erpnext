@@ -11,9 +11,23 @@ erpnext.timesheet.timer = function (frm, row, timestamp = 0) {
 				reqd: 1,
 				options: "Activity Type",
 			},
-			{ fieldtype: "Link", label: __("Project"), fieldname: "project", options: "Project" },
-			{ fieldtype: "Link", label: __("Task"), fieldname: "task", options: "Task" },
-			{ fieldtype: "Float", label: __("Expected Hrs"), fieldname: "expected_hours" },
+			{
+				fieldtype: "Link",
+				label: __("Project"),
+				fieldname: "project",
+				options: "Project",
+			},
+			{
+				fieldtype: "Link",
+				label: __("Task"),
+				fieldname: "task",
+				options: "Task",
+			},
+			{
+				fieldtype: "Float",
+				label: __("Expected Hrs"),
+				fieldname: "expected_hours",
+			},
 			{ fieldtype: "Section Break" },
 			{ fieldtype: "HTML", fieldname: "timer_html" },
 		],
@@ -79,7 +93,11 @@ erpnext.timesheet.control_timer = function (frm, dialog, row, timestamp = 0) {
 			) {
 				frm.doc.time_logs = [];
 			}
-			row = frappe.model.add_child(frm.doc, "Timesheet Detail", "time_logs");
+			row = frappe.model.add_child(
+				frm.doc,
+				"Timesheet Detail",
+				"time_logs",
+			);
 			row.activity_type = args.activity_type;
 			row.from_time = frappe.datetime.get_datetime_as_string();
 			row.project = args.project;
@@ -144,15 +162,25 @@ erpnext.timesheet.control_timer = function (frm, dialog, row, timestamp = 0) {
 		}
 		if (hours > 99999) reset();
 		if (cur_dialog && cur_dialog.get_value("expected_hours") > 0) {
-			if (flag && currentIncrement >= cur_dialog.get_value("expected_hours") * 3600) {
+			if (
+				flag &&
+				currentIncrement >=
+					cur_dialog.get_value("expected_hours") * 3600
+			) {
 				frappe.utils.play_sound("alert");
 				frappe.msgprint(__("Timer exceeded the given hours."));
 				flag = false;
 			}
 		}
-		$(".hours").text(hours < 10 ? "0" + hours.toString() : hours.toString());
-		$(".minutes").text(minutes < 10 ? "0" + minutes.toString() : minutes.toString());
-		$(".seconds").text(seconds < 10 ? "0" + seconds.toString() : seconds.toString());
+		$(".hours").text(
+			hours < 10 ? "0" + hours.toString() : hours.toString(),
+		);
+		$(".minutes").text(
+			minutes < 10 ? "0" + minutes.toString() : minutes.toString(),
+		);
+		$(".seconds").text(
+			seconds < 10 ? "0" + seconds.toString() : seconds.toString(),
+		);
 	}
 
 	function setCurrentIncrement() {

@@ -345,9 +345,9 @@ class TestPaymentReconciliation(FrappeTestCase):
 		self.assertEqual(len(pr.get("invoices")), 3)
 		self.assertEqual(len(pr.get("payments")), 2)
 
-		pr.minimum_invoice_amount = (
-			pr.maximum_invoice_amount
-		) = pr.minimum_payment_amount = pr.maximum_payment_amount = 0
+		pr.minimum_invoice_amount = pr.maximum_invoice_amount = pr.minimum_payment_amount = (
+			pr.maximum_payment_amount
+		) = 0
 		pr.get_unreconciled_entries()
 		self.assertEqual(len(pr.get("invoices")), 3)
 		self.assertEqual(len(pr.get("payments")), 3)

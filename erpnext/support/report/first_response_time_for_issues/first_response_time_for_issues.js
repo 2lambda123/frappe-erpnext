@@ -36,7 +36,10 @@ frappe.query_reports["First Response Time for Issues"] = {
 						hide_days: 0,
 						hide_seconds: 0,
 					};
-					return frappe.utils.get_formatted_duration(d, duration_options);
+					return frappe.utils.get_formatted_duration(
+						d,
+						duration_options,
+					);
 				},
 			},
 		};

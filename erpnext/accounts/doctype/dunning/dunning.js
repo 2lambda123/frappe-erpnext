@@ -52,7 +52,7 @@ frappe.ui.form.on("Dunning", {
 				function () {
 					frm.events.make_payment_entry(frm);
 				},
-				__("Create")
+				__("Create"),
 			);
 			frm.page.set_inner_btn_group_as_primary(__("Create"));
 		}
@@ -79,11 +79,15 @@ frappe.ui.form.on("Dunning", {
 			});
 		}
 
-		frappe.dynamic_link = { doc: frm.doc, fieldname: "customer", doctype: "Customer" };
+		frappe.dynamic_link = {
+			doc: frm.doc,
+			fieldname: "customer",
+			doctype: "Customer",
+		};
 
 		frm.toggle_display(
 			"customer_name",
-			frm.doc.customer_name && frm.doc.customer_name !== frm.doc.customer
+			frm.doc.customer_name && frm.doc.customer_name !== frm.doc.customer,
 		);
 	},
 	// When multiple companies are set up. in case company name is changed set default company address
@@ -91,7 +95,10 @@ frappe.ui.form.on("Dunning", {
 		if (frm.doc.company) {
 			frappe.call({
 				method: "erpnext.setup.doctype.company.company.get_default_company_address",
-				args: { name: frm.doc.company, existing_address: frm.doc.company_address || "" },
+				args: {
+					name: frm.doc.company,
+					existing_address: frm.doc.company_address || "",
+				},
 				debounce: 2000,
 				callback: function (r) {
 					frm.set_value("company_address", (r && r.message) || "");
@@ -113,7 +120,10 @@ frappe.ui.form.on("Dunning", {
 			const company_doc = frappe.get_doc(":Company", frm.doc.company);
 			if (company_doc.default_letter_head) {
 				if (frm.fields_dict.letter_head) {
-					frm.set_value("letter_head", company_doc.default_letter_head);
+					frm.set_value(
+						"letter_head",
+						company_doc.default_letter_head,
+					);
 				}
 			}
 		}
@@ -153,7 +163,11 @@ frappe.ui.form.on("Dunning", {
 		}
 
 		// Make read only if Accounts Settings doesn't allow stale rates
-		frm.set_df_property("conversion_rate", "read_only", erpnext.stale_rate_allowed() ? 0 : 1);
+		frm.set_df_property(
+			"conversion_rate",
+			"read_only",
+			erpnext.stale_rate_allowed() ? 0 : 1,
+		);
 	},
 	customer_address: function (frm) {
 		erpnext.utils.get_address_display(frm, "customer_address");
@@ -207,8 +221,16 @@ frappe.ui.form.on("Dunning", {
 	calculate_overdue_days: function (frm) {
 		frm.doc.overdue_payments.forEach((row) => {
 			if (frm.doc.posting_date && row.due_date) {
-				const overdue_days = moment(frm.doc.posting_date).diff(row.due_date, "days");
-				frappe.model.set_value(row.doctype, row.name, "overdue_days", overdue_days);
+				const overdue_days = moment(frm.doc.posting_date).diff(
+					row.due_date,
+					"days",
+				);
+				frappe.model.set_value(
+					row.doctype,
+					row.name,
+					"overdue_days",
+					overdue_days,
+				);
 			}
 		});
 	},
@@ -217,14 +239,20 @@ frappe.ui.form.on("Dunning", {
 			const interest_per_day = frm.doc.rate_of_interest / 100 / 365;
 			const interest = flt(
 				interest_per_day * row.overdue_days * row.outstanding,
-				precision("interest", row)
+				precision("interest", row),
 			);
 			frappe.model.set_value(row.doctype, row.name, "interest", interest);
 		});
 	},
 	calculate_totals: function (frm) {
-		const total_interest = frm.doc.overdue_payments.reduce((prev, cur) => prev + cur.interest, 0);
-		const total_outstanding = frm.doc.overdue_payments.reduce((prev, cur) => prev + cur.outstanding, 0);
+		const total_interest = frm.doc.overdue_payments.reduce(
+			(prev, cur) => prev + cur.interest,
+			0,
+		);
+		const total_outstanding = frm.doc.overdue_payments.reduce(
+			(prev, cur) => prev + cur.outstanding,
+			0,
+		);
 		const dunning_amount = total_interest + frm.doc.dunning_fee;
 		const base_dunning_amount = dunning_amount * frm.doc.conversion_rate;
 		const grand_total = total_outstanding + dunning_amount;

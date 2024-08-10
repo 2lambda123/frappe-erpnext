@@ -9,6 +9,10 @@ frappe.listview_settings["Subcontracting Receipt"] = {
 			"Return Issued": "grey",
 			Completed: "green",
 		};
-		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_colors[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 };

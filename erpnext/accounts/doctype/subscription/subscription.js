@@ -35,44 +35,49 @@ frappe.ui.form.on("Subscription", {
 			frm.add_custom_button(
 				__("Fetch Subscription Updates"),
 				() => frm.trigger("get_subscription_updates"),
-				__("Actions")
+				__("Actions"),
 			);
 
 			frm.add_custom_button(
 				__("Cancel Subscription"),
 				() => frm.trigger("cancel_this_subscription"),
-				__("Actions")
+				__("Actions"),
 			);
 		} else if (frm.doc.status === "Cancelled") {
 			frm.add_custom_button(
 				__("Restart Subscription"),
 				() => frm.trigger("renew_this_subscription"),
-				__("Actions")
+				__("Actions"),
 			);
 		}
 	},
 
 	cancel_this_subscription: function (frm) {
 		frappe.confirm(
-			__("This action will stop future billing. Are you sure you want to cancel this subscription?"),
+			__(
+				"This action will stop future billing. Are you sure you want to cancel this subscription?",
+			),
 			() => {
 				frm.call("cancel_subscription").then((r) => {
 					if (!r.exec) {
 						frm.reload_doc();
 					}
 				});
-			}
+			},
 		);
 	},
 
 	renew_this_subscription: function (frm) {
-		frappe.confirm(__("Are you sure you want to restart this subscription?"), () => {
-			frm.call("restart_subscription").then((r) => {
-				if (!r.exec) {
-					frm.reload_doc();
-				}
-			});
-		});
+		frappe.confirm(
+			__("Are you sure you want to restart this subscription?"),
+			() => {
+				frm.call("restart_subscription").then((r) => {
+					if (!r.exec) {
+						frm.reload_doc();
+					}
+				});
+			},
+		);
 	},
 
 	get_subscription_updates: function (frm) {

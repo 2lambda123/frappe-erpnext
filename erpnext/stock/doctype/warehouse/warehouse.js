@@ -35,7 +35,10 @@ frappe.ui.form.on("Warehouse", {
 
 	refresh: function (frm) {
 		frm.toggle_display("warehouse_name", frm.doc.__islocal);
-		frm.toggle_display(["address_html", "contact_html"], !frm.doc.__islocal);
+		frm.toggle_display(
+			["address_html", "contact_html"],
+			!frm.doc.__islocal,
+		);
 
 		if (!frm.is_new()) {
 			frappe.contacts.render_address_and_contact(frm);
@@ -53,7 +56,7 @@ frappe.ui.form.on("Warehouse", {
 						: __("Convert to Group", null, "Warehouse"),
 					function () {
 						convert_to_group_or_ledger(frm);
-					}
+					},
 				);
 			}
 
@@ -74,13 +77,16 @@ frappe.ui.form.on("Warehouse", {
 			frm.doc.__onload?.account &&
 			"General Ledger" in frappe.boot.user.all_reports
 		) {
-			frm.add_custom_button(__("General Ledger", null, "Warehouse"), function () {
-				frappe.route_options = {
-					account: frm.doc.__onload.account,
-					company: frm.doc.company,
-				};
-				frappe.set_route("query-report", "General Ledger");
-			});
+			frm.add_custom_button(
+				__("General Ledger", null, "Warehouse"),
+				function () {
+					frappe.route_options = {
+						account: frm.doc.__onload.account,
+						company: frm.doc.company,
+					};
+					frappe.set_route("query-report", "General Ledger");
+				},
+			);
 		}
 
 		frm.toggle_enable(["is_group", "company"], false);

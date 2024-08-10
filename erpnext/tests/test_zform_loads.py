@@ -1,4 +1,4 @@
-""" smoak tests to check basic functionality calls on known form loads."""
+"""smoak tests to check basic functionality calls on known form loads."""
 
 import frappe
 from frappe.desk.form.load import getdoc

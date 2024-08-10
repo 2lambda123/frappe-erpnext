@@ -30,8 +30,7 @@ def make_stock_entry(
 	do_not_save: bool = False,
 	do_not_submit: bool = False,
 	inspection_required: bool = False,
-) -> "StockEntry":
-	...
+) -> "StockEntry": ...
 
 
 @frappe.whitelist()

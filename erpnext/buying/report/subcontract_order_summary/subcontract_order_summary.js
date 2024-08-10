@@ -15,7 +15,10 @@ frappe.query_reports["Subcontract Order Summary"] = {
 			label: __("From Date"),
 			fieldname: "from_date",
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 			reqd: 1,
 		},
 		{

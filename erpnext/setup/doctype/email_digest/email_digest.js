@@ -23,7 +23,10 @@ frappe.ui.form.on("Email Digest", {
 
 			frm.add_custom_button(__("Send Now"), function () {
 				return frm.call("send", null, () => {
-					frappe.show_alert({ message: __("Message Sent"), indicator: "green" });
+					frappe.show_alert({
+						message: __("Message Sent"),
+						indicator: "green",
+					});
 				});
 			});
 		}

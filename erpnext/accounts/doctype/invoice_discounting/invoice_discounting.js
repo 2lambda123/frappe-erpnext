@@ -13,14 +13,24 @@ frappe.ui.form.on("Invoice Discounting", {
 			};
 		});
 
-		frm.events.filter_accounts("bank_account", frm, [["account_type", "=", "Bank"]]);
-		frm.events.filter_accounts("bank_charges_account", frm, [["root_type", "=", "Expense"]]);
-		frm.events.filter_accounts("short_term_loan", frm, [["root_type", "=", "Liability"]]);
+		frm.events.filter_accounts("bank_account", frm, [
+			["account_type", "=", "Bank"],
+		]);
+		frm.events.filter_accounts("bank_charges_account", frm, [
+			["root_type", "=", "Expense"],
+		]);
+		frm.events.filter_accounts("short_term_loan", frm, [
+			["root_type", "=", "Liability"],
+		]);
 		frm.events.filter_accounts("accounts_receivable_discounted", frm, [
 			["account_type", "=", "Receivable"],
 		]);
-		frm.events.filter_accounts("accounts_receivable_credit", frm, [["account_type", "=", "Receivable"]]);
-		frm.events.filter_accounts("accounts_receivable_unpaid", frm, [["account_type", "=", "Receivable"]]);
+		frm.events.filter_accounts("accounts_receivable_credit", frm, [
+			["account_type", "=", "Receivable"],
+		]);
+		frm.events.filter_accounts("accounts_receivable_unpaid", frm, [
+			["account_type", "=", "Receivable"],
+		]);
 	},
 
 	filter_accounts: (fieldname, frm, addl_filters) => {
@@ -38,15 +48,21 @@ frappe.ui.form.on("Invoice Discounting", {
 	},
 
 	refresh_filters: (frm) => {
-		let invoice_accounts = Object.keys(frm.doc.invoices).map(function (key) {
-			return frm.doc.invoices[key].debit_to;
-		});
+		let invoice_accounts = Object.keys(frm.doc.invoices).map(
+			function (key) {
+				return frm.doc.invoices[key].debit_to;
+			},
+		);
 		let filters = [
 			["account_type", "=", "Receivable"],
 			["name", "not in", invoice_accounts],
 		];
 		frm.events.filter_accounts("accounts_receivable_credit", frm, filters);
-		frm.events.filter_accounts("accounts_receivable_discounted", frm, filters);
+		frm.events.filter_accounts(
+			"accounts_receivable_discounted",
+			frm,
+			filters,
+		);
 		frm.events.filter_accounts("accounts_receivable_unpaid", frm, filters);
 	},
 
@@ -83,7 +99,10 @@ frappe.ui.form.on("Invoice Discounting", {
 
 	set_end_date: (frm) => {
 		if (frm.doc.loan_start_date && frm.doc.loan_period) {
-			let end_date = frappe.datetime.add_days(frm.doc.loan_start_date, frm.doc.loan_period);
+			let end_date = frappe.datetime.add_days(
+				frm.doc.loan_start_date,
+				frm.doc.loan_period,
+			);
 			frm.set_value("loan_end_date", end_date);
 		}
 	},
@@ -146,7 +165,9 @@ frappe.ui.form.on("Invoice Discounting", {
 						if (!r.exc) {
 							d.hide();
 							$.each(r.message, function (i, v) {
-								frm.doc.invoices = frm.doc.invoices.filter((row) => row.sales_invoice);
+								frm.doc.invoices = frm.doc.invoices.filter(
+									(row) => row.sales_invoice,
+								);
 								let row = frm.add_child("invoices");
 								$.extend(row, v);
 								frm.events.refresh_filters(frm);
@@ -168,7 +189,11 @@ frappe.ui.form.on("Invoice Discounting", {
 			callback: function (r) {
 				if (!r.exc) {
 					var doclist = frappe.model.sync(r.message);
-					frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+					frappe.set_route(
+						"Form",
+						doclist[0].doctype,
+						doclist[0].name,
+					);
 				}
 			},
 		});
@@ -181,7 +206,11 @@ frappe.ui.form.on("Invoice Discounting", {
 			callback: function (r) {
 				if (!r.exc) {
 					var doclist = frappe.model.sync(r.message);
-					frappe.set_route("Form", doclist[0].doctype, doclist[0].name);
+					frappe.set_route(
+						"Form",
+						doclist[0].doctype,
+						doclist[0].name,
+					);
 				}
 			},
 		});
@@ -202,7 +231,7 @@ frappe.ui.form.on("Invoice Discounting", {
 					};
 					frappe.set_route("query-report", "General Ledger");
 				},
-				__("View")
+				__("View"),
 			);
 		}
 	},

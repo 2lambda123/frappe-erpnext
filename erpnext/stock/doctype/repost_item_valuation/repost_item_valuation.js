@@ -96,7 +96,9 @@ frappe.ui.form.on("Repost Item Valuation", {
 			frappe.call({
 				method: "erpnext.stock.doctype.repost_item_valuation.repost_item_valuation.execute_repost_item_valuation",
 				callback: function () {
-					frappe.msgprint(__("Reposting has been started in the background."));
+					frappe.msgprint(
+						__("Reposting has been started in the background."),
+					);
 				},
 			});
 		});
@@ -105,13 +107,16 @@ frappe.ui.form.on("Repost Item Valuation", {
 	show_reposting_progress: function (frm) {
 		var bars = [];
 
-		let total_count = frm.doc.items_to_be_repost ? JSON.parse(frm.doc.items_to_be_repost).length : 0;
+		let total_count = frm.doc.items_to_be_repost
+			? JSON.parse(frm.doc.items_to_be_repost).length
+			: 0;
 
 		if (frm.doc?.total_reposting_count) {
 			total_count = frm.doc.total_reposting_count;
 		}
 
-		let progress = flt((cint(frm.doc.current_index) / total_count) * 100, 2) || 0.5;
+		let progress =
+			flt((cint(frm.doc.current_index) / total_count) * 100, 2) || 0.5;
 		var title = __("Reposting Completed {0}%", [progress]);
 
 		bars.push({

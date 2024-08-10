@@ -25,7 +25,9 @@ frappe.ui.form.on("Opportunity", {
 	validate: function (frm) {
 		if (frm.doc.status == "Lost" && !frm.doc.lost_reasons.length) {
 			frm.trigger("set_as_lost_dialog");
-			frappe.throw(__("Lost Reasons are required in case opportunity is Lost."));
+			frappe.throw(
+				__("Lost Reasons are required in case opportunity is Lost."),
+			);
 		}
 	},
 
@@ -54,7 +56,12 @@ frappe.ui.form.on("Opportunity", {
 	},
 
 	customer_address: function (frm, cdt, cdn) {
-		erpnext.utils.get_address_display(frm, "customer_address", "address_display", false);
+		erpnext.utils.get_address_display(
+			frm,
+			"customer_address",
+			"address_display",
+			false,
+		);
 	},
 
 	contact_person: erpnext.utils.get_contact_details,
@@ -82,7 +89,7 @@ frappe.ui.form.on("Opportunity", {
 					function () {
 						frm.trigger("make_supplier_quotation");
 					},
-					__("Create")
+					__("Create"),
 				);
 
 				frm.add_custom_button(
@@ -90,7 +97,7 @@ frappe.ui.form.on("Opportunity", {
 					function () {
 						frm.trigger("make_request_for_quotation");
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -100,7 +107,7 @@ frappe.ui.form.on("Opportunity", {
 					function () {
 						frm.trigger("make_customer");
 					},
-					__("Create")
+					__("Create"),
 				);
 			}
 
@@ -109,7 +116,7 @@ frappe.ui.form.on("Opportunity", {
 				function () {
 					frm.trigger("create_quotation");
 				},
-				__("Create")
+				__("Create"),
 			);
 		}
 
@@ -142,11 +149,26 @@ frappe.ui.form.on("Opportunity", {
 
 	set_contact_link: function (frm) {
 		if (frm.doc.opportunity_from == "Customer" && frm.doc.party_name) {
-			frappe.dynamic_link = { doc: frm.doc, fieldname: "party_name", doctype: "Customer" };
+			frappe.dynamic_link = {
+				doc: frm.doc,
+				fieldname: "party_name",
+				doctype: "Customer",
+			};
 		} else if (frm.doc.opportunity_from == "Lead" && frm.doc.party_name) {
-			frappe.dynamic_link = { doc: frm.doc, fieldname: "party_name", doctype: "Lead" };
-		} else if (frm.doc.opportunity_from == "Prospect" && frm.doc.party_name) {
-			frappe.dynamic_link = { doc: frm.doc, fieldname: "party_name", doctype: "Prospect" };
+			frappe.dynamic_link = {
+				doc: frm.doc,
+				fieldname: "party_name",
+				doctype: "Lead",
+			};
+		} else if (
+			frm.doc.opportunity_from == "Prospect" &&
+			frm.doc.party_name
+		) {
+			frappe.dynamic_link = {
+				doc: frm.doc,
+				fieldname: "party_name",
+				doctype: "Prospect",
+			};
 		}
 	},
 
@@ -165,7 +187,10 @@ frappe.ui.form.on("Opportunity", {
 						frm.set_df_property(
 							"conversion_rate",
 							"description",
-							"1 " + frm.doc.currency + " = [?] " + company_currency
+							"1 " +
+								frm.doc.currency +
+								" = [?] " +
+								company_currency,
 						);
 					}
 				},
@@ -183,13 +208,17 @@ frappe.ui.form.on("Opportunity", {
 	opportunity_amount: function (frm) {
 		frm.set_value(
 			"base_opportunity_amount",
-			flt(frm.doc.opportunity_amount) * flt(frm.doc.conversion_rate)
+			flt(frm.doc.opportunity_amount) * flt(frm.doc.conversion_rate),
 		);
 	},
 
 	set_dynamic_field_label: function (frm) {
 		if (frm.doc.opportunity_from) {
-			frm.set_df_property("party_name", "label", frm.doc.opportunity_from);
+			frm.set_df_property(
+				"party_name",
+				"label",
+				frm.doc.opportunity_from,
+			);
 		}
 		frm.trigger("change_grid_labels");
 		frm.trigger("change_form_labels");
@@ -211,25 +240,38 @@ frappe.ui.form.on("Opportunity", {
 
 	change_form_labels: function (frm) {
 		let company_currency = erpnext.get_currency(frm.doc.company);
-		frm.set_currency_labels(["base_opportunity_amount", "base_total"], company_currency);
-		frm.set_currency_labels(["opportunity_amount", "total"], frm.doc.currency);
+		frm.set_currency_labels(
+			["base_opportunity_amount", "base_total"],
+			company_currency,
+		);
+		frm.set_currency_labels(
+			["opportunity_amount", "total"],
+			frm.doc.currency,
+		);
 
 		// toggle fields
 		frm.toggle_display(
 			["conversion_rate", "base_opportunity_amount", "base_total"],
-			frm.doc.currency != company_currency
+			frm.doc.currency != company_currency,
 		);
 	},
 
 	change_grid_labels: function (frm) {
 		let company_currency = erpnext.get_currency(frm.doc.company);
-		frm.set_currency_labels(["base_rate", "base_amount"], company_currency, "items");
+		frm.set_currency_labels(
+			["base_rate", "base_amount"],
+			company_currency,
+			"items",
+		);
 		frm.set_currency_labels(["rate", "amount"], frm.doc.currency, "items");
 
 		let item_grid = frm.fields_dict.items.grid;
 		$.each(["base_rate", "base_amount"], function (i, fname) {
 			if (frappe.meta.get_docfield(item_grid.doctype, fname))
-				item_grid.set_column_disp(fname, frm.doc.currency != company_currency);
+				item_grid.set_column_disp(
+					fname,
+					frm.doc.currency != company_currency,
+				);
 		});
 		frm.refresh_fields();
 	},
@@ -251,9 +293,24 @@ frappe.ui.form.on("Opportunity", {
 frappe.ui.form.on("Opportunity Item", {
 	calculate: function (frm, cdt, cdn) {
 		let row = frappe.get_doc(cdt, cdn);
-		frappe.model.set_value(cdt, cdn, "amount", flt(row.qty) * flt(row.rate));
-		frappe.model.set_value(cdt, cdn, "base_rate", flt(frm.doc.conversion_rate) * flt(row.rate));
-		frappe.model.set_value(cdt, cdn, "base_amount", flt(frm.doc.conversion_rate) * flt(row.amount));
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"amount",
+			flt(row.qty) * flt(row.rate),
+		);
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"base_rate",
+			flt(frm.doc.conversion_rate) * flt(row.rate),
+		);
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"base_amount",
+			flt(frm.doc.conversion_rate) * flt(row.amount),
+		);
 		frm.trigger("calculate_total");
 	},
 	qty: function (frm, cdt, cdn) {
@@ -270,11 +327,20 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 		if (!this.frm.doc.status) {
 			this.frm.set_value("status", "Open");
 		}
-		if (!this.frm.doc.company && frappe.defaults.get_user_default("Company")) {
-			this.frm.set_value("company", frappe.defaults.get_user_default("Company"));
+		if (
+			!this.frm.doc.company &&
+			frappe.defaults.get_user_default("Company")
+		) {
+			this.frm.set_value(
+				"company",
+				frappe.defaults.get_user_default("Company"),
+			);
 		}
 		if (!this.frm.doc.currency) {
-			this.frm.set_value("currency", frappe.defaults.get_user_default("Currency"));
+			this.frm.set_value(
+				"currency",
+				frappe.defaults.get_user_default("Currency"),
+			);
 		}
 
 		this.setup_queries();
@@ -340,8 +406,12 @@ erpnext.crm.Opportunity = class Opportunity extends frappe.ui.form.Controller {
 	show_activities() {
 		const crm_activities = new erpnext.utils.CRMActivities({
 			frm: this.frm,
-			open_activities_wrapper: $(this.frm.fields_dict.open_activities_html.wrapper),
-			all_activities_wrapper: $(this.frm.fields_dict.all_activities_html.wrapper),
+			open_activities_wrapper: $(
+				this.frm.fields_dict.open_activities_html.wrapper,
+			),
+			all_activities_wrapper: $(
+				this.frm.fields_dict.all_activities_html.wrapper,
+			),
 			form_wrapper: $(this.frm.wrapper),
 		});
 		crm_activities.refresh();

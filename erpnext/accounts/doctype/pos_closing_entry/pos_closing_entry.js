@@ -50,17 +50,22 @@ frappe.ui.form.on("POS Closing Entry", {
 
 	refresh: function (frm) {
 		if (frm.doc.docstatus == 1 && frm.doc.status == "Failed") {
-			const issue = '<a id="jump_to_error" style="text-decoration: underline;">issue</a>';
+			const issue =
+				'<a id="jump_to_error" style="text-decoration: underline;">issue</a>';
 			frm.dashboard.set_headline(
 				__(
 					"POS Closing failed while running in a background process. You can resolve the {0} and retry the process again.",
-					[issue]
-				)
+					[issue],
+				),
 			);
 
 			$("#jump_to_error").on("click", (e) => {
 				e.preventDefault();
-				frappe.utils.scroll_to(cur_frm.get_field("error_message").$wrapper, true, 30);
+				frappe.utils.scroll_to(
+					cur_frm.get_field("error_message").$wrapper,
+					true,
+					30,
+				);
 			});
 
 			frm.add_custom_button(__("Retry"), function () {
@@ -104,8 +109,12 @@ frappe.ui.form.on("POS Closing Entry", {
 		return frappe.call({
 			method: "erpnext.accounts.doctype.pos_closing_entry.pos_closing_entry.get_pos_invoices",
 			args: {
-				start: frappe.datetime.get_datetime_as_string(frm.doc.period_start_date),
-				end: frappe.datetime.get_datetime_as_string(frm.doc.period_end_date),
+				start: frappe.datetime.get_datetime_as_string(
+					frm.doc.period_start_date,
+				),
+				end: frappe.datetime.get_datetime_as_string(
+					frm.doc.period_end_date,
+				),
 				pos_profile: frm.doc.pos_profile,
 				user: frm.doc.user,
 			},
@@ -134,8 +143,12 @@ frappe.ui.form.on("POS Closing Entry", {
 			frappe.call({
 				method: "erpnext.accounts.doctype.pos_closing_entry.pos_closing_entry.get_pos_invoices",
 				args: {
-					start: frappe.datetime.get_datetime_as_string(frm.doc.period_start_date),
-					end: frappe.datetime.get_datetime_as_string(frm.doc.period_end_date),
+					start: frappe.datetime.get_datetime_as_string(
+						frm.doc.period_start_date,
+					),
+					end: frappe.datetime.get_datetime_as_string(
+						frm.doc.period_end_date,
+					),
 					pos_profile: frm.doc.pos_profile,
 					user: frm.doc.user,
 				},
@@ -160,7 +173,12 @@ frappe.ui.form.on("POS Closing Entry", {
 frappe.ui.form.on("POS Closing Entry Detail", {
 	closing_amount: (frm, cdt, cdn) => {
 		const row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "difference", flt(row.closing_amount - row.expected_amount));
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"difference",
+			flt(row.closing_amount - row.expected_amount),
+		);
 	},
 });
 
@@ -187,7 +205,7 @@ function add_to_pos_transaction(d, frm) {
 function refresh_payments(d, frm) {
 	d.payments.forEach((p) => {
 		const payment = frm.doc.payment_reconciliation.find(
-			(pay) => pay.mode_of_payment === p.mode_of_payment
+			(pay) => pay.mode_of_payment === p.mode_of_payment,
 		);
 		if (p.account == d.account_for_change_amount) {
 			p.amount -= flt(d.change_amount);
@@ -195,7 +213,8 @@ function refresh_payments(d, frm) {
 		if (payment) {
 			payment.expected_amount += flt(p.amount);
 			payment.closing_amount = payment.expected_amount;
-			payment.difference = payment.closing_amount - payment.expected_amount;
+			payment.difference =
+				payment.closing_amount - payment.expected_amount;
 		} else {
 			frm.add_child("payment_reconciliation", {
 				mode_of_payment: p.mode_of_payment,
@@ -209,7 +228,9 @@ function refresh_payments(d, frm) {
 
 function refresh_taxes(d, frm) {
 	d.taxes.forEach((t) => {
-		const tax = frm.doc.taxes.find((tx) => tx.account_head === t.account_head && tx.rate === t.rate);
+		const tax = frm.doc.taxes.find(
+			(tx) => tx.account_head === t.account_head && tx.rate === t.rate,
+		);
 		if (tax) {
 			tax.amount += flt(t.tax_amount);
 		} else {
@@ -246,7 +267,9 @@ function set_html_data(frm) {
 			method: "get_payment_reconciliation_details",
 			doc: frm.doc,
 			callback: (r) => {
-				frm.get_field("payment_reconciliation_details").$wrapper.html(r.message);
+				frm.get_field("payment_reconciliation_details").$wrapper.html(
+					r.message,
+				);
 			},
 		});
 	}

@@ -7,8 +7,17 @@ frappe.ui.form.on("Asset Shift Allocation", {
 
 	make_schedules_editable: function (frm) {
 		frm.toggle_enable("depreciation_schedule", true);
-		frm.fields_dict["depreciation_schedule"].grid.toggle_enable("schedule_date", false);
-		frm.fields_dict["depreciation_schedule"].grid.toggle_enable("depreciation_amount", false);
-		frm.fields_dict["depreciation_schedule"].grid.toggle_enable("shift", true);
+		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
+			"schedule_date",
+			false,
+		);
+		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
+			"depreciation_amount",
+			false,
+		);
+		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
+			"shift",
+			true,
+		);
 	},
 });

@@ -3,15 +3,16 @@ frappe.provide("erpnext.accounts.bank_reconciliation");
 erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 	constructor(opts) {
 		Object.assign(this, opts);
-		this.dialog_manager = new erpnext.accounts.bank_reconciliation.DialogManager(
-			this.company,
-			this.bank_account,
-			this.bank_statement_from_date,
-			this.bank_statement_to_date,
-			this.filter_by_reference_date,
-			this.from_reference_date,
-			this.to_reference_date
-		);
+		this.dialog_manager =
+			new erpnext.accounts.bank_reconciliation.DialogManager(
+				this.company,
+				this.bank_account,
+				this.bank_statement_from_date,
+				this.bank_statement_to_date,
+				this.filter_by_reference_date,
+				this.from_reference_date,
+				this.to_reference_date,
+			);
 		this.make_dt();
 	}
 
@@ -61,14 +62,18 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 				editable: false,
 				width: 100,
 				format: (value) =>
-					"<span style='color:green;'>" + format_currency(value, this.currency) + "</span>",
+					"<span style='color:green;'>" +
+					format_currency(value, this.currency) +
+					"</span>",
 			},
 			{
 				name: __("Withdrawal"),
 				editable: false,
 				width: 100,
 				format: (value) =>
-					"<span style='color:red;'>" + format_currency(value, this.currency) + "</span>",
+					"<span style='color:red;'>" +
+					format_currency(value, this.currency) +
+					"</span>",
 			},
 			{
 				name: __("Unallocated Amount"),
@@ -112,14 +117,16 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 		return [
 			row["date"],
 			row["party_type"],
-			frappe.form.formatters.Link(row["party"], { options: row["party_type"] }),
+			frappe.form.formatters.Link(row["party"], {
+				options: row["party_type"],
+			}),
 			row["description"],
 			row["deposit"],
 			row["withdrawal"],
 			row["unallocated_amount"],
 			row["reference_number"],
 			`<button class="btn btn-primary btn-xs center" data-name="${row["name"]}">${__(
-				"Actions"
+				"Actions",
 			)}</button>`,
 		];
 	}
@@ -132,8 +139,14 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 			checkboxColumn: false,
 			inlineFilters: true,
 		};
-		this.datatable = new frappe.DataTable(this.$reconciliation_tool_dt.get(0), datatable_options);
-		$(`.${this.datatable.style.scopeClass} .dt-scrollable`).css("max-height", "calc(100vh - 400px)");
+		this.datatable = new frappe.DataTable(
+			this.$reconciliation_tool_dt.get(0),
+			datatable_options,
+		);
+		$(`.${this.datatable.style.scopeClass} .dt-scrollable`).css(
+			"max-height",
+			"calc(100vh - 400px)",
+		);
 
 		if (this.transactions.length > 0) {
 			this.$reconciliation_tool_dt.show();
@@ -146,18 +159,25 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 
 	set_listeners() {
 		var me = this;
-		$(`.${this.datatable.style.scopeClass} .dt-scrollable`).on("click", `.btn`, function () {
-			me.dialog_manager.show_dialog($(this).attr("data-name"), (bank_transaction) =>
-				me.update_dt_cards(bank_transaction)
-			);
-			return true;
-		});
+		$(`.${this.datatable.style.scopeClass} .dt-scrollable`).on(
+			"click",
+			`.btn`,
+			function () {
+				me.dialog_manager.show_dialog(
+					$(this).attr("data-name"),
+					(bank_transaction) => me.update_dt_cards(bank_transaction),
+				);
+				return true;
+			},
+		);
 	}
 
 	update_dt_cards(bank_transaction) {
-		const transaction_index = this.transaction_dt_map[bank_transaction.name];
+		const transaction_index =
+			this.transaction_dt_map[bank_transaction.name];
 		if (bank_transaction.unallocated_amount > 0) {
-			this.transactions[transaction_index] = this.format_row(bank_transaction);
+			this.transactions[transaction_index] =
+				this.format_row(bank_transaction);
 		} else {
 			this.transactions.splice(transaction_index, 1);
 			for (const [k, v] of Object.entries(this.transaction_dt_map)) {
@@ -173,15 +193,20 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 
 		// this.make_dt();
 		this.get_cleared_balance().then(() => {
-			this.cards_manager.$cards[1].set_value(format_currency(this.cleared_balance), this.currency);
+			this.cards_manager.$cards[1].set_value(
+				format_currency(this.cleared_balance),
+				this.currency,
+			);
 			this.cards_manager.$cards[2].set_value(
-				format_currency(this.bank_statement_closing_balance - this.cleared_balance),
-				this.currency
+				format_currency(
+					this.bank_statement_closing_balance - this.cleared_balance,
+				),
+				this.currency,
 			);
 			this.cards_manager.$cards[2].set_value_color(
 				this.bank_statement_closing_balance - this.cleared_balance == 0
 					? "text-success"
-					: "text-danger"
+					: "text-danger",
 			);
 		});
 	}
@@ -194,7 +219,8 @@ erpnext.accounts.bank_reconciliation.DataTableManager = class DataTableManager {
 					bank_account: this.bank_account,
 					till_date: this.bank_statement_to_date,
 				},
-				callback: (response) => (this.cleared_balance = response.message),
+				callback: (response) =>
+					(this.cleared_balance = response.message),
 			});
 		}
 	}

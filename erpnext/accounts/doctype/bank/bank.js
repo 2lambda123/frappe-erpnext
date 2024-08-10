@@ -8,7 +8,10 @@ frappe.ui.form.on("Bank", {
 	},
 	refresh: function (frm) {
 		add_fields_to_mapping_table(frm);
-		frm.toggle_display(["address_html", "contact_html"], !frm.doc.__islocal);
+		frm.toggle_display(
+			["address_html", "contact_html"],
+			!frm.doc.__islocal,
+		);
 
 		if (frm.doc.__islocal) {
 			frm.set_df_property("address_and_contact", "hidden", 1);
@@ -19,7 +22,9 @@ frappe.ui.form.on("Bank", {
 		}
 		if (frm.doc.plaid_access_token) {
 			frm.add_custom_button(__("Refresh Plaid Link"), () => {
-				new erpnext.integrations.refreshPlaidLink(frm.doc.plaid_access_token);
+				new erpnext.integrations.refreshPlaidLink(
+					frm.doc.plaid_access_token,
+				);
 			});
 		}
 	},
@@ -40,19 +45,23 @@ let add_fields_to_mapping_table = function (frm) {
 	frm.fields_dict.bank_transaction_mapping.grid.update_docfield_property(
 		"bank_transaction_field",
 		"options",
-		options
+		options,
 	);
 };
 
 erpnext.integrations.refreshPlaidLink = class refreshPlaidLink {
 	constructor(access_token) {
 		this.access_token = access_token;
-		this.plaidUrl = "https://cdn.plaid.com/link/v2/stable/link-initialize.js";
+		this.plaidUrl =
+			"https://cdn.plaid.com/link/v2/stable/link-initialize.js";
 		this.init_config();
 	}
 
 	async init_config() {
-		this.plaid_env = await frappe.db.get_single_value("Plaid Settings", "plaid_env");
+		this.plaid_env = await frappe.db.get_single_value(
+			"Plaid Settings",
+			"plaid_env",
+		);
 		this.token = await this.get_link_token_for_update();
 		this.init_plaid();
 	}
@@ -60,10 +69,14 @@ erpnext.integrations.refreshPlaidLink = class refreshPlaidLink {
 	async get_link_token_for_update() {
 		const token = frappe.xcall(
 			"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.get_link_token_for_update",
-			{ access_token: this.access_token }
+			{ access_token: this.access_token },
 		);
 		if (!token) {
-			frappe.throw(__("Cannot retrieve link token for update. Check Error Log for more information"));
+			frappe.throw(
+				__(
+					"Cannot retrieve link token for update. Check Error Log for more information",
+				),
+			);
 		}
 		return token;
 	}
@@ -113,8 +126,8 @@ erpnext.integrations.refreshPlaidLink = class refreshPlaidLink {
 	onScriptError(error) {
 		frappe.msgprint(
 			__(
-				"There was an issue connecting to Plaid's authentication server. Check browser console for more information"
-			)
+				"There was an issue connecting to Plaid's authentication server. Check browser console for more information",
+			),
 		);
 		console.log(error);
 	}
@@ -125,10 +138,13 @@ erpnext.integrations.refreshPlaidLink = class refreshPlaidLink {
 				"erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.update_bank_account_ids",
 				{
 					response: response,
-				}
+				},
 			)
 			.then(() => {
-				frappe.show_alert({ message: __("Plaid Link Updated"), indicator: "green" });
+				frappe.show_alert({
+					message: __("Plaid Link Updated"),
+					indicator: "green",
+				});
 			});
 	}
 };

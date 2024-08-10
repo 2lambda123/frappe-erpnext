@@ -7,7 +7,10 @@ frappe.query_reports["Bank Clearance Summary"] = {
 			fieldname: "from_date",
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), true)[1],
+			default: erpnext.utils.get_fiscal_year(
+				frappe.datetime.get_today(),
+				true,
+			)[1],
 			width: "80",
 		},
 		{
@@ -23,7 +26,9 @@ frappe.query_reports["Bank Clearance Summary"] = {
 			options: "Account",
 			reqd: 1,
 			default: frappe.defaults.get_user_default("Company")
-				? locals[":Company"][frappe.defaults.get_user_default("Company")]["default_bank_account"]
+				? locals[":Company"][
+						frappe.defaults.get_user_default("Company")
+					]["default_bank_account"]
 				: "",
 			get_query: function () {
 				return {

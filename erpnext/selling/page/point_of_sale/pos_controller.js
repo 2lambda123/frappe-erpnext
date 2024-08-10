@@ -7,9 +7,12 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	fetch_opening_entry() {
-		return frappe.call("erpnext.selling.page.point_of_sale.point_of_sale.check_opening_entry", {
-			user: frappe.session.user,
-		});
+		return frappe.call(
+			"erpnext.selling.page.point_of_sale.point_of_sale.check_opening_entry",
+			{
+				user: frappe.session.user,
+			},
+		);
 	}
 
 	check_opening_entry() {
@@ -54,14 +57,19 @@ erpnext.PointOfSale.Controller = class {
 		const fetch_pos_payment_methods = () => {
 			const pos_profile = dialog.fields_dict.pos_profile.get_value();
 			if (!pos_profile) return;
-			frappe.db.get_doc("POS Profile", pos_profile).then(({ payments }) => {
-				dialog.fields_dict.balance_details.df.data = [];
-				payments.forEach((pay) => {
-					const { mode_of_payment } = pay;
-					dialog.fields_dict.balance_details.df.data.push({ mode_of_payment, opening_amount: "0" });
+			frappe.db
+				.get_doc("POS Profile", pos_profile)
+				.then(({ payments }) => {
+					dialog.fields_dict.balance_details.df.data = [];
+					payments.forEach((pay) => {
+						const { mode_of_payment } = pay;
+						dialog.fields_dict.balance_details.df.data.push({
+							mode_of_payment,
+							opening_amount: "0",
+						});
+					});
+					dialog.fields_dict.balance_details.grid.refresh();
 				});
-				dialog.fields_dict.balance_details.grid.refresh();
-			});
 		};
 		const dialog = new frappe.ui.Dialog({
 			title: __("Create POS Opening Entry"),
@@ -95,19 +103,28 @@ erpnext.PointOfSale.Controller = class {
 					fields: table_fields,
 				},
 			],
-			primary_action: async function ({ company, pos_profile, balance_details }) {
+			primary_action: async function ({
+				company,
+				pos_profile,
+				balance_details,
+			}) {
 				if (!balance_details.length) {
 					frappe.show_alert({
-						message: __("Please add Mode of payments and opening balance details."),
+						message: __(
+							"Please add Mode of payments and opening balance details.",
+						),
 						indicator: "red",
 					});
 					return frappe.utils.play_sound("error");
 				}
 
 				// filter balance details for empty rows
-				balance_details = balance_details.filter((d) => d.mode_of_payment);
+				balance_details = balance_details.filter(
+					(d) => d.mode_of_payment,
+				);
 
-				const method = "erpnext.selling.page.point_of_sale.point_of_sale.create_opening_voucher";
+				const method =
+					"erpnext.selling.page.point_of_sale.point_of_sale.create_opening_voucher";
 				const res = await frappe.call({
 					method,
 					args: { pos_profile, company, balance_details },
@@ -135,9 +152,12 @@ erpnext.PointOfSale.Controller = class {
 		this.item_stock_map = {};
 		this.settings = {};
 
-		frappe.db.get_value("Stock Settings", undefined, "allow_negative_stock").then(({ message }) => {
-			this.allow_negative_stock = flt(message.allow_negative_stock) || false;
-		});
+		frappe.db
+			.get_value("Stock Settings", undefined, "allow_negative_stock")
+			.then(({ message }) => {
+				this.allow_negative_stock =
+					flt(message.allow_negative_stock) || false;
+			});
 
 		frappe.call({
 			method: "erpnext.selling.page.point_of_sale.point_of_sale.get_pos_profile_data",
@@ -145,7 +165,9 @@ erpnext.PointOfSale.Controller = class {
 			callback: (res) => {
 				const profile = res.message;
 				Object.assign(this.settings, profile);
-				this.settings.customer_groups = profile.customer_groups.map((group) => group.name);
+				this.settings.customer_groups = profile.customer_groups.map(
+					(group) => group.name,
+				);
 				this.make_app();
 			},
 		});
@@ -157,7 +179,7 @@ erpnext.PointOfSale.Controller = class {
 				<a class="text-muted" href="#Form/POS%20Opening%20Entry/${this.pos_opening}">
 					Opened at ${moment(this.pos_opening_time).format("Do MMMM, h:mma")}
 				</a>
-			</span>`
+			</span>`,
 		);
 	}
 
@@ -186,18 +208,33 @@ erpnext.PointOfSale.Controller = class {
 	prepare_menu() {
 		this.page.clear_menu();
 
-		this.page.add_menu_item(__("Open Form View"), this.open_form_view.bind(this), false, "Ctrl+F");
+		this.page.add_menu_item(
+			__("Open Form View"),
+			this.open_form_view.bind(this),
+			false,
+			"Ctrl+F",
+		);
 
 		this.page.add_menu_item(
 			__("Toggle Recent Orders"),
 			this.toggle_recent_order.bind(this),
 			false,
-			"Ctrl+O"
+			"Ctrl+O",
 		);
 
-		this.page.add_menu_item(__("Save as Draft"), this.save_draft_invoice.bind(this), false, "Ctrl+S");
+		this.page.add_menu_item(
+			__("Save as Draft"),
+			this.save_draft_invoice.bind(this),
+			false,
+			"Ctrl+S",
+		);
 
-		this.page.add_menu_item(__("Close the POS"), this.close_pos.bind(this), false, "Shift+Ctrl+C");
+		this.page.add_menu_item(
+			__("Close the POS"),
+			this.close_pos.bind(this),
+			false,
+			"Shift+Ctrl+C",
+		);
 	}
 
 	open_form_view() {
@@ -215,7 +252,9 @@ erpnext.PointOfSale.Controller = class {
 
 		if (this.frm.doc.items.length == 0) {
 			frappe.show_alert({
-				message: __("You must add atleast one item to save it as draft."),
+				message: __(
+					"You must add atleast one item to save it as draft.",
+				),
 				indicator: "red",
 			});
 			frappe.utils.play_sound("error");
@@ -278,7 +317,8 @@ erpnext.PointOfSale.Controller = class {
 					this.item_details.toggle_item_details_section(item_row);
 				},
 
-				numpad_event: (value, action) => this.update_item_field(value, action),
+				numpad_event: (value, action) =>
+					this.update_item_field(value, action),
 
 				checkout: () => this.save_and_checkout(),
 
@@ -306,7 +346,10 @@ erpnext.PointOfSale.Controller = class {
 				},
 
 				form_updated: (item, field, value) => {
-					const item_row = frappe.model.get_doc(item.doctype, item.name);
+					const item_row = frappe.model.get_doc(
+						item.doctype,
+						item.name,
+					);
 					if (item_row && item_row[field] != value) {
 						const args = {
 							field,
@@ -331,15 +374,19 @@ erpnext.PointOfSale.Controller = class {
 					this.cart.update_selector_value_in_cart_item(
 						selector,
 						value,
-						this.item_details.current_item
+						this.item_details.current_item,
 					);
 				},
 				clone_new_batch_item_in_frm: (batch_serial_map, item) => {
 					// called if serial nos are 'auto_selected' and if those serial nos belongs to multiple batches
 					// for each unique batch new item row is added in the form & cart
 					Object.keys(batch_serial_map).forEach((batch) => {
-						const item_to_clone = this.frm.doc.items.find((i) => i.name == item.name);
-						const new_row = this.frm.add_child("items", { ...item_to_clone });
+						const item_to_clone = this.frm.doc.items.find(
+							(i) => i.name == item.name,
+						);
+						const new_row = this.frm.add_child("items", {
+							...item_to_clone,
+						});
 						// update new serialno and batch
 						new_row.batch_no = batch;
 						new_row.serial_no = batch_serial_map[batch].join(`\n`);
@@ -358,7 +405,8 @@ erpnext.PointOfSale.Controller = class {
 					this.cart.prev_action = null;
 					this.cart.toggle_item_highlight();
 				},
-				get_available_stock: (item_code, warehouse) => this.get_available_stock(item_code, warehouse),
+				get_available_stock: (item_code, warehouse) =>
+					this.get_available_stock(item_code, warehouse),
 			},
 		});
 	}
@@ -374,7 +422,10 @@ erpnext.PointOfSale.Controller = class {
 				toggle_other_sections: (show) => {
 					if (show) {
 						this.item_details.$component.is(":visible")
-							? this.item_details.$component.css("display", "none")
+							? this.item_details.$component.css(
+									"display",
+									"none",
+								)
 							: "";
 						this.item_selector.toggle_component(false);
 					} else {
@@ -389,7 +440,10 @@ erpnext.PointOfSale.Controller = class {
 						this.order_summary.load_summary_of(this.frm.doc, true);
 						frappe.show_alert({
 							indicator: "green",
-							message: __("POS invoice {0} created successfully", [r.doc.name]),
+							message: __(
+								"POS invoice {0} created successfully",
+								[r.doc.name],
+							),
 						});
 					});
 				},
@@ -406,7 +460,8 @@ erpnext.PointOfSale.Controller = class {
 						this.order_summary.load_summary_of(doc);
 					});
 				},
-				reset_summary: () => this.order_summary.toggle_summary_placeholder(true),
+				reset_summary: () =>
+					this.order_summary.toggle_summary_placeholder(true),
 			},
 		});
 	}
@@ -464,7 +519,10 @@ erpnext.PointOfSale.Controller = class {
 		this.item_selector.toggle_component(show);
 
 		// do not show item details or payment if recent order is toggled off
-		!show ? this.item_details.toggle_component(false) || this.payment.toggle_component(false) : "";
+		!show
+			? this.item_details.toggle_component(false) ||
+				this.payment.toggle_component(false)
+			: "";
 	}
 
 	make_new_invoice() {
@@ -519,7 +577,10 @@ erpnext.PointOfSale.Controller = class {
 			},
 			callback: (r) => {
 				frappe.model.sync(r.message);
-				frappe.get_doc(r.message.doctype, r.message.name).__run_link_triggers = false;
+				frappe.get_doc(
+					r.message.doctype,
+					r.message.name,
+				).__run_link_triggers = false;
 				this.set_pos_profile_data().then(() => {
 					frappe.dom.unfreeze();
 				});
@@ -528,10 +589,12 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	set_pos_profile_data() {
-		if (this.company && !this.frm.doc.company) this.frm.doc.company = this.company;
+		if (this.company && !this.frm.doc.company)
+			this.frm.doc.company = this.company;
 		if (
 			(this.pos_profile && !this.frm.doc.pos_profile) |
-			(this.frm.doc.is_return && this.pos_profile != this.frm.doc.pos_profile)
+			(this.frm.doc.is_return &&
+				this.pos_profile != this.frm.doc.pos_profile)
 		) {
 			this.frm.doc.pos_profile = this.pos_profile;
 		}
@@ -561,18 +624,37 @@ erpnext.PointOfSale.Controller = class {
 			if (item_row_exists) {
 				if (field === "qty") value = flt(value);
 
-				if (["qty", "conversion_factor"].includes(field) && value > 0 && !this.allow_negative_stock) {
+				if (
+					["qty", "conversion_factor"].includes(field) &&
+					value > 0 &&
+					!this.allow_negative_stock
+				) {
 					const qty_needed =
-						field === "qty" ? value * item_row.conversion_factor : item_row.qty * value;
-					await this.check_stock_availability(item_row, qty_needed, this.frm.doc.set_warehouse);
+						field === "qty"
+							? value * item_row.conversion_factor
+							: item_row.qty * value;
+					await this.check_stock_availability(
+						item_row,
+						qty_needed,
+						this.frm.doc.set_warehouse,
+					);
 				}
 
-				if (this.is_current_item_being_edited(item_row) || from_selector) {
-					await frappe.model.set_value(item_row.doctype, item_row.name, field, value);
+				if (
+					this.is_current_item_being_edited(item_row) ||
+					from_selector
+				) {
+					await frappe.model.set_value(
+						item_row.doctype,
+						item_row.name,
+						field,
+						value,
+					);
 					this.update_cart_html(item_row);
 				}
 			} else {
-				if (!this.frm.doc.customer) return this.raise_customer_selection_alert();
+				if (!this.frm.doc.customer)
+					return this.raise_customer_selection_alert();
 
 				const { item_code, batch_no, serial_no, rate, uom } = item;
 
@@ -586,28 +668,48 @@ erpnext.PointOfSale.Controller = class {
 					frappe.utils.play_sound("error");
 					return;
 				}
-				const new_item = { item_code, batch_no, rate, uom, [field]: value };
+				const new_item = {
+					item_code,
+					batch_no,
+					rate,
+					uom,
+					[field]: value,
+				};
 
 				if (serial_no) {
-					await this.check_serial_no_availablilty(item_code, this.frm.doc.set_warehouse, serial_no);
+					await this.check_serial_no_availablilty(
+						item_code,
+						this.frm.doc.set_warehouse,
+						serial_no,
+					);
 					new_item["serial_no"] = serial_no;
 				}
 
 				new_item["use_serial_batch_fields"] = 1;
-				if (field === "serial_no") new_item["qty"] = value.split(`\n`).length || 0;
+				if (field === "serial_no")
+					new_item["qty"] = value.split(`\n`).length || 0;
 
 				item_row = this.frm.add_child("items", new_item);
 
-				if (field === "qty" && value !== 0 && !this.allow_negative_stock) {
+				if (
+					field === "qty" &&
+					value !== 0 &&
+					!this.allow_negative_stock
+				) {
 					const qty_needed = value * item_row.conversion_factor;
-					await this.check_stock_availability(item_row, qty_needed, this.frm.doc.set_warehouse);
+					await this.check_stock_availability(
+						item_row,
+						qty_needed,
+						this.frm.doc.set_warehouse,
+					);
 				}
 
 				await this.trigger_new_item_events(item_row);
 
 				this.update_cart_html(item_row);
 
-				if (this.item_details.$component.is(":visible")) this.edit_item_details_of(item_row);
+				if (this.item_details.$component.is(":visible"))
+					this.edit_item_details_of(item_row);
 
 				if (
 					this.check_serial_batch_selection_needed(item_row) &&
@@ -644,9 +746,10 @@ erpnext.PointOfSale.Controller = class {
 			item_row = this.frm.doc.items.find(
 				(i) =>
 					i.item_code === item_code &&
-					(!has_batch_no || (has_batch_no && i.batch_no === batch_no)) &&
+					(!has_batch_no ||
+						(has_batch_no && i.batch_no === batch_no)) &&
 					i.uom === uom &&
-					i.rate === flt(rate)
+					i.rate === flt(rate),
 			);
 		}
 
@@ -685,12 +788,22 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	async trigger_new_item_events(item_row) {
-		await this.frm.script_manager.trigger("item_code", item_row.doctype, item_row.name);
-		await this.frm.script_manager.trigger("qty", item_row.doctype, item_row.name);
+		await this.frm.script_manager.trigger(
+			"item_code",
+			item_row.doctype,
+			item_row.name,
+		);
+		await this.frm.script_manager.trigger(
+			"qty",
+			item_row.doctype,
+			item_row.name,
+		);
 	}
 
 	async check_stock_availability(item_row, qty_needed, warehouse) {
-		const resp = (await this.get_available_stock(item_row.item_code, warehouse)).message;
+		const resp = (
+			await this.get_available_stock(item_row.item_code, warehouse)
+		).message;
 		const available_qty = resp[0];
 		const is_stock_item = resp[1];
 
@@ -704,10 +817,10 @@ erpnext.PointOfSale.Controller = class {
 				frappe.model.clear_doc(item_row.doctype, item_row.name);
 				frappe.throw({
 					title: __("Not Available"),
-					message: __("Item Code: {0} is not available under warehouse {1}.", [
-						bold_item_code,
-						bold_warehouse,
-					]),
+					message: __(
+						"Item Code: {0} is not available under warehouse {1}.",
+						[bold_item_code, bold_warehouse],
+					),
 				});
 			} else {
 				return;
@@ -716,7 +829,12 @@ erpnext.PointOfSale.Controller = class {
 			frappe.throw({
 				message: __(
 					"Stock quantity not enough for Item Code: {0} under warehouse {1}. Available quantity {2} {3}.",
-					[bold_item_code, bold_warehouse, bold_available_qty, bold_uom]
+					[
+						bold_item_code,
+						bold_warehouse,
+						bold_available_qty,
+						bold_uom,
+					],
 				),
 				indicator: "orange",
 			});
@@ -726,16 +844,18 @@ erpnext.PointOfSale.Controller = class {
 	}
 
 	async check_serial_no_availablilty(item_code, warehouse, serial_no) {
-		const method = "erpnext.stock.doctype.serial_no.serial_no.get_pos_reserved_serial_nos";
+		const method =
+			"erpnext.stock.doctype.serial_no.serial_no.get_pos_reserved_serial_nos";
 		const args = { filters: { item_code, warehouse } };
 		const res = await frappe.call({ method, args });
 
 		if (res.message.includes(serial_no)) {
 			frappe.throw({
 				title: __("Not Available"),
-				message: __("Serial No: {0} has already been transacted into another POS Invoice.", [
-					serial_no.bold(),
-				]),
+				message: __(
+					"Serial No: {0} has already been transacted into another POS Invoice.",
+					[serial_no.bold()],
+				),
 			});
 		}
 	}
@@ -749,7 +869,8 @@ erpnext.PointOfSale.Controller = class {
 				warehouse: warehouse,
 			},
 			callback(res) {
-				if (!me.item_stock_map[item_code]) me.item_stock_map[item_code] = {};
+				if (!me.item_stock_map[item_code])
+					me.item_stock_map[item_code] = {};
 				me.item_stock_map[item_code][warehouse] = res.message;
 			},
 		});
@@ -761,7 +882,8 @@ erpnext.PointOfSale.Controller = class {
 		} else if (field_or_action === "remove") {
 			this.remove_item_from_cart();
 		} else {
-			const field_control = this.item_details[`${field_or_action}_control`];
+			const field_control =
+				this.item_details[`${field_or_action}_control`];
 			if (!field_control) return;
 			field_control.set_focus();
 			value != "" && field_control.set_value(value);

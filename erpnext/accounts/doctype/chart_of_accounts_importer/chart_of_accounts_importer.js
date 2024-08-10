@@ -9,7 +9,11 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 
 		// make company mandatory
 		frm.set_df_property("company", "reqd", frm.doc.company ? 0 : 1);
-		frm.set_df_property("import_file_section", "hidden", frm.doc.company ? 0 : 1);
+		frm.set_df_property(
+			"import_file_section",
+			"hidden",
+			frm.doc.company ? 0 : 1,
+		);
 
 		if (frm.doc.import_file) {
 			frappe.run_serially([
@@ -22,7 +26,7 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 		frm.set_df_property(
 			"chart_preview",
 			"hidden",
-			$(frm.fields_dict["chart_tree"].wrapper).html() != "" ? 0 : 1
+			$(frm.fields_dict["chart_tree"].wrapper).html() != "" ? 0 : 1,
 		);
 	},
 
@@ -51,14 +55,14 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 								"template_type",
 								"description",
 								`The Sample Template contains all the required accounts pre filled in the  template.
-								You can add more accounts or change existing accounts in the template as per your choice.`
+								You can add more accounts or change existing accounts in the template as per your choice.`,
 							);
 						} else {
 							d.set_df_property(
 								"template_type",
 								"description",
 								`The Blank Template contains just the account type and root type required to build the Chart
-								of Accounts. Please enter the account names and add more rows as per your requirement.`
+								of Accounts. Please enter the account names and add more rows as per your requirement.`,
 							);
 						}
 					},
@@ -76,7 +80,11 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 				let data = d.get_values();
 
 				if (!data.template_type) {
-					frappe.throw(__("Please select <b>Template Type</b> to download template"));
+					frappe.throw(
+						__(
+							"Please select <b>Template Type</b> to download template",
+						),
+					);
 				}
 
 				open_url_post(
@@ -85,7 +93,7 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 						file_type: data.file_type,
 						template_type: data.template_type,
 						company: data.company,
-					}
+					},
 				);
 
 				d.hide();
@@ -115,8 +123,8 @@ frappe.ui.form.on("Chart of Accounts Importer", {
 						frm.set_value("company", "");
 						frappe.throw(
 							__(
-								"Transactions against the Company already exist! Chart of Accounts can only be imported for a Company with no transactions."
-							)
+								"Transactions against the Company already exist! Chart of Accounts can only be imported for a Company with no transactions.",
+							),
 						);
 					} else {
 						frm.trigger("refresh");
@@ -174,7 +182,9 @@ var validate_coa = function (frm) {
 			},
 			callback: function (r) {
 				if (r.message["show_import_button"]) {
-					frm.page["show_import_button"] = Boolean(r.message["show_import_button"]);
+					frm.page["show_import_button"] = Boolean(
+						r.message["show_import_button"],
+					);
 				}
 			},
 		});

@@ -16,7 +16,7 @@ frappe.query_reports["Cost of Poor Quality Report"] = {
 			fieldname: "from_date",
 			fieldtype: "Datetime",
 			default: frappe.datetime.convert_to_system_tz(
-				frappe.datetime.add_months(frappe.datetime.now_datetime(), -1)
+				frappe.datetime.add_months(frappe.datetime.now_datetime(), -1),
 			),
 		},
 		{
@@ -77,7 +77,8 @@ frappe.query_reports["Cost of Poor Quality Report"] = {
 			options: "Serial No",
 			depends_on: "eval: doc.production_item",
 			get_query: function () {
-				var item_code = frappe.query_report.get_filter_value("production_item");
+				var item_code =
+					frappe.query_report.get_filter_value("production_item");
 				return {
 					filters: {
 						item_code: item_code,
@@ -92,7 +93,8 @@ frappe.query_reports["Cost of Poor Quality Report"] = {
 			options: "Batch No",
 			depends_on: "eval: doc.production_item",
 			get_query: function () {
-				var item_code = frappe.query_report.get_filter_value("production_item");
+				var item_code =
+					frappe.query_report.get_filter_value("production_item");
 				return {
 					filters: {
 						item: item_code,

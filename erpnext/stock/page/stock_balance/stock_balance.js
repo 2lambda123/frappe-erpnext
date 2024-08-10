@@ -50,8 +50,14 @@ frappe.pages["stock-balance"].on_page_load = function (wrapper) {
 			options: [
 				{ fieldname: "projected_qty", label: __("Projected qty") },
 				{ fieldname: "reserved_qty", label: __("Reserved for sale") },
-				{ fieldname: "reserved_qty_for_production", label: __("Reserved for manufacturing") },
-				{ fieldname: "reserved_qty_for_sub_contract", label: __("Reserved for sub contracting") },
+				{
+					fieldname: "reserved_qty_for_production",
+					label: __("Reserved for manufacturing"),
+				},
+				{
+					fieldname: "reserved_qty_for_sub_contract",
+					label: __("Reserved for sub contracting"),
+				},
 				{ fieldname: "actual_qty", label: __("Actual qty in stock") },
 			],
 		},
@@ -83,16 +89,20 @@ frappe.pages["stock-balance"].on_page_load = function (wrapper) {
 
 		// item click
 		var setup_click = function (doctype) {
-			page.main.on("click", 'a[data-type="' + doctype.toLowerCase() + '"]', function () {
-				var name = $(this).attr("data-name");
-				var field = page[doctype.toLowerCase() + "_field"];
-				if (field.get_value() === name) {
-					frappe.set_route("Form", doctype, name);
-				} else {
-					field.set_input(name);
-					page.item_dashboard.refresh();
-				}
-			});
+			page.main.on(
+				"click",
+				'a[data-type="' + doctype.toLowerCase() + '"]',
+				function () {
+					var name = $(this).attr("data-name");
+					var field = page[doctype.toLowerCase() + "_field"];
+					if (field.get_value() === name) {
+						frappe.set_route("Form", doctype, name);
+					} else {
+						field.set_input(name);
+						page.item_dashboard.refresh();
+					}
+				},
+			);
 		};
 
 		setup_click("Item");

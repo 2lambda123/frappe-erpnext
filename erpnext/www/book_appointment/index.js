@@ -42,14 +42,17 @@ function setup_date_picker() {
 	let date_picker = document.getElementById("appointment-date");
 	let today = new Date();
 	date_picker.min = today.toISOString().substr(0, 10);
-	today.setDate(today.getDate() + window.appointment_settings.advance_booking_days);
+	today.setDate(
+		today.getDate() + window.appointment_settings.advance_booking_days,
+	);
 	date_picker.max = today.toISOString().substr(0, 10);
 }
 
 function hide_next_button() {
 	let next_button = document.getElementById("next-button");
 	next_button.disabled = true;
-	next_button.onclick = () => frappe.msgprint(__("Please select a date and time"));
+	next_button.onclick = () =>
+		frappe.msgprint(__("Please select a date and time"));
 }
 
 function show_next_button() {
@@ -129,10 +132,12 @@ function get_slot_layout(time) {
 	let timezone = document.getElementById("appointment-timezone").value;
 	time = new Date(time);
 	let start_time_string = moment(time).tz(timezone).format("LT");
-	let end_time = moment(time).tz(timezone).add(window.appointment_settings.appointment_duration, "minutes");
+	let end_time = moment(time)
+		.tz(timezone)
+		.add(window.appointment_settings.appointment_duration, "minutes");
 	let end_time_string = end_time.format("LT");
 	return `<span style="font-size: 1.2em;">${start_time_string}</span><br><span class="text-muted small">${__(
-		"to"
+		"to",
 	)} ${end_time_string}</span>`;
 }
 
@@ -187,8 +192,12 @@ function setup_details_page() {
 	let date_container = document.getElementsByClassName("date-span")[0];
 	let time_container = document.getElementsByClassName("time-span")[0];
 	setup_search_params();
-	date_container.innerHTML = moment(window.selected_date).format("MMM Do YYYY");
-	time_container.innerHTML = moment(window.selected_time, "HH:mm:ss").format("LT");
+	date_container.innerHTML = moment(window.selected_date).format(
+		"MMM Do YYYY",
+	);
+	time_container.innerHTML = moment(window.selected_time, "HH:mm:ss").format(
+		"LT",
+	);
 }
 
 function setup_search_params() {
@@ -232,14 +241,17 @@ async function submit() {
 		},
 		callback: (response) => {
 			if (response.message.status == "Unverified") {
-				frappe.show_alert(__("Please check your email to confirm the appointment"));
+				frappe.show_alert(
+					__("Please check your email to confirm the appointment"),
+				);
 			} else {
 				frappe.show_alert(__("Appointment Created Successfully"));
 			}
 			setTimeout(() => {
 				let redirect_url = "/";
 				if (window.appointment_settings.success_redirect_url) {
-					redirect_url += window.appointment_settings.success_redirect_url;
+					redirect_url +=
+						window.appointment_settings.success_redirect_url;
 				}
 				window.location.href = redirect_url;
 			}, 5000);
@@ -254,6 +266,8 @@ async function submit() {
 function get_form_data() {
 	let contact = {};
 	let inputs = ["name", "skype", "number", "notes", "email"];
-	inputs.forEach((id) => (contact[id] = document.getElementById(`customer_${id}`).value));
+	inputs.forEach(
+		(id) => (contact[id] = document.getElementById(`customer_${id}`).value),
+	);
 	return contact;
 }

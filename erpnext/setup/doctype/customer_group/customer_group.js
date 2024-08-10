@@ -41,7 +41,9 @@ frappe.ui.form.on("Customer Group", {
 		// read-only for root customer group
 		if (!frm.doc.parent_customer_group && !frm.doc.__islocal) {
 			frm.set_read_only();
-			frm.set_intro(__("This is a root customer group and cannot be edited."));
+			frm.set_intro(
+				__("This is a root customer group and cannot be edited."),
+			);
 		} else {
 			frm.set_intro(null);
 		}

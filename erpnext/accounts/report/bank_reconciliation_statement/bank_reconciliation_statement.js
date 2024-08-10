@@ -17,7 +17,9 @@ frappe.query_reports["Bank Reconciliation Statement"] = {
 			fieldtype: "Link",
 			options: "Account",
 			default: frappe.defaults.get_user_default("Company")
-				? locals[":Company"][frappe.defaults.get_user_default("Company")]["default_bank_account"]
+				? locals[":Company"][
+						frappe.defaults.get_user_default("Company")
+					]["default_bank_account"]
 				: "",
 			reqd: 1,
 			get_query: function () {

@@ -38,17 +38,21 @@ frappe.ui.form.on("Asset Repair", {
 			};
 		});
 
-		frm.set_query("serial_and_batch_bundle", "stock_items", (doc, cdt, cdn) => {
-			let row = locals[cdt][cdn];
-			return {
-				filters: {
-					item_code: row.item_code,
-					voucher_type: doc.doctype,
-					voucher_no: ["in", [doc.name, ""]],
-					is_cancelled: 0,
-				},
-			};
-		});
+		frm.set_query(
+			"serial_and_batch_bundle",
+			"stock_items",
+			(doc, cdt, cdn) => {
+				let row = locals[cdt][cdn];
+				return {
+					filters: {
+						item_code: row.item_code,
+						voucher_type: doc.doctype,
+						voucher_no: ["in", [doc.name, ""]],
+						is_cancelled: 0,
+					},
+				};
+			},
+		);
 	},
 
 	refresh: function (frm) {
@@ -61,7 +65,10 @@ frappe.ui.form.on("Asset Repair", {
 			});
 		}
 
-		let sbb_field = frm.get_docfield("stock_items", "serial_and_batch_bundle");
+		let sbb_field = frm.get_docfield(
+			"stock_items",
+			"serial_and_batch_bundle",
+		);
 		if (sbb_field) {
 			sbb_field.get_route_options_for_new_doc = (row) => {
 				return {
@@ -130,7 +137,9 @@ frappe.ui.form.on("Asset Repair Consumed Item", {
 		var item = locals[cdt][cdn];
 
 		if (!item.item_code) {
-			frappe.msgprint(__("Please select an item code before setting the warehouse."));
+			frappe.msgprint(
+				__("Please select an item code before setting the warehouse."),
+			);
 			frappe.model.set_value(cdt, cdn, "warehouse", "");
 			return;
 		}
@@ -156,6 +165,11 @@ frappe.ui.form.on("Asset Repair Consumed Item", {
 
 	consumed_quantity: function (frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "total_value", row.consumed_quantity * row.valuation_rate);
+		frappe.model.set_value(
+			cdt,
+			cdn,
+			"total_value",
+			row.consumed_quantity * row.valuation_rate,
+		);
 	},
 });

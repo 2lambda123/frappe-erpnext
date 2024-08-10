@@ -16,9 +16,12 @@ frappe.ui.form.on("Cost Center", {
 	},
 	refresh: function (frm) {
 		if (!frm.is_new()) {
-			frm.add_custom_button(__("Update Cost Center Name / Number"), function () {
-				frm.trigger("update_cost_center_number");
-			});
+			frm.add_custom_button(
+				__("Update Cost Center Name / Number"),
+				function () {
+					frm.trigger("update_cost_center_number");
+				},
+			);
 		}
 
 		let intro_txt = "";
@@ -28,7 +31,7 @@ frappe.ui.form.on("Cost Center", {
 
 		if (!doc.__islocal && doc.is_group == 1) {
 			intro_txt += __(
-				"Note: This Cost Center is a Group. Cannot make accounting entries against groups."
+				"Note: This Cost Center is a Group. Cannot make accounting entries against groups.",
 			);
 		}
 
@@ -43,7 +46,9 @@ frappe.ui.form.on("Cost Center", {
 			});
 
 			frm.add_custom_button(__("Budget"), function () {
-				frappe.set_route("List", "Budget", { cost_center: frm.doc.name });
+				frappe.set_route("List", "Budget", {
+					cost_center: frm.doc.name,
+				});
 			});
 		}
 	},
@@ -94,10 +99,20 @@ frappe.ui.form.on("Cost Center", {
 						frappe.dom.unfreeze();
 						if (!r.exc) {
 							if (r.message) {
-								frappe.set_route("Form", "Cost Center", r.message);
+								frappe.set_route(
+									"Form",
+									"Cost Center",
+									r.message,
+								);
 							} else {
-								frm.set_value("cost_center_name", data.cost_center_name);
-								frm.set_value("cost_center_number", data.cost_center_number);
+								frm.set_value(
+									"cost_center_name",
+									data.cost_center_name,
+								);
+								frm.set_value(
+									"cost_center_number",
+									data.cost_center_number,
+								);
 							}
 							d.hide();
 						}
@@ -118,9 +133,13 @@ frappe.ui.form.on("Cost Center", {
 	hide_unhide_group_ledger(frm) {
 		let doc = frm.doc;
 		if (doc.is_group == 1) {
-			frm.add_custom_button(__("Convert to Non-Group"), () => frm.events.convert_to_ledger(frm));
+			frm.add_custom_button(__("Convert to Non-Group"), () =>
+				frm.events.convert_to_ledger(frm),
+			);
 		} else if (doc.is_group == 0) {
-			frm.add_custom_button(__("Convert to Group"), () => frm.events.convert_to_group(frm));
+			frm.add_custom_button(__("Convert to Group"), () =>
+				frm.events.convert_to_group(frm),
+			);
 		}
 	},
 

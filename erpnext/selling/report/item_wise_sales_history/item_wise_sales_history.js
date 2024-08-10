@@ -16,7 +16,10 @@ frappe.query_reports["Item-wise Sales History"] = {
 			reqd: 1,
 			label: __("From Date"),
 			fieldtype: "Date",
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "to_date",
@@ -54,7 +57,11 @@ frappe.query_reports["Item-wise Sales History"] = {
 		value = default_formatter(value, row, column, data);
 		let format_fields = ["delivered_quantity", "billed_amount"];
 
-		if (in_list(format_fields, column.fieldname) && data && data[column.fieldname] > 0) {
+		if (
+			in_list(format_fields, column.fieldname) &&
+			data &&
+			data[column.fieldname] > 0
+		) {
 			value = "<span style='color:green;'>" + value + "</span>";
 		}
 		return value;

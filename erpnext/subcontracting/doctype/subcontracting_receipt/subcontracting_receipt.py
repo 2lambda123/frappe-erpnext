@@ -346,9 +346,9 @@ class SubcontractingReceipt(SubcontractingController):
 				supplied_items_details[item.name] = {}
 
 				for supplied_item in supplied_items:
-					supplied_items_details[item.name][
-						supplied_item.rm_item_code
-					] = supplied_item.available_qty
+					supplied_items_details[item.name][supplied_item.rm_item_code] = (
+						supplied_item.available_qty
+					)
 		else:
 			for item in self.get("supplied_items"):
 				item.available_qty_for_consumption = supplied_items_details.get(item.reference_name, {}).get(

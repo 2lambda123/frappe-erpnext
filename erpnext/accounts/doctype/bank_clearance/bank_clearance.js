@@ -25,7 +25,9 @@ frappe.ui.form.on("Bank Clearance", {
 
 	onload: function (frm) {
 		let default_bank_account = frappe.defaults.get_user_default("Company")
-			? locals[":Company"][frappe.defaults.get_user_default("Company")]["default_bank_account"]
+			? locals[":Company"][frappe.defaults.get_user_default("Company")][
+					"default_bank_account"
+				]
 			: "";
 		frm.set_value("account", default_bank_account);
 
@@ -35,9 +37,15 @@ frappe.ui.form.on("Bank Clearance", {
 
 	refresh: function (frm) {
 		frm.disable_save();
-		frm.add_custom_button(__("Get Payment Entries"), () => frm.trigger("get_payment_entries"));
+		frm.add_custom_button(__("Get Payment Entries"), () =>
+			frm.trigger("get_payment_entries"),
+		);
 
-		frm.change_custom_button_type(__("Get Payment Entries"), null, "primary");
+		frm.change_custom_button_type(
+			__("Get Payment Entries"),
+			null,
+			"primary",
+		);
 	},
 
 	update_clearance_date: function (frm) {
@@ -49,8 +57,16 @@ frappe.ui.form.on("Bank Clearance", {
 				frm.refresh_fields();
 
 				if (!frm.doc.payment_entries.length) {
-					frm.change_custom_button_type(__("Get Payment Entries"), null, "primary");
-					frm.change_custom_button_type(__("Update Clearance Date"), null, "default");
+					frm.change_custom_button_type(
+						__("Get Payment Entries"),
+						null,
+						"primary",
+					);
+					frm.change_custom_button_type(
+						__("Update Clearance Date"),
+						null,
+						"default",
+					);
 				}
 			},
 		});
@@ -65,11 +81,19 @@ frappe.ui.form.on("Bank Clearance", {
 
 				if (frm.doc.payment_entries.length) {
 					frm.add_custom_button(__("Update Clearance Date"), () =>
-						frm.trigger("update_clearance_date")
+						frm.trigger("update_clearance_date"),
 					);
 
-					frm.change_custom_button_type(__("Get Payment Entries"), null, "default");
-					frm.change_custom_button_type(__("Update Clearance Date"), null, "primary");
+					frm.change_custom_button_type(
+						__("Get Payment Entries"),
+						null,
+						"default",
+					);
+					frm.change_custom_button_type(
+						__("Update Clearance Date"),
+						null,
+						"primary",
+					);
 				}
 			},
 		});

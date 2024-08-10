@@ -41,7 +41,10 @@ frappe.query_reports["FIFO Queue vs Qty After Transaction Comparison"] = {
 	],
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
-		if (DIFFERNCE_FIELD_NAMES.includes(column.fieldname) && Math.abs(data[column.fieldname]) > 0.001) {
+		if (
+			DIFFERNCE_FIELD_NAMES.includes(column.fieldname) &&
+			Math.abs(data[column.fieldname]) > 0.001
+		) {
 			value = "<span style='color:red'>" + value + "</span>";
 		}
 		return value;

@@ -11,16 +11,17 @@ frappe.ui.form.on("Request for Quotation", {
 			"Supplier Quotation": "Create",
 		};
 
-		frm.fields_dict["suppliers"].grid.get_field("contact").get_query = function (doc, cdt, cdn) {
-			let d = locals[cdt][cdn];
-			return {
-				query: "frappe.contacts.doctype.contact.contact.contact_query",
-				filters: {
-					link_doctype: "Supplier",
-					link_name: d.supplier || "",
-				},
+		frm.fields_dict["suppliers"].grid.get_field("contact").get_query =
+			function (doc, cdt, cdn) {
+				let d = locals[cdt][cdn];
+				return {
+					query: "frappe.contacts.doctype.contact.contact.contact_query",
+					filters: {
+						link_doctype: "Supplier",
+						link_name: d.supplier || "",
+					},
+				};
 			};
-		};
 
 		frm.set_query("warehouse", "items", () => ({
 			filters: {
@@ -34,7 +35,9 @@ frappe.ui.form.on("Request for Quotation", {
 		if (!frm.doc.message_for_supplier) {
 			frm.set_value(
 				"message_for_supplier",
-				__("Please supply the specified items at the best possible rates")
+				__(
+					"Please supply the specified items at the best possible rates",
+				),
 			);
 		}
 	},
@@ -46,7 +49,7 @@ frappe.ui.form.on("Request for Quotation", {
 				function () {
 					frm.trigger("make_supplier_quotation");
 				},
-				__("Create")
+				__("Create"),
 			);
 
 			frm.add_custom_button(
@@ -63,7 +66,7 @@ frappe.ui.form.on("Request for Quotation", {
 						},
 					});
 				},
-				__("Tools")
+				__("Tools"),
 			);
 
 			frm.add_custom_button(
@@ -77,7 +80,10 @@ frappe.ui.form.on("Request for Quotation", {
 								fieldname: "supplier",
 								options: "Supplier",
 								reqd: 1,
-								default: frm.doc.suppliers?.length == 1 ? frm.doc.suppliers[0].supplier : "",
+								default:
+									frm.doc.suppliers?.length == 1
+										? frm.doc.suppliers[0].supplier
+										: "",
 								get_query: () => {
 									return {
 										filters: [
@@ -135,11 +141,17 @@ frappe.ui.form.on("Request for Quotation", {
 										new URLSearchParams({
 											name: frm.doc.name,
 											supplier: data.supplier,
-											print_format: data.print_format || "Standard",
-											language: data.language || frappe.boot.lang,
-											letterhead: data.letter_head || frm.doc.letter_head || "",
-										}).toString()
-								)
+											print_format:
+												data.print_format || "Standard",
+											language:
+												data.language ||
+												frappe.boot.lang,
+											letterhead:
+												data.letter_head ||
+												frm.doc.letter_head ||
+												"",
+										}).toString(),
+								),
 							);
 							if (!w) {
 								frappe.msgprint(__("Please enable pop-ups"));
@@ -147,10 +159,10 @@ frappe.ui.form.on("Request for Quotation", {
 							}
 						},
 						"Download PDF for Supplier",
-						"Download"
+						"Download",
 					);
 				},
-				__("Tools")
+				__("Tools"),
 			);
 
 			frm.page.set_inner_btn_group_as_primary(__("Create"));
@@ -200,7 +212,11 @@ frappe.ui.form.on("Request for Quotation", {
 					callback: function (r) {
 						if (!r.exc) {
 							var doc = frappe.model.sync(r.message);
-							frappe.set_route("Form", r.message.doctype, r.message.name);
+							frappe.set_route(
+								"Form",
+								r.message.doctype,
+								r.message.name,
+							);
 						}
 					},
 				});
@@ -267,7 +283,9 @@ frappe.ui.form.on("Request for Quotation", {
 				supplier: dialog.get_value("supplier"),
 			}).then(({ message }) => {
 				dialog.fields_dict.email_preview.$wrapper.empty();
-				dialog.fields_dict.email_preview.$wrapper.append(message.message);
+				dialog.fields_dict.email_preview.$wrapper.append(
+					message.message,
+				);
 				dialog.set_value("subject", message.subject);
 			});
 		};
@@ -282,7 +300,12 @@ frappe.ui.form.on("Request for Quotation", {
 frappe.ui.form.on("Request for Quotation Item", {
 	items_add(frm, cdt, cdn) {
 		if (frm.doc.schedule_date) {
-			frappe.model.set_value(cdt, cdn, "schedule_date", frm.doc.schedule_date);
+			frappe.model.set_value(
+				cdt,
+				cdn,
+				"schedule_date",
+				frm.doc.schedule_date,
+			);
 		}
 	},
 });
@@ -297,8 +320,18 @@ frappe.ui.form.on("Request for Quotation Supplier", {
 			},
 			callback: function (r) {
 				if (r.message) {
-					frappe.model.set_value(cdt, cdn, "contact", r.message.contact_person);
-					frappe.model.set_value(cdt, cdn, "email_id", r.message.contact_email);
+					frappe.model.set_value(
+						cdt,
+						cdn,
+						"contact",
+						r.message.contact_person,
+					);
+					frappe.model.set_value(
+						cdt,
+						cdn,
+						"email_id",
+						r.message.contact_email,
+					);
 				}
 			},
 		});
@@ -332,7 +365,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 
 			// Get items from Opportunity
@@ -354,7 +387,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 						},
 					});
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 
 			// Get items from open Material Requests based on supplier
@@ -371,7 +404,9 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 								options: "Supplier",
 								label: "Supplier",
 								reqd: 1,
-								description: __("Get Items from Material Requests against this Supplier"),
+								description: __(
+									"Get Items from Material Requests against this Supplier",
+								),
 							},
 						],
 						primary_action_label: __("Get Items"),
@@ -399,7 +434,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 
 					dialog.show();
 				},
-				__("Get Items From")
+				__("Get Items From"),
 			);
 
 			// Link Material Requests
@@ -408,7 +443,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 				function () {
 					erpnext.buying.link_to_mrs(me.frm);
 				},
-				__("Tools")
+				__("Tools"),
 			);
 
 			// Get Suppliers
@@ -417,7 +452,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 				function () {
 					me.get_suppliers_button(me.frm);
 				},
-				__("Tools")
+				__("Tools"),
 			);
 		}
 	}
@@ -448,7 +483,11 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 									method: "erpnext.buying.doctype.request_for_quotation.request_for_quotation.get_supplier_tag",
 								})
 								.then((r) => {
-									dialog.set_df_property("tag", "options", r.message);
+									dialog.set_df_property(
+										"tag",
+										"options",
+										r.message,
+									);
 								});
 						}
 					},
@@ -476,7 +515,12 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 
 				//Remove blanks
 				for (var j = 0; j < frm.doc.suppliers.length; j++) {
-					if (!Object.prototype.hasOwnProperty.call(frm.doc.suppliers[j], "supplier")) {
+					if (
+						!Object.prototype.hasOwnProperty.call(
+							frm.doc.suppliers[j],
+							"supplier",
+						)
+					) {
 						frm.get_field("suppliers").grid.grid_rows[j].remove();
 					}
 				}
@@ -500,7 +544,11 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 							if (!exists) {
 								var d = frm.add_child("suppliers");
 								d.supplier = supplier;
-								frm.script_manager.trigger("supplier", d.doctype, d.name);
+								frm.script_manager.trigger(
+									"supplier",
+									d.doctype,
+									d.name,
+								);
 							}
 						}
 					}
@@ -536,4 +584,7 @@ erpnext.buying.RequestforQuotationController = class RequestforQuotationControll
 };
 
 // for backward compatibility: combine new and previous states
-extend_cscript(cur_frm.cscript, new erpnext.buying.RequestforQuotationController({ frm: cur_frm }));
+extend_cscript(
+	cur_frm.cscript,
+	new erpnext.buying.RequestforQuotationController({ frm: cur_frm }),
+);

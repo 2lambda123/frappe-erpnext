@@ -3,8 +3,18 @@
 
 frappe.provide("erpnext.utils");
 
-const SALES_DOCTYPES = ["Quotation", "Sales Order", "Delivery Note", "Sales Invoice"];
-const PURCHASE_DOCTYPES = ["Supplier Quotation", "Purchase Order", "Purchase Receipt", "Purchase Invoice"];
+const SALES_DOCTYPES = [
+	"Quotation",
+	"Sales Order",
+	"Delivery Note",
+	"Sales Invoice",
+];
+const PURCHASE_DOCTYPES = [
+	"Supplier Quotation",
+	"Purchase Order",
+	"Purchase Receipt",
+	"Purchase Invoice",
+];
 
 erpnext.utils.get_party_details = function (frm, method, args, callback) {
 	if (!method) {
@@ -14,10 +24,14 @@ erpnext.utils.get_party_details = function (frm, method, args, callback) {
 	if (!args) {
 		if (
 			(frm.doctype != "Purchase Order" && frm.doc.customer) ||
-			(frm.doc.party_name && ["Quotation", "Opportunity"].includes(frm.doc.doctype))
+			(frm.doc.party_name &&
+				["Quotation", "Opportunity"].includes(frm.doc.doctype))
 		) {
 			let party_type = "Customer";
-			if (frm.doc.quotation_to && ["Lead", "Prospect"].includes(frm.doc.quotation_to)) {
+			if (
+				frm.doc.quotation_to &&
+				["Lead", "Prospect"].includes(frm.doc.quotation_to)
+			) {
 				party_type = frm.doc.quotation_to;
 			}
 
@@ -54,7 +68,9 @@ erpnext.utils.get_party_details = function (frm, method, args, callback) {
 		if (!args || !args.party) return;
 
 		args.posting_date = frm.doc.posting_date || frm.doc.transaction_date;
-		args.fetch_payment_terms_template = cint(!frm.doc.ignore_default_payment_terms_template);
+		args.fetch_payment_terms_template = cint(
+			!frm.doc.ignore_default_payment_terms_template,
+		);
 	}
 
 	if (in_list(SALES_DOCTYPES, frm.doc.doctype)) {
@@ -79,7 +95,7 @@ erpnext.utils.get_party_details = function (frm, method, args, callback) {
 				frm,
 				"Posting / Transaction Date",
 				args.posting_date,
-				args.party_type == "Customer" ? "customer" : "supplier"
+				args.party_type == "Customer" ? "customer" : "supplier",
 			)
 		)
 			return;
@@ -90,7 +106,7 @@ erpnext.utils.get_party_details = function (frm, method, args, callback) {
 			frm,
 			"Company",
 			frm.doc.company,
-			args.party_type == "Customer" ? "customer" : "supplier"
+			args.party_type == "Customer" ? "customer" : "supplier",
 		)
 	) {
 		return;
@@ -123,18 +139,31 @@ erpnext.utils.get_party_details = function (frm, method, args, callback) {
 erpnext.utils.add_item = function (frm) {
 	if (frm.is_new()) {
 		var prev_route = frappe.get_prev_route();
-		if (prev_route[1] === "Item" && !(frm.doc.items && frm.doc.items.length)) {
+		if (
+			prev_route[1] === "Item" &&
+			!(frm.doc.items && frm.doc.items.length)
+		) {
 			// add row
 			var item = frm.add_child("items");
 			frm.refresh_field("items");
 
 			// set item
-			frappe.model.set_value(item.doctype, item.name, "item_code", prev_route[2]);
+			frappe.model.set_value(
+				item.doctype,
+				item.name,
+				"item_code",
+				prev_route[2],
+			);
 		}
 	}
 };
 
-erpnext.utils.get_address_display = function (frm, address_field, display_field, is_your_company_address) {
+erpnext.utils.get_address_display = function (
+	frm,
+	address_field,
+	display_field,
+	is_your_company_address,
+) {
 	if (frm.updating_party_details) return;
 
 	if (!address_field) {
@@ -165,7 +194,7 @@ erpnext.utils.set_taxes_from_address = function (
 	frm,
 	triggered_from_field,
 	billing_address_field,
-	shipping_address_field
+	shipping_address_field,
 ) {
 	if (frm.updating_party_details) return;
 
@@ -174,8 +203,11 @@ erpnext.utils.set_taxes_from_address = function (
 			!erpnext.utils.validate_mandatory(
 				frm,
 				"Lead / Customer / Supplier",
-				frm.doc.customer || frm.doc.supplier || frm.doc.lead || frm.doc.party_name,
-				triggered_from_field
+				frm.doc.customer ||
+					frm.doc.supplier ||
+					frm.doc.lead ||
+					frm.doc.party_name,
+				triggered_from_field,
 			)
 		) {
 			return;
@@ -186,7 +218,7 @@ erpnext.utils.set_taxes_from_address = function (
 				frm,
 				"Posting / Transaction Date",
 				frm.doc.posting_date || frm.doc.transaction_date,
-				triggered_from_field
+				triggered_from_field,
 			)
 		) {
 			return;
@@ -216,7 +248,14 @@ erpnext.utils.set_taxes_from_address = function (
 
 erpnext.utils.set_taxes = function (frm, triggered_from_field) {
 	if (frappe.meta.get_docfield(frm.doc.doctype, "taxes")) {
-		if (!erpnext.utils.validate_mandatory(frm, "Company", frm.doc.company, triggered_from_field)) {
+		if (
+			!erpnext.utils.validate_mandatory(
+				frm,
+				"Company",
+				frm.doc.company,
+				triggered_from_field,
+			)
+		) {
 			return;
 		}
 
@@ -224,8 +263,11 @@ erpnext.utils.set_taxes = function (frm, triggered_from_field) {
 			!erpnext.utils.validate_mandatory(
 				frm,
 				"Lead / Customer / Supplier",
-				frm.doc.customer || frm.doc.supplier || frm.doc.lead || frm.doc.party_name,
-				triggered_from_field
+				frm.doc.customer ||
+					frm.doc.supplier ||
+					frm.doc.lead ||
+					frm.doc.party_name,
+				triggered_from_field,
 			)
 		) {
 			return;
@@ -236,7 +278,7 @@ erpnext.utils.set_taxes = function (frm, triggered_from_field) {
 				frm,
 				"Posting / Transaction Date",
 				frm.doc.posting_date || frm.doc.transaction_date,
-				triggered_from_field
+				triggered_from_field,
 			)
 		) {
 			return;
@@ -275,7 +317,9 @@ erpnext.utils.set_taxes = function (frm, triggered_from_field) {
 			supplier_group: frm.doc.supplier_group,
 			tax_category: frm.doc.tax_category,
 			billing_address:
-				frm.doc.customer || frm.doc.lead ? frm.doc.customer_address : frm.doc.supplier_address,
+				frm.doc.customer || frm.doc.lead
+					? frm.doc.customer_address
+					: frm.doc.supplier_address,
 			shipping_address: frm.doc.shipping_address_name,
 		},
 		callback: function (r) {
@@ -314,7 +358,10 @@ erpnext.utils.validate_mandatory = function (frm, label, value, trigger_on) {
 	if (!value) {
 		frm.doc[trigger_on] = "";
 		refresh_field(trigger_on);
-		frappe.throw({ message: __("Please enter {0} first", [label]), title: __("Mandatory") });
+		frappe.throw({
+			message: __("Please enter {0} first", [label]),
+			title: __("Mandatory"),
+		});
 		return false;
 	}
 	return true;

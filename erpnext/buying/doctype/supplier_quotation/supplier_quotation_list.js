@@ -1,5 +1,11 @@
 frappe.listview_settings["Supplier Quotation"] = {
-	add_fields: ["supplier", "base_grand_total", "status", "company", "currency"],
+	add_fields: [
+		"supplier",
+		"base_grand_total",
+		"status",
+		"company",
+		"currency",
+	],
 	get_indicator: function (doc) {
 		if (doc.status === "Ordered") {
 			return [__("Ordered"), "green", "status,=,Ordered"];
@@ -12,11 +18,19 @@ frappe.listview_settings["Supplier Quotation"] = {
 
 	onload: function (listview) {
 		listview.page.add_action_item(__("Purchase Order"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Supplier Quotation", "Purchase Order");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Supplier Quotation",
+				"Purchase Order",
+			);
 		});
 
 		listview.page.add_action_item(__("Purchase Invoice"), () => {
-			erpnext.bulk_transaction_processing.create(listview, "Supplier Quotation", "Purchase Invoice");
+			erpnext.bulk_transaction_processing.create(
+				listview,
+				"Supplier Quotation",
+				"Purchase Invoice",
+			);
 		});
 	},
 };

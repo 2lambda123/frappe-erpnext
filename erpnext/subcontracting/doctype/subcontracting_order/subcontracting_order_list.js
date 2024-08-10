@@ -13,6 +13,10 @@ frappe.listview_settings["Subcontracting Order"] = {
 			Closed: "green",
 			Cancelled: "red",
 		};
-		return [__(doc.status), status_colors[doc.status], "status,=," + doc.status];
+		return [
+			__(doc.status),
+			status_colors[doc.status],
+			"status,=," + doc.status,
+		];
 	},
 };

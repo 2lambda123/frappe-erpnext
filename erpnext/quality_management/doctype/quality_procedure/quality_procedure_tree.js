@@ -1,7 +1,9 @@
 frappe.treeview_settings["Quality Procedure"] = {
 	ignore_fields: ["parent_quality_procedure"],
-	get_tree_nodes: "erpnext.quality_management.doctype.quality_procedure.quality_procedure.get_children",
-	add_tree_node: "erpnext.quality_management.doctype.quality_procedure.quality_procedure.add_node",
+	get_tree_nodes:
+		"erpnext.quality_management.doctype.quality_procedure.quality_procedure.get_children",
+	add_tree_node:
+		"erpnext.quality_management.doctype.quality_procedure.quality_procedure.add_node",
 	filters: [
 		{
 			fieldname: "parent_quality_procedure",
@@ -25,7 +27,8 @@ frappe.treeview_settings["Quality Procedure"] = {
 			action: function () {
 				frappe.new_doc("Quality Procedure", true);
 			},
-			condition: 'frappe.boot.user.can_create.indexOf("Quality Procedure") !== -1',
+			condition:
+				'frappe.boot.user.can_create.indexOf("Quality Procedure") !== -1',
 		},
 	],
 	onload: function (treeview) {

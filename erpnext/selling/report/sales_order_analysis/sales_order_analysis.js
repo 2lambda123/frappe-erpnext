@@ -18,7 +18,10 @@ frappe.query_reports["Sales Order Analysis"] = {
 			fieldtype: "Date",
 			width: "80",
 			reqd: 1,
-			default: frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			default: frappe.datetime.add_months(
+				frappe.datetime.get_today(),
+				-1,
+			),
 		},
 		{
 			fieldname: "to_date",
@@ -55,7 +58,13 @@ frappe.query_reports["Sales Order Analysis"] = {
 			fieldtype: "MultiSelectList",
 			width: "80",
 			get_data: function (txt) {
-				let status = ["To Pay", "To Bill", "To Deliver", "To Deliver and Bill", "Completed"];
+				let status = [
+					"To Pay",
+					"To Bill",
+					"To Deliver",
+					"To Deliver and Bill",
+					"Completed",
+				];
 				let options = [];
 				for (let option of status) {
 					options.push({
@@ -79,7 +88,11 @@ frappe.query_reports["Sales Order Analysis"] = {
 		value = default_formatter(value, row, column, data);
 		let format_fields = ["delivered_qty", "billed_amount"];
 
-		if (in_list(format_fields, column.fieldname) && data && data[column.fieldname] > 0) {
+		if (
+			in_list(format_fields, column.fieldname) &&
+			data &&
+			data[column.fieldname] > 0
+		) {
 			value = "<span style='color:green;'>" + value + "</span>";
 		}
 

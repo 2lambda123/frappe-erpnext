@@ -1,4 +1,5 @@
 """Import Address Templates from ./templates directory."""
+
 import os
 
 import frappe

@@ -15,7 +15,12 @@ frappe.query_reports["Issue Analytics"] = {
 			fieldname: "based_on",
 			label: __("Based On"),
 			fieldtype: "Select",
-			options: ["Customer", "Issue Type", "Issue Priority", "Assigned To"],
+			options: [
+				"Customer",
+				"Issue Type",
+				"Issue Priority",
+				"Assigned To",
+			],
 			default: "Customer",
 			reqd: 1,
 		},
@@ -84,7 +89,10 @@ frappe.query_reports["Issue Analytics"] = {
 		},
 	],
 	after_datatable_render: function (datatable_obj) {
-		$(datatable_obj.wrapper).find(".dt-row-0").find("input[type=checkbox]").click();
+		$(datatable_obj.wrapper)
+			.find(".dt-row-0")
+			.find("input[type=checkbox]")
+			.click();
 	},
 	get_datatable_options(options) {
 		return Object.assign(options, {

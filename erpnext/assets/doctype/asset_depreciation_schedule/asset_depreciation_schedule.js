@@ -8,19 +8,26 @@ frappe.ui.form.on("Asset Depreciation Schedule", {
 	},
 
 	make_schedules_editable: function (frm) {
-		var is_manual_hence_editable = frm.doc.depreciation_method === "Manual" ? true : false;
+		var is_manual_hence_editable =
+			frm.doc.depreciation_method === "Manual" ? true : false;
 		var is_shift_hence_editable = frm.doc.shift_based ? true : false;
 
-		frm.toggle_enable("depreciation_schedule", is_manual_hence_editable || is_shift_hence_editable);
+		frm.toggle_enable(
+			"depreciation_schedule",
+			is_manual_hence_editable || is_shift_hence_editable,
+		);
 		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
 			"schedule_date",
-			is_manual_hence_editable
+			is_manual_hence_editable,
 		);
 		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
 			"depreciation_amount",
-			is_manual_hence_editable
+			is_manual_hence_editable,
 		);
-		frm.fields_dict["depreciation_schedule"].grid.toggle_enable("shift", is_shift_hence_editable);
+		frm.fields_dict["depreciation_schedule"].grid.toggle_enable(
+			"shift",
+			is_shift_hence_editable,
+		);
 	},
 });
 
@@ -50,7 +57,9 @@ frappe.ui.form.on("Depreciation Schedule", {
 erpnext.asset.set_accumulated_depreciation = function (frm) {
 	if (frm.doc.depreciation_method != "Manual") return;
 
-	var accumulated_depreciation = flt(frm.doc.opening_accumulated_depreciation);
+	var accumulated_depreciation = flt(
+		frm.doc.opening_accumulated_depreciation,
+	);
 
 	$.each(frm.doc.depreciation_schedule || [], function (i, row) {
 		accumulated_depreciation += flt(row.depreciation_amount);
@@ -58,7 +67,7 @@ erpnext.asset.set_accumulated_depreciation = function (frm) {
 			row.doctype,
 			row.name,
 			"accumulated_depreciation_amount",
-			accumulated_depreciation
+			accumulated_depreciation,
 		);
 	});
 };

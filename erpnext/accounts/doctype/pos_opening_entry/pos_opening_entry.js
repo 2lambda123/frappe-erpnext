@@ -41,15 +41,19 @@ frappe.ui.form.on("POS Opening Entry", {
 
 	pos_profile: (frm) => {
 		if (frm.doc.pos_profile) {
-			frappe.db.get_doc("POS Profile", frm.doc.pos_profile).then(({ payments }) => {
-				if (payments.length) {
-					frm.doc.balance_details = [];
-					payments.forEach(({ mode_of_payment }) => {
-						frm.add_child("balance_details", { mode_of_payment });
-					});
-					frm.refresh_field("balance_details");
-				}
-			});
+			frappe.db
+				.get_doc("POS Profile", frm.doc.pos_profile)
+				.then(({ payments }) => {
+					if (payments.length) {
+						frm.doc.balance_details = [];
+						payments.forEach(({ mode_of_payment }) => {
+							frm.add_child("balance_details", {
+								mode_of_payment,
+							});
+						});
+						frm.refresh_field("balance_details");
+					}
+				});
 		}
 	},
 });

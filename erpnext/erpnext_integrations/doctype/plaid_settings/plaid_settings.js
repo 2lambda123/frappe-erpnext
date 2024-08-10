@@ -25,13 +25,14 @@ frappe.ui.form.on("Plaid Settings", {
 					method: "erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.enqueue_synchronization",
 					freeze: true,
 					callback: () => {
-						let bank_transaction_link = '<a href="#List/Bank Transaction">Bank Transaction</a>';
+						let bank_transaction_link =
+							'<a href="#List/Bank Transaction">Bank Transaction</a>';
 
 						frappe.msgprint({
 							title: __("Sync Started"),
 							message: __(
 								"The sync has started in the background, please check the {0} list for new records.",
-								[bank_transaction_link]
+								[bank_transaction_link],
 							),
 							alert: 1,
 						});
@@ -45,7 +46,8 @@ frappe.ui.form.on("Plaid Settings", {
 erpnext.integrations.plaidLink = class plaidLink {
 	constructor(parent) {
 		this.frm = parent;
-		this.plaidUrl = "https://cdn.plaid.com/link/v2/stable/link-initialize.js";
+		this.plaidUrl =
+			"https://cdn.plaid.com/link/v2/stable/link-initialize.js";
 		this.init_config();
 	}
 
@@ -58,9 +60,15 @@ erpnext.integrations.plaidLink = class plaidLink {
 	}
 
 	async get_link_token() {
-		const token = await this.frm.call("get_link_token").then((resp) => resp.message);
+		const token = await this.frm
+			.call("get_link_token")
+			.then((resp) => resp.message);
 		if (!token) {
-			frappe.throw(__("Cannot retrieve link token. Check Error Log for more information"));
+			frappe.throw(
+				__(
+					"Cannot retrieve link token. Check Error Log for more information",
+				),
+			);
 		}
 		return token;
 	}
@@ -112,8 +120,8 @@ erpnext.integrations.plaidLink = class plaidLink {
 	onScriptError(error) {
 		frappe.msgprint(
 			__(
-				"There was an issue connecting to Plaid's authentication server. Check browser console for more information"
-			)
+				"There was an issue connecting to Plaid's authentication server. Check browser console for more information",
+			),
 		);
 		console.log(error);
 	}
@@ -137,7 +145,7 @@ erpnext.integrations.plaidLink = class plaidLink {
 						{
 							token: token,
 							response: response,
-						}
+						},
 					)
 					.then((result) => {
 						frappe.xcall(
@@ -146,15 +154,18 @@ erpnext.integrations.plaidLink = class plaidLink {
 								response: response,
 								bank: result,
 								company: me.company,
-							}
+							},
 						);
 					})
 					.then(() => {
-						frappe.show_alert({ message: __("Bank accounts added"), indicator: "green" });
+						frappe.show_alert({
+							message: __("Bank accounts added"),
+							indicator: "green",
+						});
 					});
 			},
 			__("Select a company"),
-			__("Continue")
+			__("Continue"),
 		);
 	}
 };

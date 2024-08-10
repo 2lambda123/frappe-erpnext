@@ -18,12 +18,15 @@ erpnext.financial_statements = {
 				//If the previous year value is 0 and the current value is greater than 0
 				annualGrowth = 1;
 			} else if (lastAnnualValue > 0) {
-				annualGrowth = (currentAnnualvalue - lastAnnualValue) / lastAnnualValue;
+				annualGrowth =
+					(currentAnnualvalue - lastAnnualValue) / lastAnnualValue;
 			}
 
 			const growthPercent = Math.round(annualGrowth * 10000) / 100; //calculating the rounded off percentage
 
-			value = $(`<span>${(growthPercent >= 0 ? "+" : "") + growthPercent + "%"}</span>`);
+			value = $(
+				`<span>${(growthPercent >= 0 ? "+" : "") + growthPercent + "%"}</span>`,
+			);
 			if (growthPercent < 0) {
 				value = $(value).addClass("text-danger");
 			} else {
@@ -32,8 +35,14 @@ erpnext.financial_statements = {
 			value = $(value).wrap("<p></p>").parent().html();
 
 			return value;
-		} else if (frappe.query_report.get_filter_value("selected_view") == "Margin" && data) {
-			if (column.fieldname == "account" && data.account_name == __("Income")) {
+		} else if (
+			frappe.query_report.get_filter_value("selected_view") == "Margin" &&
+			data
+		) {
+			if (
+				column.fieldname == "account" &&
+				data.account_name == __("Income")
+			) {
 				//Taking the total income from each column (for all the financial years) as the base (100%)
 				this.baseData = row;
 			}
@@ -41,8 +50,10 @@ erpnext.financial_statements = {
 				//Assuming that the first two columns are s.no and account name, to calculate the relative percentage values of the successive columns.
 				const currentAnnualvalue = data[column.fieldname];
 				const baseValue = this.baseData[column.colIndex].content;
-				if (currentAnnualvalue == undefined || baseValue <= 0) return "NA";
-				const marginPercent = Math.round((currentAnnualvalue / baseValue) * 10000) / 100;
+				if (currentAnnualvalue == undefined || baseValue <= 0)
+					return "NA";
+				const marginPercent =
+					Math.round((currentAnnualvalue / baseValue) * 10000) / 100;
 
 				value = $(`<span>${marginPercent + "%"}</span>`);
 				if (marginPercent < 0) value = $(value).addClass("text-danger");
@@ -63,7 +74,9 @@ erpnext.financial_statements = {
 
 			if (data.account) {
 				column.link_onclick =
-					"erpnext.financial_statements.open_general_ledger(" + JSON.stringify(data) + ")";
+					"erpnext.financial_statements.open_general_ledger(" +
+					JSON.stringify(data) +
+					")";
 			}
 			column.is_tree = true;
 		}
@@ -94,13 +107,17 @@ erpnext.financial_statements = {
 			company: frappe.query_report.get_filter_value("company"),
 			from_date: data.from_date || data.year_start_date,
 			to_date: data.to_date || data.year_end_date,
-			project: project && project.length > 0 ? project[0].$input.val() : "",
+			project:
+				project && project.length > 0 ? project[0].$input.val() : "",
 		};
 
 		let report = "General Ledger";
 
 		if (["Payable", "Receivable"].includes(data.account_type)) {
-			report = data.account_type == "Payable" ? "Accounts Payable" : "Accounts Receivable";
+			report =
+				data.account_type == "Payable"
+					? "Accounts Payable"
+					: "Accounts Receivable";
 			frappe.route_options["party_account"] = data.account;
 			frappe.route_options["report_date"] = data.year_end_date;
 		}
@@ -115,7 +132,9 @@ erpnext.financial_statements = {
 		// dropdown for links to other financial statements
 		erpnext.financial_statements.filters = get_filters();
 
-		let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today());
+		let fiscal_year = erpnext.utils.get_fiscal_year(
+			frappe.datetime.get_today(),
+		);
 
 		frappe.model.with_doc("Fiscal Year", fiscal_year, function (r) {
 			var fy = frappe.model.get_doc("Fiscal Year", fiscal_year);
@@ -126,22 +145,44 @@ erpnext.financial_statements = {
 		});
 
 		if (report.page) {
-			const views_menu = report.page.add_custom_button_group(__("Financial Statements"));
+			const views_menu = report.page.add_custom_button_group(
+				__("Financial Statements"),
+			);
 
-			report.page.add_custom_menu_item(views_menu, __("Balance Sheet"), function () {
-				var filters = report.get_values();
-				frappe.set_route("query-report", "Balance Sheet", { company: filters.company });
-			});
+			report.page.add_custom_menu_item(
+				views_menu,
+				__("Balance Sheet"),
+				function () {
+					var filters = report.get_values();
+					frappe.set_route("query-report", "Balance Sheet", {
+						company: filters.company,
+					});
+				},
+			);
 
-			report.page.add_custom_menu_item(views_menu, __("Profit and Loss"), function () {
-				var filters = report.get_values();
-				frappe.set_route("query-report", "Profit and Loss Statement", { company: filters.company });
-			});
+			report.page.add_custom_menu_item(
+				views_menu,
+				__("Profit and Loss"),
+				function () {
+					var filters = report.get_values();
+					frappe.set_route(
+						"query-report",
+						"Profit and Loss Statement",
+						{ company: filters.company },
+					);
+				},
+			);
 
-			report.page.add_custom_menu_item(views_menu, __("Cash Flow Statement"), function () {
-				var filters = report.get_values();
-				frappe.set_route("query-report", "Cash Flow", { company: filters.company });
-			});
+			report.page.add_custom_menu_item(
+				views_menu,
+				__("Cash Flow Statement"),
+				function () {
+					var filters = report.get_values();
+					frappe.set_route("query-report", "Cash Flow", {
+						company: filters.company,
+					});
+				},
+			);
 		}
 	},
 };
@@ -170,19 +211,23 @@ function get_filters() {
 			default: ["Fiscal Year"],
 			reqd: 1,
 			on_change: function () {
-				let filter_based_on = frappe.query_report.get_filter_value("filter_based_on");
+				let filter_based_on =
+					frappe.query_report.get_filter_value("filter_based_on");
 				frappe.query_report.toggle_filter_display(
 					"from_fiscal_year",
-					filter_based_on === "Date Range"
+					filter_based_on === "Date Range",
 				);
-				frappe.query_report.toggle_filter_display("to_fiscal_year", filter_based_on === "Date Range");
+				frappe.query_report.toggle_filter_display(
+					"to_fiscal_year",
+					filter_based_on === "Date Range",
+				);
 				frappe.query_report.toggle_filter_display(
 					"period_start_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 				frappe.query_report.toggle_filter_display(
 					"period_end_date",
-					filter_based_on === "Fiscal Year"
+					filter_based_on === "Fiscal Year",
 				);
 
 				frappe.query_report.refresh();
@@ -267,9 +312,17 @@ function get_filters() {
 	let fy_filters = filters.filter((x) => {
 		return ["from_fiscal_year", "to_fiscal_year"].includes(x.fieldname);
 	});
-	let fiscal_year = erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), false, true);
+	let fiscal_year = erpnext.utils.get_fiscal_year(
+		frappe.datetime.get_today(),
+		false,
+		true,
+	);
 	if (fiscal_year) {
-		let fy = erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), false, false);
+		let fy = erpnext.utils.get_fiscal_year(
+			frappe.datetime.get_today(),
+			false,
+			false,
+		);
 		fy_filters.forEach((x) => {
 			x.default = fy;
 		});

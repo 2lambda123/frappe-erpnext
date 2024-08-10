@@ -80,7 +80,8 @@ frappe.query_reports["Accounts Payable Summary"] = {
 				frappe.query_report.set_filter_value("party", "");
 				frappe.query_report.toggle_filter_display(
 					"supplier_group",
-					frappe.query_report.get_filter_value("party_type") !== "Supplier"
+					frappe.query_report.get_filter_value("party_type") !==
+						"Supplier",
 				);
 			},
 		},
@@ -91,7 +92,8 @@ frappe.query_reports["Accounts Payable Summary"] = {
 			get_data: function (txt) {
 				if (!frappe.query_report.filters) return;
 
-				let party_type = frappe.query_report.get_filter_value("party_type");
+				let party_type =
+					frappe.query_report.get_filter_value("party_type");
 				if (!party_type) return;
 
 				return frappe.db.get_link_options(party_type, txt);
@@ -124,7 +126,9 @@ frappe.query_reports["Accounts Payable Summary"] = {
 	onload: function (report) {
 		report.page.add_inner_button(__("Accounts Payable"), function () {
 			var filters = report.get_values();
-			frappe.set_route("query-report", "Accounts Payable", { company: filters.company });
+			frappe.set_route("query-report", "Accounts Payable", {
+				company: filters.company,
+			});
 		});
 	},
 };
@@ -134,7 +138,10 @@ erpnext.utils.add_dimensions("Accounts Payable Summary", 9);
 function get_party_type_options() {
 	let options = [];
 	frappe.db
-		.get_list("Party Type", { filters: { account_type: "Payable" }, fields: ["name"] })
+		.get_list("Party Type", {
+			filters: { account_type: "Payable" },
+			fields: ["name"],
+		})
 		.then((res) => {
 			res.forEach((party_type) => {
 				options.push(party_type.name);
