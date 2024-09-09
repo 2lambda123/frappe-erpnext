@@ -38,7 +38,7 @@ repos:
             )$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.9.1
+    rev: v9.10.0
     hooks:
       - id: eslint
         types_or: [javascript]
@@ -56,7 +56,7 @@ repos:
             )$
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.3
+    rev: v0.6.4
     hooks:
       - id: ruff
         name: "Run ruff import sorter"
